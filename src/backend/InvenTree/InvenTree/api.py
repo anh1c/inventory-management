@@ -160,7 +160,7 @@ class VersionView(APIView):
                 'doc': InvenTree.version.inventreeDocUrl(),
                 'code': InvenTree.version.inventreeGithubUrl(),
                 'app': InvenTree.version.inventreeAppUrl(),
-                'bug': f'{InvenTree.version.inventreeGithubUrl()}issues',
+                'bug': InvenTree.version.inventreeDocUrl(),
             },
         })
 
@@ -291,7 +291,7 @@ class InfoView(APIView):
             is_staff = self.check_auth_header(request)
 
         data = {
-            'server': 'InvenTree',
+            'server': 'DTWare',
             'id': InvenTree.version.inventree_identifier(),
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),

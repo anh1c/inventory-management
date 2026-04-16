@@ -7,7 +7,6 @@ import type { DashboardWidgetProps } from './DashboardWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
-import NewsWidget from './widgets/NewsWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 import StocktakeDashboardWidget from './widgets/StocktakeDashboardWidget';
 
@@ -192,18 +191,10 @@ function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
     {
       label: 'gstart',
       title: t`Getting Started`,
-      description: t`Getting started with InvenTree`,
+      description: t`Getting started with DTWare`,
       minWidth: 5,
       minHeight: 4,
       render: () => <GetStartedWidget />
-    },
-    {
-      label: 'news',
-      title: t`News Updates`,
-      description: t`The latest news from InvenTree`,
-      minWidth: 5,
-      minHeight: 4,
-      render: () => <NewsWidget />
     }
   ];
 }

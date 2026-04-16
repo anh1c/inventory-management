@@ -28,7 +28,7 @@ database:
   # HOST: Database host address (if required)
   # PORT: Database host port (if required)
 
-# Base URL for the InvenTree server (or use the environment variable INVENTREE_SITE_URL)
+# Base URL for the DTWare server (or use the environment variable INVENTREE_SITE_URL)
 # site_url: 'http://localhost:8000'
 
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
@@ -90,7 +90,7 @@ timezone: UTC
 # e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
 
 email:
-  sender: '' #  'inventree@example.org'
+  sender: '' #  'noreply@dtware.example.org'
   # For 1
   # backend: 'django.core.mail.backends.smtp.EmailBackend'
   host: ''
@@ -223,8 +223,8 @@ ldap:
 # Ref: https://docs.inventree.org/en/stable/start/config/#customization-options
 # customize:
 #   site_header: 'Custom Admin Panel'  # Django admin panel header text
-#   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
-#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
+#   login_message: DTWare demo instance - <a href='https://dtware.example.org/demo'> Click here for login details</a>
+#   navbar_message: <h6>DTWare demo mode <a href='https://dtware.example.org/demo'><span class='fas fa-info-circle'></span></a></h6>
 #   hide_admin_link: true
 #   hide_password_reset: true
 #   disable_theme_storage: true

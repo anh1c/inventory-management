@@ -82,15 +82,11 @@ export const QuickAction = () => {
   const items = [
     {
       id: '0',
-      title: t`Open an Issue`,
-      description: t`Report a bug or request a feature on GitHub`,
+      title: t`Open Support`,
+      description: t`Open the DTWare support and administration area`,
       icon: <IconBrandGithub />,
-      buttonText: t`Open Issue`,
-      action: () =>
-        window.open(
-          'https://github.com/inventree/inventree/issues/new',
-          '_blank'
-        )
+      buttonText: t`Open Support`,
+      action: () => window.open(`${window.location.origin}/settings/admin/`, '_blank')
     },
     {
       id: '1',

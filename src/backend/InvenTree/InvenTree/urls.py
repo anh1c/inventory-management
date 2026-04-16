@@ -46,7 +46,7 @@ from .views import auth_request
 
 # Set admin header from config or use default
 admin.site.site_header = get_setting(
-    'INVENTREE_SITE_HEADER', 'customize.site_header', 'InvenTree Admin'
+    'INVENTREE_SITE_HEADER', 'customize.site_header', 'DTWare Admin'
 )
 
 

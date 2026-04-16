@@ -28,7 +28,7 @@ function NewsLink({ item }: Readonly<{ item: any }>) {
   let link: string = item.link;
 
   if (link?.startsWith('/')) {
-    link = `https://inventree.org${link}`;
+    link = `${window.location.origin}${link}`;
   }
 
   if (link) {
@@ -73,7 +73,7 @@ function NewsItem({
 }
 
 /**
- * A widget which displays a list of news items on the dashboard
+ * A widget which displays a list of product updates on the dashboard
  */
 export default function NewsWidget() {
   const user = useUserState();

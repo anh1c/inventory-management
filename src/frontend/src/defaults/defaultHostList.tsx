@@ -8,8 +8,10 @@ export function translateHostName(name: string | undefined): string {
   switch (name) {
     case 'Localhost':
       return t`Local Server`;
+    case 'DTWare Demo':
+      return t`DTWare Demo`;
     case 'InvenTree Demo':
-      return t`InvenTree Demo`;
+      return t`DTWare Demo`;
     case 'Current Server':
       return t`Current Server`;
     default:

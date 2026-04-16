@@ -93,7 +93,7 @@ const AboutContent = ({
   const commit_set: boolean =
     data.version.commit_hash && data.version.commit_date;
 
-  const copyval = `InvenTree-Version: ${data.version.server}\nDjango Version: ${
+  const copyval = `DTWare-Version: ${data.version.server}\nDjango Version: ${
     data.version.django
   }\n${
     commit_set
@@ -110,8 +110,7 @@ const AboutContent = ({
   const tableData = [
     {
       ref: 'server',
-      title: <Trans>InvenTree Version</Trans>,
-      link: 'https://github.com/inventree/InvenTree/releases',
+      title: <Trans>Platform Version</Trans>,
       copy: true
     },
     {
@@ -173,9 +172,9 @@ const AboutContent = ({
           {fillTable(
             [
               { ref: 'doc', title: <Trans>Documentation</Trans> },
-              { ref: 'code', title: <Trans>Source Code</Trans> },
-              { ref: 'app', title: <Trans>Mobile App</Trans> },
-              { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
+              { ref: 'code', title: <Trans>Deployment URL</Trans> },
+              { ref: 'app', title: <Trans>Mobile Access</Trans> },
+              { ref: 'bug', title: <Trans>Support</Trans> }
             ],
             data.links,
             true

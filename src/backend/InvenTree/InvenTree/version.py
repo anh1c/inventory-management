@@ -23,6 +23,7 @@ INVENTREE_SW_VERSION = '1.4.0 dev'
 MIN_PYTHON_VERSION = (3, 11)
 
 logger = logging.getLogger('inventree')
+BRAND_NAME = 'DTWare'
 
 git_warning_txt = 'INVE-W3: Could not detect git information.'
 
@@ -142,19 +143,24 @@ def inventreeDocsVersion() -> str:
 
 
 def inventreeDocUrl() -> str:
-    """Return URL for InvenTree documentation site."""
-    tag = inventreeDocsVersion()
-    return f'https://docs.inventree.org/en/{tag}'
+    """Return URL for DTWare documentation."""
+    if settings.SITE_URL:
+        return f'{settings.SITE_URL}/api-doc/'
+    return 'http://localhost:8000/api-doc/'
 
 
 def inventreeAppUrl() -> str:
-    """Return URL for InvenTree app site."""
-    return 'https://docs.inventree.org/en/stable/app/'
+    """Return URL for DTWare mobile / browser access."""
+    if settings.SITE_URL:
+        return settings.SITE_URL
+    return 'http://localhost:8000/'
 
 
 def inventreeGithubUrl() -> str:
-    """Return URL for InvenTree github site."""
-    return 'https://github.com/InvenTree/InvenTree/'
+    """Return URL for the current DTWare deployment."""
+    if settings.SITE_URL:
+        return settings.SITE_URL
+    return 'http://localhost:8000/'
 
 
 def isInvenTreeUpToDate() -> bool:

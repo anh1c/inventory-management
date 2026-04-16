@@ -6,15 +6,15 @@ from InvenTree.version import inventreeApiVersion
 def get_spectacular_settings():
     """Return configuration dictionary for drf-spectacular."""
     return {
-        'TITLE': 'InvenTree API',
-        'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
+        'TITLE': 'DTWare API',
+        'DESCRIPTION': 'API for DTWare inventory and operations management',
         'LICENSE': {
             'name': 'MIT',
-            'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
+            'url': 'http://localhost:8000/licenses/',
         },
         'EXTERNAL_DOCS': {
-            'description': 'More information about InvenTree in the official docs',
-            'url': 'https://docs.inventree.org',
+            'description': 'DTWare API reference and deployment documentation',
+            'url': 'http://localhost:8000/api-doc/',
         },
         'VERSION': str(inventreeApiVersion()),
         'SERVE_INCLUDE_SCHEMA': False,

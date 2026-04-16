@@ -40,14 +40,14 @@ export function getActions(navigate: NavigateFunction) {
       {
         id: 'dashboard',
         label: t`Dashboard`,
-        description: t`Go to the InvenTree dashboard`,
+        description: t`Go to the DTWare dashboard`,
         onClick: () => navigate('/'),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'documentation',
         label: t`Documentation`,
-        description: t`Visit the documentation to learn more about InvenTree`,
+        description: t`Open DTWare documentation and support resources`,
         onClick: () => {
           window.location.href = docLinks.faq;
         },
@@ -55,15 +55,15 @@ export function getActions(navigate: NavigateFunction) {
       },
       {
         id: 'about',
-        label: t`About InvenTree`,
-        description: t`About the InvenTree org`,
+        label: t`About DTWare`,
+        description: t`About the DTWare platform`,
         onClick: () => aboutInvenTree(),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'server-info',
         label: t`Server Information`,
-        description: t`About this InvenTree instance`,
+        description: t`About this DTWare instance`,
         onClick: () => serverInfo(),
         leftSection: <IconLink size='1.2rem' />
       },

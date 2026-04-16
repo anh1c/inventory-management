@@ -44,8 +44,8 @@ except ImportError:  # pragma: no cover
 
 checkMinPythonVersion()
 
-INVENTREE_BASE_URL = 'https://inventree.org'
-INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
+INVENTREE_BASE_URL = os.environ.get('DTWARE_BASE_URL', 'http://localhost:8000')
+INVENTREE_NEWS_URL = os.environ.get('DTWARE_NEWS_URL', '')
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv or 'TESTING' in os.environ or 'pytest' in sys.argv

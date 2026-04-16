@@ -70,13 +70,13 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
 }
 
 export const docLinks = {
-  app: 'https://docs.inventree.org/en/latest/app/',
-  getting_started: 'https://docs.inventree.org/en/latest/start/',
-  api: 'https://docs.inventree.org/en/latest/api/',
-  developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
-  faq: 'https://docs.inventree.org/en/latest/faq/',
-  github: 'https://github.com/inventree/inventree',
-  errorcodes: 'https://docs.inventree.org/en/latest/sref/error-codes/'
+  app: `${window.location.origin}/`,
+  getting_started: `${window.location.origin}/`,
+  api: `${window.location.origin}/api-doc/`,
+  developer: `${window.location.origin}/settings/system/`,
+  faq: `${window.location.origin}/settings/admin/`,
+  github: `${window.location.origin}/`,
+  errorcodes: `${window.location.origin}/api-doc/`
 };
 
 export function DocumentationLinks(): MenuLinkItem[] {
@@ -86,35 +86,35 @@ export function DocumentationLinks(): MenuLinkItem[] {
       title: t`Getting Started`,
       link: docLinks.getting_started,
       external: true,
-      description: t`Getting started with InvenTree`
+      description: t`Getting started with DTWare`
     },
     {
       id: 'api',
-      title: t`API`,
+      title: t`API Reference`,
       link: docLinks.api,
       external: true,
-      description: t`InvenTree API documentation`
+      description: t`DTWare API reference`
     },
     {
       id: 'developer',
-      title: t`Developer Manual`,
+      title: t`System Guide`,
       link: docLinks.developer,
       external: true,
-      description: t`InvenTree developer manual`
+      description: t`DTWare system administration guide`
     },
     {
       id: 'faq',
-      title: t`FAQ`,
+      title: t`Support`,
       link: docLinks.faq,
       external: true,
-      description: t`Frequently asked questions`
+      description: t`DTWare support and configuration`
     },
     {
       id: 'github',
-      title: t`GitHub Repository`,
+      title: t`Deployment URL`,
       link: docLinks.github,
       external: true,
-      description: t`InvenTree source code on GitHub`
+      description: t`Current DTWare deployment`
     }
   ];
 }
@@ -137,7 +137,7 @@ export function aboutInvenTree() {
     modal: 'about',
     title: (
       <StylishText size='xl'>
-        <Trans>About InvenTree</Trans>
+        <Trans>About DTWare</Trans>
       </StylishText>
     ),
     size: 'xl',
@@ -166,14 +166,14 @@ export function AboutLinks(
     {
       id: 'instance',
       title: t`System Information`,
-      description: t`About this InvenTree instance`,
+      description: t`About this DTWare instance`,
       icon: 'info',
       action: serverInfo
     },
     {
       id: 'licenses',
       title: t`License Information`,
-      description: t`Licenses for dependencies of the InvenTree software`,
+      description: t`Licenses for dependencies used by DTWare`,
       icon: 'license',
       action: licenseInfo
     }
@@ -183,8 +183,8 @@ export function AboutLinks(
   if (user.isSuperuser() || !settings.isSet('INVENTREE_RESTRICT_ABOUT')) {
     base_items.push({
       id: 'about',
-      title: t`About InvenTree`,
-      description: t`About the InvenTree Project`,
+      title: t`About DTWare`,
+      description: t`About the DTWare platform`,
       icon: 'info',
       action: aboutInvenTree
     });

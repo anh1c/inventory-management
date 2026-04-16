@@ -17,7 +17,7 @@
     <div id="update-warning" style="display: none;">
       If you see this text there might be an issue with your update.
       <br>
-      See <a href="https://docs.inventree.org/en/stable/settings/error_codes/#inve-e1">INVE-E1</a> in the docs for help.
+      See <a href="/api-doc/">DTWare deployment documentation</a> for help.
     </div>
     <div id="no-javascript-warning" style="display: none;">
       <hr>
@@ -45,8 +45,8 @@
   {% if bundle == "NOT_FOUND" %}
   <div id="spa_bundle_error">
     <div>
-      <h1>INVE-E1 - No frontend included</h1>
-      <p>The frontend bundle could not be found. Please check that your deployment method includes the bundle or check the <a href="https://docs.inventree.org/en/stable/faq/">FAQ</a>.<br/>
+      <h1>DTW-E1 - No frontend included</h1>
+      <p>The frontend bundle could not be found. Please check that your deployment method includes the bundle or review the <a href="/api-doc/">DTWare deployment guide</a>.<br/>
         <span>Install method: <code>{% inventree_installer %}</code></span></p>
   </div>
   {% else %}
