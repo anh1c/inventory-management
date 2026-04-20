@@ -171,7 +171,7 @@ export function getActions(navigate: NavigateFunction) {
       _actions.push({
         id: 'plugin-settings',
         label: t`Plugins`,
-        description: t`Manage InvenTree plugins`,
+        description: t`Manage DTWare plugins`,
         onClick: () => navigate('/settings/admin/plugin'),
         leftSection: <IconPlug size='1.2rem' />
       });

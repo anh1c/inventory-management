@@ -1,12 +1,12 @@
 # Project
-site_url: https://inventree.readthedocs.io
-site_name: InvenTree Documentation
-site_description: InvenTree - Open Source Inventory Management
-site_author: InvenTree
+site_url: http://localhost:8000/api-doc/
+site_name: DTWare Documentation
+site_description: DTWare - Inventory and Operations Management
+site_author: DTWare
 
 # Repository
-repo_url: https://github.com/inventree/inventree
-repo_name: inventree/inventree
+repo_url: https://github.com/anh1c/inventory-management
+repo_name: anh1c/inventory-management
 
 
 # Theme
@@ -71,14 +71,14 @@ extra_javascript:
 
 # Navigation
 nav:
-  - InvenTree:
-    - InvenTree: index.md
+  - DTWare:
+    - DTWare: index.md
     - FAQ: faq.md
     - Troubleshooting: troubleshooting.md
     - Demo: demo.md
     - Release Notes: releases/release_notes.md
     - Development:
-      - InvenTree Development: develop/index.md
+      - DTWare Development: develop/index.md
       - Contributing: develop/contributing.md
       - Architecture: develop/architecture.md
       - Roadmap: develop/roadmap.md
@@ -230,7 +230,7 @@ nav:
       - Builtin Plugins: plugins/builtin/index.md
       - Barcode Plugins:
         - Barcode Plugins: plugins/builtin/barcode_index.md
-        - InvenTree Barcode: plugins/builtin/inventree_barcode.md
+        - DTWare Barcode: plugins/builtin/inventree_barcode.md
         - DigiKey Barcode Plugin: plugins/builtin/barcode_digikey.md
         - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
         - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
@@ -241,7 +241,7 @@ nav:
         - Part Update Notification: plugins/builtin/part_notifications.md
       - Export Plugins:
         - BOM Exporter: plugins/builtin/bom_exporter.md
-        - InvenTree Exporter: plugins/builtin/inventree_exporter.md
+        - DTWare Exporter: plugins/builtin/inventree_exporter.md
         - Parameter Exporter: plugins/builtin/parameter_exporter.md
         - Stocktake Exporter: plugins/builtin/stocktake_exporter.md
       - Label Printing:
@@ -312,23 +312,23 @@ plugins:
             show_root_toc_entry: false
   - redirects:
       redirect_maps:
-        'sref/faq.md': 'faq.md' #  https://docs.inventree.org/en/latest/faq/
-        'sref/contrib.md': 'develop/contributing.md'  #  https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md.
-        'sref/docs.md': 'index.md' #   https://docs.inventree.org/en/latest/
-        'sref/api.md': 'api/index.md' #  https://demo.inventree.org/api-doc/
+        'sref/faq.md': 'faq.md'
+        'sref/contrib.md': 'develop/contributing.md'
+        'sref/docs.md': 'index.md'
+        'sref/api.md': 'api/index.md'
         'sref/architecture.md': 'develop/architecture.md'
         'sref/roadmap.md': 'develop/roadmap.md'
-        'sref/code.md': 'https://github.com/inventree/InvenTree/tree/master' #  https://github.com/inventree/InvenTree/tree/master
+        'sref/code.md': 'https://github.com/anh1c/inventory-management/tree/thainh'
         'sref/oci-image.md': 'https://hub.docker.com/r/inventree/inventree/tags' #  https://hub.docker.com/r/inventree/inventree/tags
-        'sref/releases.md': 'https://github.com/inventree/InvenTree/releases' # https://github.com/inventree/InvenTree/releases
-        'sref/issues.md': 'https://github.com/inventree/InvenTree/issues' # https://github.com/inventree/InvenTree/issues
-        'sref/security-policy.md': 'https://github.com/inventree/InvenTree/security/policy' # https://github.com/inventree/InvenTree/security/policy
+        'sref/releases.md': 'https://github.com/anh1c/inventory-management/releases'
+        'sref/issues.md': 'https://github.com/anh1c/inventory-management/issues'
+        'sref/security-policy.md': 'https://github.com/anh1c/inventory-management/security/policy'
         'sref/security-history.md': 'https://huntr.dev/repos/inventree/inventree/' # https://huntr.dev/repos/inventree/inventree/
-        'sref/ci.md': 'https://github.com/inventree/InvenTree/actions' # https://github.com/inventree/InvenTree/actions
-        'sref/ci-sample.md': 'https://github.com/inventree/InvenTree/blob/master/.github/workflows/qc_checks.yaml' # https://github.com/inventree/InvenTree/blob/master/.github/workflows/qc_checks.yaml
-        'sref/ci-pre.md': 'https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml' # https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml
-        'sref/test-sample.md': 'https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py' # https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py
-        'sref/coverage.md': 'https://coveralls.io/github/inventree/InvenTree' # https://coveralls.io/github/inventree/InvenTree
+        'sref/ci.md': 'https://github.com/anh1c/inventory-management/actions'
+        'sref/ci-sample.md': 'https://github.com/anh1c/inventory-management/blob/thainh/.github/workflows/qc_checks.yaml'
+        'sref/ci-pre.md': 'https://github.com/anh1c/inventory-management/blob/thainh/.pre-commit-config.yaml'
+        'sref/test-sample.md': 'https://github.com/anh1c/inventory-management/blob/thainh/src/backend/InvenTree/InvenTree/tests.py'
+        'sref/coverage.md': 'https://github.com/anh1c/inventory-management/actions'
         'sref/error-codes.md': 'settings/error_codes.md'
 
 # Extensions
@@ -373,17 +373,8 @@ extra:
 
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/inventree/inventree
-      name: InvenTree on GitHub
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/inventreedb
-      name: InvenTree on Twitter
-    - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/r/inventree/inventree
-      name: InvenTree on Docker
-    - icon: fontawesome/brands/reddit
-      name: InvenTree on Reddit
-      link: https://reddit.com/r/inventree
+      link: https://github.com/anh1c/inventory-management
+      name: DTWare on GitHub
 
 use_directory_urls: true
 strict: true

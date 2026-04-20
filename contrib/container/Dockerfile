@@ -1,12 +1,12 @@
-# The InvenTree dockerfile provides two build targets:
+# The DTWare dockerfile provides two build targets:
 #
 # production:
 # - Required files are copied into the image
-# - Runs InvenTree web server under gunicorn
+# - Runs DTWare web server under gunicorn
 #
 # dev:
 # - Expects source directories to be loaded as a run-time volume
-# - Runs InvenTree web server under django development server
+# - Runs DTWare web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
 # Base image last bumped 2026-03-20
@@ -25,7 +25,7 @@ ENV INVOKE_RUN_SHELL="/bin/bash"
 
 ENV INVENTREE_DOCKER="true"
 
-# InvenTree paths
+# DTWare paths
 ENV INVENTREE_HOME="/home/inventree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/${data_dir}"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
@@ -35,7 +35,7 @@ ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 
 ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 
-# InvenTree configuration files
+# DTWare configuration files
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
 ENV INVENTREE_OIDC_PRIVATE_KEY_FILE="${INVENTREE_DATA_DIR}/oidc.pem"
@@ -49,12 +49,12 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
 
-LABEL org.opencontainers.image.vendor="inventree" \
-      org.opencontainers.image.title="InvenTree backend server" \
-      org.opencontainers.image.description="InvenTree is the open-source inventory management system" \
-      org.opencontainers.image.url="https://inventree.org" \
-      org.opencontainers.image.documentation="https://docs.inventree.org" \
-      org.opencontainers.image.source="https://github.com/inventree/InvenTree" \
+LABEL org.opencontainers.image.vendor="dtware" \
+      org.opencontainers.image.title="DTWare backend server" \
+      org.opencontainers.image.description="DTWare inventory and operations management system" \
+      org.opencontainers.image.url="http://localhost:8000" \
+      org.opencontainers.image.documentation="http://localhost:8000/api-doc/" \
+      org.opencontainers.image.source="https://github.com/anh1c/inventory-management" \
       org.opencontainers.image.revision=${commit_hash} \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.version=${commit_tag}
@@ -79,7 +79,7 @@ RUN rm -rf /usr/lib/python3/dist-packages/numpy \
 
 EXPOSE 8000
 
-# Fix invoke command path for InvenTree environment check
+# Fix invoke command path for DTWare environment check
 RUN python -m pip install --no-cache-dir -U invoke
 
 RUN mkdir -p ${INVENTREE_HOME}
@@ -128,7 +128,7 @@ RUN npm install -g n yarn --ignore-scripts && \
 RUN bash -c "n lts"
 RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
 
-# InvenTree production image:
+# DTWare production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
 FROM inventree_base AS production

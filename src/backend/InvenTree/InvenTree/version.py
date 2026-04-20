@@ -1,6 +1,6 @@
-"""Version information for InvenTree.
+"""Version information for DTWare.
 
-Provides information on the current InvenTree version
+Provides information on the current DTWare version
 """
 
 import logging
@@ -16,7 +16,7 @@ from django.conf import settings
 
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
-# InvenTree software version
+# DTWare software version
 INVENTREE_SW_VERSION = '1.4.0 dev'
 
 # Minimum supported Python version
@@ -75,12 +75,12 @@ def checkMinPythonVersion():
     V_MIN_MAJOR, V_MIN_MINOR = MIN_PYTHON_VERSION
 
     version = sys.version.split(' ')[0]
-    docs = 'https://docs.inventree.org/en/stable/start/#python-requirements'
+    docs = 'http://localhost:8000/api-doc/'
 
     msg = f"""
     INVE-E15: Python version not supported.
-    InvenTree requires Python {V_MIN_MAJOR}.{V_MIN_MINOR} or above - you are running version {version}.
-    - Refer to the InvenTree documentation for more information:
+    DTWare requires Python {V_MIN_MAJOR}.{V_MIN_MINOR} or above - you are running version {version}.
+    - Refer to the DTWare deployment documentation for more information:
     - {docs}
     """
 
@@ -107,11 +107,11 @@ def inventreeInstanceTitle() -> str:
     if get_global_setting('INVENTREE_INSTANCE_TITLE'):
         return get_global_setting('INVENTREE_INSTANCE')
 
-    return 'InvenTree'
+    return BRAND_NAME
 
 
 def inventreeVersion() -> str:
-    """Returns the InvenTree version string."""
+    """Returns the DTWare version string."""
     return INVENTREE_SW_VERSION.lower().strip()
 
 

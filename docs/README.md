@@ -1,23 +1,22 @@
-# InvenTree Documentation
+# DTWare Documentation
 
-[![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
+This repository hosts the DTWare documentation source and generated API reference material.
 
-This repository hosts the [official documentation](https://inventree.readthedocs.io/) for [InvenTree](https://github.com/inventree/inventree), an open source inventory management system.
 
 ## Prerequisites
 
-InvenTree uses [MkDocs](https://www.mkdocs.org/) to convert [Markdown](https://www.mkdocs.org/user-guide/writing-your-docs/#writing-with-markdown) format `.md` files into HTML suitable for viewing in a web browser.
+DTWare uses [MkDocs](https://www.mkdocs.org/) to convert [Markdown](https://www.mkdocs.org/user-guide/writing-your-docs/#writing-with-markdown) format `.md` files into HTML suitable for viewing in a web browser.
 
 !!! info "Prerequisites"
     To build and serve this documentation locally (e.g. for development), you will need:
 
     * Python 3 installed on your system.
-    * An existing InvenTree installation containing the virtual environment that was created during installation.
+    * An existing DTWare installation containing the virtual environment that was created during installation.
 
-    These instructions assume you followed the [InvenTree bare metal installation instructions](./docs/start/install.md), so you'll have an `inventree` user, a home directory at `/home/inventree`, the InvenTree source code cloned from [GitHub](https://github.com/inventree/inventree) into `/home/inventree/src`, and a virtual environment at `/home/inventree/env`.  If you installed InvenTree some other way, this might vary, and you'll have to adjust these instructions accordingly.
+    These instructions assume you have a DTWare deployment user, a home directory at `/home/inventree`, the DTWare source code cloned into `/home/inventree/src`, and a virtual environment at `/home/inventree/env`. If you installed DTWare another way, adjust these instructions accordingly.
 
-!!! warning "Your InvenTree install will be updated!"
-    Some of the commands that follow will make changes to your install, for example, by running any pending database migrations.  There's a small risk this may cause issues with your existing installation.  If you can't risk this, consider setting up a separate InvenTree installation specifically for documentation development.
+!!! warning "Your DTWare install will be updated!"
+    Some of the commands that follow will make changes to your install, for example, by running any pending database migrations. There's a small risk this may cause issues with your existing installation. If you can't risk this, consider setting up a separate DTWare installation specifically for documentation development.
 
 ## Building the documentation locally
 
@@ -51,13 +50,13 @@ $ invoke build-docs
 
 You will see output similar to this (truncated for brevity):
 ```
-Running InvenTree database migrations...
+Running DTWare database migrations...
 Exporting definitions...
 Exporting settings definition to '/home/inventree/src/docs/generated/inventree_settings.json'...
-Exported InvenTree settings definitions to '/home/inventree/src/docs/generated/inventree_settings.json'
-Exported InvenTree tag definitions to '/home/inventree/src/docs/generated/inventree_tags.yml'
-Exported InvenTree filter definitions to '/home/inventree/src/docs/generated/inventree_filters.yml'
-Exported InvenTree report context definitions to '/home/inventree/src/docs/generated/inventree_report_context.json'
+Exported DTWare settings definitions to '/home/inventree/src/docs/generated/inventree_settings.json'
+Exported DTWare tag definitions to '/home/inventree/src/docs/generated/inventree_tags.yml'
+Exported DTWare filter definitions to '/home/inventree/src/docs/generated/inventree_filters.yml'
+Exported DTWare report context definitions to '/home/inventree/src/docs/generated/inventree_report_context.json'
 Exporting definitions complete
 Exporting schema file to '/home/inventree/src/docs/generated/schema.yml'
 

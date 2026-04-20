@@ -1,15 +1,15 @@
-# Docker compose recipe for InvenTree development server
+# Docker compose recipe for DTWare development server
 # - Runs PostgreSQL as the database backend
 # - Uses built-in django webserver
-# - Runs the InvenTree background worker process
+# - Runs the DTWare background worker process
 # - Serves media and static content directly from Django webserver
 
 # IMPORTANT NOTE:
-# The InvenTree development image does not clone source code from git.
+# The DTWare development image does not clone source code from git.
 # Instead, it runs from source code on your local machine.
 # The django server will auto-detect any code changes and reload the server.
 
-# If you have cloned the InvenTree git repo, and not made any changes to this file,
+# If you have cloned the DTWare git repo, and not made any changes to this file,
 # then the default setup in this file should work straight out of the box, without modification
 
 services:
@@ -31,7 +31,7 @@ services:
           - ./data:/var/lib/postgresql/data:z
         restart: unless-stopped
 
-    # InvenTree web server service
+    # DTWare web server service
     # Runs the django built-in webserver application
     inventree-dev-server:
         depends_on:

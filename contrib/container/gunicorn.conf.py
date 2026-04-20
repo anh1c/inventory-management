@@ -1,4 +1,4 @@
-"""Gunicorn configuration for InvenTree."""
+"""Gunicorn configuration for DTWare."""
 
 import logging
 import multiprocessing

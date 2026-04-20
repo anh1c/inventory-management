@@ -22,7 +22,7 @@ export const InvenTreeLogoHomeButton = forwardRef<HTMLDivElement>(
 );
 
 /*
- * Render the InvenTree logo
+ * Render the DTWare logo
  * - Uses the custom logo if one is defined on the server
  * - Otherwise, uses the default logo
  */
@@ -33,9 +33,9 @@ export function InvenTreeLogo(): ReactNode {
 
   if (server.server && server.customize?.logo) {
     return (
-      <img src={server.customize.logo} alt={t`InvenTree Logo`} height={28} />
+      <img src={server.customize.logo} alt={t`DTWare Logo`} height={28} />
     );
   }
 
-  return <img src={InvenTreeIcon} alt={t`InvenTree Logo`} height={28} />;
+  return <img src={InvenTreeIcon} alt={t`DTWare Logo`} height={28} />;
 }

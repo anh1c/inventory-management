@@ -1,7 +1,7 @@
-# Docker compose recipe for a production-ready InvenTree setup, with the following containers:
+# Docker compose recipe for a production-ready DTWare setup, with the following containers:
 # - PostgreSQL as the database backend
-# - gunicorn as the InvenTree web server
-# - django-q as the InvenTree background worker process
+# - gunicorn as the DTWare web server
+# - django-q as the DTWare background worker process
 # - Caddy as a reverse proxy
 # - redis as the cache manager (optional, enabled by default)
 
@@ -20,12 +20,12 @@
 # Instead, make any changes in the .env file!
 
 # ------------------------
-# InvenTree Image Versions
+# DTWare Image Versions
 # ------------------------
-# By default, this docker-compose script targets the STABLE version of InvenTree,
+# By default, this docker-compose script targets the STABLE version of DTWare,
 # image: inventree/inventree:stable
 #
-# To run the LATEST (development) version of InvenTree,
+# To run the LATEST (development) version of DTWare,
 # change the INVENTREE_TAG variable (in the .env file) to "latest"
 #
 # Alternatively, you could target a specific tagged release version with (for example):
@@ -36,7 +36,7 @@
 # Docker compose customization
 # ----------------------------
 # If you wish to customize the docker-compose script, you should only do so if you understand the stack!
-# Do not expect support for customizations that are not part of the standard InvenTree setup!
+# Do not expect support for customizations that are not part of the standard DTWare setup!
 
 services:
     # Database service
@@ -68,10 +68,10 @@ services:
             - ${INVENTREE_EXT_VOLUME}/redis:/data
         restart: always
 
-    # InvenTree web server service
+    # DTWare web server service
     # Uses gunicorn as the web server
     inventree-server:
-        # If you wish to specify a particular InvenTree version, do so here
+        # If you wish to specify a particular DTWare version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-server
         # Only change this port if you understand the stack.
@@ -91,7 +91,7 @@ services:
 
     # Background worker process handles long-running or periodic tasks
     inventree-worker:
-        # If you wish to specify a particular InvenTree version, do so here
+        # If you wish to specify a particular DTWare version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-worker
         command: invoke worker
