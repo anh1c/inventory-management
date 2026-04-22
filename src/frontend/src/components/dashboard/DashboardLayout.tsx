@@ -222,39 +222,9 @@ export default function DashboardLayout() {
   }, []);
 
   const defaultLayouts = {
-    lg: [
-      {
-        w: 6,
-        h: 4,
-        x: 0,
-        y: 0,
-        i: 'gstart',
-        minW: 5,
-        minH: 4,
-        moved: false,
-        static: false
-      },
-      {
-        w: 6,
-        h: 4,
-        x: 6,
-        y: 0,
-        i: 'news',
-        minW: 5,
-        minH: 4,
-        moved: false,
-        static: false
-      }
-    ]
+    lg: []
   };
-  const loadWigs = ['news', 'gstart'];
-  const defaultWidgets = useMemo(() => {
-    return loadWigs
-      .map((lwid: string) =>
-        availableWidgets.items.find((wid) => wid.label === lwid)
-      )
-      .filter((widget): widget is DashboardWidgetProps => widget !== undefined);
-  }, [availableWidgets.items, defaultLayouts]);
+  const defaultWidgets = useMemo<DashboardWidgetProps[]>(() => [], []);
 
   return (
     <>
@@ -297,7 +267,7 @@ export default function DashboardLayout() {
                   </Alert>
                 </Card>
               </Center>
-              {showSampleDashboard && (
+              {showSampleDashboard && defaultWidgets.length > 0 && (
                 <>
                   <Space h='lg' />
                   {WidgetGrid(

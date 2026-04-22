@@ -29,12 +29,14 @@ export default function LoginLayoutComponent() {
 export function Wrapper({
   children,
   titleText,
+  actions,
   logOff = false,
   loader = false,
   smallPadding = false
 }: Readonly<{
   children?: React.ReactNode;
   titleText: string;
+  actions?: React.ReactNode;
   logOff?: boolean;
   loader?: boolean;
   smallPadding?: boolean;
@@ -44,7 +46,10 @@ export function Wrapper({
   return (
     <Paper p='xl' withBorder miw={425} shadow='lg'>
       <Stack gap={smallPadding ? 0 : 'md'}>
-        <StylishText size='xl'>{titleText}</StylishText>
+        <Group justify='space-between' align='center' wrap='nowrap'>
+          <StylishText size='xl'>{titleText}</StylishText>
+          {actions}
+        </Group>
         <Divider p='xs' />
         {loader && (
           <Group justify='center'>

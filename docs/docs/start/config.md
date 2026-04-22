@@ -357,7 +357,7 @@ The default email implementation uses the Django STMP backend. This should be su
 
 ### Sender Email
 
-The "sender" email address is the address from which InvenTree emails are sent (by default) and must be specified for outgoing emails to function:
+The "sender" email address is the address from which Emails are sent (by default) and must be specified for outgoing emails to function:
 
 !!! info "Fallback"
     If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)

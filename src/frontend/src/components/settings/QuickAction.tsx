@@ -83,7 +83,7 @@ export const QuickAction = () => {
     {
       id: '0',
       title: t`Open Support`,
-      description: t`Open the DTWare support and administration area`,
+      description: t`Submit Bug Report`,
       icon: <IconBrandGithub />,
       buttonText: t`Open Support`,
       action: () => window.open(`${window.location.origin}/settings/admin/`, '_blank')

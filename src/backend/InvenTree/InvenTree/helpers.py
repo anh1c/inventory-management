@@ -295,7 +295,7 @@ def getSplashScreen(custom=True):
             return static_storage.url(settings.CUSTOM_SPLASH)
 
     # No custom splash screen
-    return static_storage.url('img/inventree_splash.jpg')
+    return static_storage.url('img/dti_splash.jpg')
 
 
 def getCustomOption(reference: str):

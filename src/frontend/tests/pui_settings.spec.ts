@@ -115,7 +115,7 @@ test('Settings - User', async ({ browser }) => {
 
   await loadTab(page, 'Notifications');
   await page
-    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .getByRole('button', { name: 'Email Notifications' })
     .waitFor();
 
   await loadTab(page, 'Reporting');
@@ -130,7 +130,7 @@ test('Settings - User', async ({ browser }) => {
 
   await loadTab(page, 'Plugin Settings');
   await page
-    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .getByRole('button', { name: 'Email Notifications' })
     .waitFor();
 });
 

@@ -33,9 +33,19 @@ export function InvenTreeLogo(): ReactNode {
 
   if (server.server && server.customize?.logo) {
     return (
-      <img src={server.customize.logo} alt={t`DTWare Logo`} height={28} />
+      <img
+        src={server.customize.logo}
+        alt={t`InvenTree Logo`.replaceAll('InvenTree', 'DTWare')}
+        height={28}
+      />
     );
   }
 
-  return <img src={InvenTreeIcon} alt={t`DTWare Logo`} height={28} />;
+  return (
+    <img
+      src={InvenTreeIcon}
+      alt={t`InvenTree Logo`.replaceAll('InvenTree', 'DTWare')}
+      height={28}
+    />
+  );
 }

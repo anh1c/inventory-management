@@ -22,12 +22,12 @@ import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
 import { StylishText } from '../items/StylishText';
 
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 import { OnlyStaff } from '../items/OnlyStaff';
 
 type AboutLookupRef = {
   ref: string;
-  title: JSX.Element;
+  title: ReactNode;
   link?: string;
   copy?: boolean;
 };
@@ -61,6 +61,8 @@ const AboutContent = ({
     queryKey: ['version'],
     queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
   });
+
+  const dtwareText = (value: string) => value.replaceAll('InvenTree', 'DTWare');
 
   function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
     return lookup
@@ -110,7 +112,7 @@ const AboutContent = ({
   const tableData = [
     {
       ref: 'server',
-      title: <Trans>Platform Version</Trans>,
+      title: dtwareText(t`InvenTree Version`),
       copy: true
     },
     {
@@ -172,9 +174,9 @@ const AboutContent = ({
           {fillTable(
             [
               { ref: 'doc', title: <Trans>Documentation</Trans> },
-              { ref: 'code', title: <Trans>Deployment URL</Trans> },
-              { ref: 'app', title: <Trans>Mobile Access</Trans> },
-              { ref: 'bug', title: <Trans>Support</Trans> }
+              { ref: 'code', title: <Trans>Source Code</Trans> },
+              { ref: 'app', title: <Trans>Mobile App</Trans> },
+              { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
             ],
             data.links,
             true

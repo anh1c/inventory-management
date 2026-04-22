@@ -93,11 +93,19 @@ def checkMinPythonVersion():
     logger.info(f'Python version {version} - {sys.executable}')
 
 
+def normalizeInstanceName(instance_name: str) -> str:
+    """Return the DTWare display name for legacy instance labels."""
+    if instance_name in {'InvenTree', 'InvenTree Demo Server'}:
+        return 'DTWare Demo Server'
+
+    return instance_name
+
+
 def inventreeInstanceName() -> str:
     """Returns the InstanceName settings for the current database."""
     from common.settings import get_global_setting
 
-    return get_global_setting('INVENTREE_INSTANCE')
+    return normalizeInstanceName(get_global_setting('INVENTREE_INSTANCE'))
 
 
 def inventreeInstanceTitle() -> str:
@@ -105,7 +113,7 @@ def inventreeInstanceTitle() -> str:
     from common.settings import get_global_setting
 
     if get_global_setting('INVENTREE_INSTANCE_TITLE'):
-        return get_global_setting('INVENTREE_INSTANCE')
+        return inventreeInstanceName()
 
     return BRAND_NAME
 

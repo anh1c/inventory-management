@@ -1421,7 +1421,7 @@ class TestInstanceName(InvenTreeTestCase):
     def test_instance_name(self):
         """Test instance name settings."""
         # default setting
-        self.assertEqual(version.inventreeInstanceTitle(), 'InvenTree')
+        self.assertEqual(version.inventreeInstanceTitle(), 'DTWare')
 
         # set up required setting
         InvenTreeSetting.set_setting('INVENTREE_INSTANCE_TITLE', True, self.user)

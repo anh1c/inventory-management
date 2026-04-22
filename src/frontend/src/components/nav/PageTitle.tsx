@@ -1,6 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 
+function getTabInstanceName(instanceName: string) {
+  return instanceName === 'DTWare Demo Server' ? 'Demo Server' : instanceName;
+}
+
 /**
  * Component to set the page title
  */
@@ -14,9 +18,8 @@ export default function PageTitle({
   const globalSettings = useGlobalSettingsState();
 
   const pageTitle = useMemo(() => {
-    const instanceName = globalSettings.getSetting(
-      'INVENTREE_INSTANCE',
-      'DTWare'
+    const instanceName = getTabInstanceName(
+      globalSettings.getSetting('INVENTREE_INSTANCE', 'DTWare')
     );
     const useInstanceName = globalSettings.isSet(
       'INVENTREE_INSTANCE_TITLE',

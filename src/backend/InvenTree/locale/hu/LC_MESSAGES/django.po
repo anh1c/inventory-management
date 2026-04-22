@@ -7431,12 +7431,12 @@ msgid "Integrated UI notification methods"
 msgstr "InvenTree UI Értesítési módok"
 
 #: plugin/builtin/integration/core_notifications.py:67
-msgid "InvenTree Email Notifications"
-msgstr "InvenTree Email Értesítések"
+msgid "Email Notifications"
+msgstr "Email Értesítések"
 
 #: plugin/builtin/integration/core_notifications.py:70
 msgid "Integrated email notification methods"
-msgstr "InvenTree Email Értesítési módok"
+msgstr "Email Értesítési módok"
 
 #: plugin/builtin/integration/core_notifications.py:75
 msgid "Allow email notifications"

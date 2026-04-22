@@ -83,6 +83,13 @@ def inventree_instance_name(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_tab_title(*args, **kwargs):
+    """Return the browser tab title for the current instance."""
+    instance_name = version.inventreeInstanceName()
+    return 'Demo Server' if instance_name == 'DTWare Demo Server' else instance_name
+
+
+@register.simple_tag()
 def inventree_title(*args, **kwargs):
     """Return the title for the current instance - respecting the settings."""
     return version.inventreeInstanceTitle()

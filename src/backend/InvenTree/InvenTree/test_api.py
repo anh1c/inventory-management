@@ -596,7 +596,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('version', data)
         self.assertIn('instance', data)
 
-        self.assertEqual('InvenTree', data['server'])
+        self.assertEqual('DTWare', data['server'])
 
         # Test with token
         token = self.get(url=reverse('api-token'), max_query_count=20).data['token']

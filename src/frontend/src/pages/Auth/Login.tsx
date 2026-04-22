@@ -104,7 +104,16 @@ export default function Login() {
         />
       ) : (
         <>
-          <Wrapper titleText={t`Login`} smallPadding>
+          <Wrapper
+            titleText={t`Login`}
+            smallPadding
+            actions={
+              <AuthFormOptions
+                hostname={hostname}
+                toggleHostEdit={setHostEdit}
+              />
+            }
+          >
             {isLoggingIn ? (
               <>
                 <Group justify='center'>
@@ -129,11 +138,10 @@ export default function Login() {
                     </Anchor>
                   </Text>
                 )}
-                {LoginMessage}{' '}
+                {LoginMessage}
               </>
             )}
           </Wrapper>
-          <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
         </>
       )}
     </>

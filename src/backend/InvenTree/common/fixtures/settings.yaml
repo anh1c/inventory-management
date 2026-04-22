@@ -4,7 +4,7 @@
   pk: 1
   fields:
     key: INVENTREE_INSTANCE
-    value: "My very first InvenTree Instance"
+    value: "DTWare Demo Server"
 
 - model: common.InvenTreeSetting
   pk: 2

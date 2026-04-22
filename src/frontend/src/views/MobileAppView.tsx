@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
@@ -25,13 +26,13 @@ export default function MobileAppView() {
               <Trans>Mobile viewport detected</Trans>
             </Title>
             <Text>
-              <Trans>
-                DTWare is optimized for tablets and desktops. For mobile access,
-                use your browser on a larger screen or continue in desktop mode.
-              </Trans>
+              {t`InvenTree UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience.`.replaceAll(
+                'InvenTree',
+                'DTWare'
+              )}
             </Text>
             <Anchor href={docLinks.app}>
-              <Trans>Open DTWare</Trans>
+              <Trans>Read the docs</Trans>
             </Anchor>
             {(IS_DEV ||
               window.INVENTREE_SETTINGS.mobile_mode === 'allow-ignore') && (

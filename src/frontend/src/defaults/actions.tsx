@@ -21,6 +21,8 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 
+const dtwareText = (value: string) => value.replaceAll('InvenTree', 'DTWare');
+
 export function openQrModal(navigate: NavigateFunction) {
   return openContextModal({
     modal: 'qr',
@@ -40,14 +42,16 @@ export function getActions(navigate: NavigateFunction) {
       {
         id: 'dashboard',
         label: t`Dashboard`,
-        description: t`Go to the DTWare dashboard`,
+        description: dtwareText(t`Go to the InvenTree dashboard`),
         onClick: () => navigate('/'),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'documentation',
         label: t`Documentation`,
-        description: t`Open DTWare documentation and support resources`,
+        description: dtwareText(
+          t`Visit the documentation to learn more about InvenTree`
+        ),
         onClick: () => {
           window.location.href = docLinks.faq;
         },
@@ -55,15 +59,15 @@ export function getActions(navigate: NavigateFunction) {
       },
       {
         id: 'about',
-        label: t`About DTWare`,
-        description: t`About the DTWare platform`,
+        label: dtwareText(t`About InvenTree`),
+        description: dtwareText(t`About the InvenTree Project`),
         onClick: () => aboutInvenTree(),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'server-info',
         label: t`Server Information`,
-        description: t`About this DTWare instance`,
+        description: dtwareText(t`About this InvenTree instance`),
         onClick: () => serverInfo(),
         leftSection: <IconLink size='1.2rem' />
       },
@@ -171,7 +175,7 @@ export function getActions(navigate: NavigateFunction) {
       _actions.push({
         id: 'plugin-settings',
         label: t`Plugins`,
-        description: t`Manage DTWare plugins`,
+        description: dtwareText(t`Manage InvenTree plugins`),
         onClick: () => navigate('/settings/admin/plugin'),
         leftSection: <IconPlug size='1.2rem' />
       });

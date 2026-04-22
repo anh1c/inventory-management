@@ -29,7 +29,15 @@ export default function SplashScreen({
 
   if (server.customize?.splash && checked_login) {
     return (
-      <BackgroundImage src={generateUrl(server.customize.splash)}>
+      <BackgroundImage
+        src={generateUrl(server.customize.splash)}
+        style={{
+          minHeight: '100svh',
+          backgroundPosition: 'center 58%',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover'
+        }}
+      >
         {children}
       </BackgroundImage>
     );

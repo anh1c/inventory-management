@@ -7432,7 +7432,7 @@ msgid "Integrated UI notification methods"
 msgstr "已集成用户界面通知方法"
 
 #: plugin/builtin/integration/core_notifications.py:67
-msgid "InvenTree Email Notifications"
+msgid "Email Notifications"
 msgstr "InvenTree电子邮件通知"
 
 #: plugin/builtin/integration/core_notifications.py:70

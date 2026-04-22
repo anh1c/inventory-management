@@ -256,7 +256,18 @@ export const createMachineSettingsState = ({
 function generate_lookup(data: Setting[]) {
   const lookup_dir: SettingsLookup = {};
   for (const setting of data) {
-    lookup_dir[setting.key] = setting.value;
+    lookup_dir[setting.key] = normalizeSettingValue(setting);
   }
   return lookup_dir;
+}
+
+function normalizeSettingValue(setting: Setting) {
+  if (
+    setting.key === 'INVENTREE_INSTANCE' &&
+    ['InvenTree', 'InvenTree Demo Server'].includes(setting.value)
+  ) {
+    return 'DTWare Demo Server';
+  }
+
+  return setting.value;
 }

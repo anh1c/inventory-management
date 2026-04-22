@@ -233,7 +233,7 @@ class SettingsTest(InvenTreeTestCase):
 
         instance_name = InvenTreeSetting.objects.get(pk=1)
         self.assertEqual(instance_name.key, 'INVENTREE_INSTANCE')
-        self.assertEqual(instance_name.value, 'My very first InvenTree Instance')
+        self.assertEqual(instance_name.value, 'DTWare Demo Server')
 
         # Check object lookup (case insensitive)
         self.assertEqual(
@@ -272,7 +272,7 @@ class SettingsTest(InvenTreeTestCase):
         self.assertEqual(instance_obj.get_setting_units(stale_ref), 'days')
 
         # check as_choice
-        self.assertEqual(instance_obj.as_choice(), 'My very first InvenTree Instance')
+        self.assertEqual(instance_obj.as_choice(), 'DTWare Demo Server')
         self.assertEqual(report_size_obj.as_choice(), 'A4')
 
         # check is_choice
@@ -675,7 +675,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         # Access via the API, and the default value should be received
         response = self.get(url, expected_code=200)
 
-        self.assertEqual(response.data['value'], 'InvenTree')
+        self.assertEqual(response.data['value'], 'DTWare Demo Server')
 
         # Now, the object should have been created in the DB
         self.patch(url, {'value': 'My new title'}, expected_code=200)

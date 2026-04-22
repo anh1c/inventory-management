@@ -92,7 +92,7 @@ test('Spotlight - No Keys', async ({ browser }) => {
     .getByRole('button', { name: 'Dashboard Go to the InvenTree' })
     .click();
 
-  await page.getByText('InvenTree Demo Server - ').waitFor();
+  await page.getByText('DTWare Demo Server - ').waitFor();
 
   // Use navigation menu
   await page.getByLabel('open-spotlight').click();

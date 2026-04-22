@@ -41,11 +41,17 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting."""
-        self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
+        self.assertEqual(
+            inventree_extras.inventree_instance_name(), 'DTWare Demo Server'
+        )
+
+    def test_inventree_tab_title(self):
+        """Test the browser tab title."""
+        self.assertEqual(inventree_extras.inventree_tab_title(), 'Demo Server')
 
     def test_inventree_title(self):
         """Test the 'inventree_title' setting."""
-        self.assertEqual(inventree_extras.inventree_title(), 'InvenTree')
+        self.assertEqual(inventree_extras.inventree_title(), 'DTWare')
 
     def test_inventree_customize(self):
         """Test the 'inventree_customize' template tag."""

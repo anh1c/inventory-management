@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
   Group,
@@ -96,7 +97,7 @@ export function MainMenu() {
             onClick={() => aboutInvenTree()}
             leftSection={<IconInfoCircle />}
           >
-            <Trans>About DTWare</Trans>
+            {t`About InvenTree`.replaceAll('InvenTree', 'DTWare')}
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item

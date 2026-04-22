@@ -9,9 +9,9 @@ export function translateHostName(name: string | undefined): string {
     case 'Localhost':
       return t`Local Server`;
     case 'DTWare Demo':
-      return t`DTWare Demo`;
+      return t`InvenTree Demo`.replaceAll('InvenTree', 'DTWare');
     case 'InvenTree Demo':
-      return t`DTWare Demo`;
+      return t`InvenTree Demo`.replaceAll('InvenTree', 'DTWare');
     case 'Current Server':
       return t`Current Server`;
     default:
