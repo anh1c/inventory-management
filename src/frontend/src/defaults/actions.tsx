@@ -21,8 +21,6 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 
-const dtwareText = (value: string) => value.replaceAll('InvenTree', 'DTWare');
-
 export function openQrModal(navigate: NavigateFunction) {
   return openContextModal({
     modal: 'qr',
@@ -42,16 +40,14 @@ export function getActions(navigate: NavigateFunction) {
       {
         id: 'dashboard',
         label: t`Dashboard`,
-        description: dtwareText(t`Go to the InvenTree dashboard`),
+        description: t`View operational overview`,
         onClick: () => navigate('/'),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'documentation',
-        label: t`Documentation`,
-        description: dtwareText(
-          t`Visit the documentation to learn more about InvenTree`
-        ),
+        label: t`Help Center`,
+        description: t`Open DTWare support resources`,
         onClick: () => {
           window.location.href = docLinks.faq;
         },
@@ -59,22 +55,22 @@ export function getActions(navigate: NavigateFunction) {
       },
       {
         id: 'about',
-        label: dtwareText(t`About InvenTree`),
-        description: dtwareText(t`About the InvenTree Project`),
+        label: t`About DTWare`,
+        description: t`View DTWare product information`,
         onClick: () => aboutInvenTree(),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'server-info',
-        label: t`Server Information`,
-        description: dtwareText(t`About this InvenTree instance`),
+        label: t`System Details`,
+        description: t`View deployment and version details`,
         onClick: () => serverInfo(),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'license-info',
         label: t`License Information`,
-        description: t`Licenses for dependencies of the service`,
+        description: t`View third-party dependency licenses`,
         onClick: () => licenseInfo(),
         leftSection: <IconLink size='1.2rem' />
       },
@@ -175,7 +171,7 @@ export function getActions(navigate: NavigateFunction) {
       _actions.push({
         id: 'plugin-settings',
         label: t`Plugins`,
-        description: dtwareText(t`Manage InvenTree plugins`),
+        description: t`Manage DTWare extensions`,
         onClick: () => navigate('/settings/admin/plugin'),
         leftSection: <IconPlug size='1.2rem' />
       });

@@ -62,8 +62,6 @@ const AboutContent = ({
     queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
   });
 
-  const dtwareText = (value: string) => value.replaceAll('InvenTree', 'DTWare');
-
   function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
     return lookup
       .filter((entry: AboutLookupRef) => !!data[entry.ref])
@@ -95,7 +93,7 @@ const AboutContent = ({
   const commit_set: boolean =
     data.version.commit_hash && data.version.commit_date;
 
-  const copyval = `DTWare-Version: ${data.version.server}\nDjango Version: ${
+  const copyval = `DTWare Version: ${data.version.server}\nDjango Version: ${
     data.version.django
   }\n${
     commit_set
@@ -112,7 +110,7 @@ const AboutContent = ({
   const tableData = [
     {
       ref: 'server',
-      title: dtwareText(t`InvenTree Version`),
+      title: t`DTWare Version`,
       copy: true
     },
     {
@@ -158,7 +156,7 @@ const AboutContent = ({
       <Divider />
       <Group justify='space-between' wrap='nowrap'>
         <StylishText size='lg'>
-          <Trans>Version Information</Trans>
+          <Trans>System Details</Trans>
         </StylishText>
         {renderVersionBadge(data)}
       </Group>
@@ -167,16 +165,16 @@ const AboutContent = ({
       </Table>
       <Divider />
       <StylishText size='lg'>
-        <Trans>Links</Trans>
+        <Trans>Resources</Trans>
       </StylishText>
       <Table striped>
         <Table.Tbody>
           {fillTable(
             [
               { ref: 'doc', title: <Trans>Documentation</Trans> },
-              { ref: 'code', title: <Trans>Source Code</Trans> },
-              { ref: 'app', title: <Trans>Mobile App</Trans> },
-              { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
+              { ref: 'code', title: <Trans>Technical Reference</Trans> },
+              { ref: 'app', title: <Trans>Application Access</Trans> },
+              { ref: 'bug', title: <Trans>Support Request</Trans> }
             ],
             data.links,
             true
@@ -188,7 +186,7 @@ const AboutContent = ({
         <div style={{ border: '1px solid orange', borderRadius: '8px' }}>
           <CopyButton
             value={copyval}
-            label={t`Copy version information`}
+            label={t`Copy system details`}
             color='orange'
           />
         </div>
@@ -208,7 +206,7 @@ const AboutContent = ({
 function renderVersionBadge(data: any) {
   const badgeType = () => {
     if (data.dev) {
-      return { color: 'blue', label: <Trans>Development Version</Trans> };
+      return { color: 'blue', label: <Trans>Demo Build</Trans> };
     } else if (data.up_to_date) {
       return { color: 'green', label: <Trans>Up to Date</Trans> };
     } else {

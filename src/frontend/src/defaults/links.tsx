@@ -24,8 +24,6 @@ type NavTab = {
   role?: UserRoles;
 };
 
-const dtwareText = (value: string) => value.replaceAll('InvenTree', 'DTWare');
-
 export function getNavTabs(user: UserStateProps): NavTab[] {
   const navTabs: NavTab[] = [
     {
@@ -88,35 +86,35 @@ export function DocumentationLinks(): MenuLinkItem[] {
       title: t`Getting Started`,
       link: docLinks.getting_started,
       external: true,
-      description: dtwareText(t`Getting started with InvenTree`)
+      description: t`Open the DTWare workspace`
     },
     {
       id: 'api',
-      title: t`Documentation`,
+      title: t`API Reference`,
       link: docLinks.api,
       external: true,
-      description: t`Documentation`
+      description: t`Review API capabilities`
     },
     {
       id: 'developer',
-      title: t`Documentation`,
+      title: t`System Settings`,
       link: docLinks.developer,
       external: true,
-      description: t`Documentation`
+      description: t`Configure the DTWare instance`
     },
     {
       id: 'faq',
-      title: t`Submit Bug Report`,
+      title: t`Support`,
       link: docLinks.faq,
       external: true,
-      description: t`Submit Bug Report`
+      description: t`Open support and administration tools`
     },
     {
       id: 'github',
-      title: t`Source Code`,
+      title: t`Application`,
       link: docLinks.github,
       external: true,
-      description: t`Source Code`
+      description: t`Return to DTWare`
     }
   ];
 }
@@ -126,7 +124,7 @@ export function serverInfo() {
     modal: 'info',
     title: (
       <StylishText size='xl'>
-        <Trans>System Information</Trans>
+        <Trans>System Details</Trans>
       </StylishText>
     ),
     size: 'xl',
@@ -139,7 +137,7 @@ export function aboutInvenTree() {
     modal: 'about',
     title: (
       <StylishText size='xl'>
-        {dtwareText(t`About InvenTree`)}
+        <Trans>About DTWare</Trans>
       </StylishText>
     ),
     size: 'xl',
@@ -167,15 +165,15 @@ export function AboutLinks(
   const base_items: MenuLinkItem[] = [
     {
       id: 'instance',
-      title: t`System Information`,
-      description: dtwareText(t`About this InvenTree instance`),
+      title: t`System Details`,
+      description: t`Deployment, version and runtime information`,
       icon: 'info',
       action: serverInfo
     },
     {
       id: 'licenses',
       title: t`License Information`,
-      description: dtwareText(t`Licenses for dependencies of the InvenTree software`),
+      description: t`Third-party dependency license information`,
       icon: 'license',
       action: licenseInfo
     }
@@ -185,8 +183,8 @@ export function AboutLinks(
   if (user.isSuperuser() || !settings.isSet('INVENTREE_RESTRICT_ABOUT')) {
     base_items.push({
       id: 'about',
-      title: dtwareText(t`About InvenTree`),
-      description: dtwareText(t`About the InvenTree Project`),
+      title: t`About DTWare`,
+      description: t`Product information for DTWare`,
       icon: 'info',
       action: aboutInvenTree
     });
