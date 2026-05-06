@@ -24,7 +24,7 @@ msgstr "Lỗi khi hiển thị giao diện"
 
 #: lib/components/Boundary.tsx:16
 msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr "Một lỗi đã xảy ra trong quá trình hiển thị thành phần này. Vui lòng tham khảo bảng điều khiển để biết thêm thông tin."
+msgstr "Một lỗi đã xảy ra trong quá trình hiển thị giao diện này. Vui lòng tham khảo bảng điều khiển để biết thêm thông tin."
 
 #: lib/components/CopyButton.tsx:49
 msgid "Copied"
@@ -213,12 +213,12 @@ msgstr "Mẫu kiểm thử vật tư"
 #: src/tables/purchasing/SupplierPartTable.tsx:106
 #: src/tables/stock/StockItemTable.tsx:99
 msgid "Supplier Part"
-msgstr "Mã hàng nhà cung cấp"
+msgstr "Vật tư nhà cung cấp"
 
 #: lib/enums/ModelInformation.tsx:60
 #: src/pages/purchasing/PurchasingIndex.tsx:129
 msgid "Supplier Parts"
-msgstr "Mã hàng nhà cung cấp"
+msgstr "Vật tư nhà cung cấp"
 
 #: lib/enums/ModelInformation.tsx:69
 #: src/pages/company/ManufacturerPartDetail.tsx:289
@@ -226,12 +226,12 @@ msgstr "Mã hàng nhà cung cấp"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:56
 #: src/tables/stock/StockItemTable.tsx:106
 msgid "Manufacturer Part"
-msgstr "Mã hàng nhà sản xuất"
+msgstr "Vật tư nhà sản xuất"
 
 #: lib/enums/ModelInformation.tsx:70
 #: src/pages/purchasing/PurchasingIndex.tsx:179
 msgid "Manufacturer Parts"
-msgstr "Mã hàng nhà sản xuất"
+msgstr "Vật tư nhà sản xuất"
 
 #: lib/enums/ModelInformation.tsx:79
 #: src/pages/part/CategoryDetail.tsx:371
@@ -2255,7 +2255,7 @@ msgstr "Chờ"
 
 #: src/components/items/ActionDropdown.tsx:290
 msgid "Duplicate item"
-msgstr "Nhân bản hàng hóa"
+msgstr "Nhân bản mặt hàng"
 
 #: src/components/items/BarcodeInput.tsx:24
 #~ msgid "Scan barcode data here using barcode scanner"
@@ -3871,11 +3871,11 @@ msgstr "Mở vật tư"
 
 #: src/components/wizards/ImportPartWizard.tsx:760
 msgid "Open Supplier Part"
-msgstr "Mở mã hàng nhà cung cấp"
+msgstr "Mở vật tư nhà cung cấp"
 
 #: src/components/wizards/ImportPartWizard.tsx:767
 msgid "Open Manufacturer Part"
-msgstr "Mở mã hàng nhà sản xuất"
+msgstr "Mở vật tư nhà sản xuất"
 
 #: src/components/wizards/ImportPartWizard.tsx:797
 #: src/tables/part/PartTable.tsx:499
@@ -3884,11 +3884,11 @@ msgstr "Mở mã hàng nhà sản xuất"
 
 #: src/components/wizards/ImportPartWizard.tsx:803
 msgid "Import Supplier Part"
-msgstr "Nhập mã hàng nhà cung cấp"
+msgstr "Nhập vật tư nhà cung cấp"
 
 #: src/components/wizards/ImportPartWizard.tsx:805
 msgid "Search Supplier Part"
-msgstr "Tìm mã hàng nhà cung cấp"
+msgstr "Tìm vật tư nhà cung cấp"
 
 #: src/components/wizards/ImportPartWizard.tsx:807
 msgid "Confirm import"
@@ -3946,13 +3946,13 @@ msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:217
 msgid "New Supplier Part"
-msgstr "Mã hàng nhà cung cấp mới"
+msgstr "Vật tư nhà cung cấp mới"
 
 #: src/components/wizards/OrderPartsWizard.tsx:219
 #: src/tables/purchasing/SupplierPartTable.tsx:213
 #: src/tables/purchasing/SupplierPartTable.tsx:302
 msgid "Supplier part created"
-msgstr "Đã tạo sản phẩm nhà cung cấp"
+msgstr "Đã tạo vật tư nhà cung cấp"
 
 #: src/components/wizards/OrderPartsWizard.tsx:247
 msgid "Add to Purchase Order"
@@ -4784,7 +4784,7 @@ msgstr "Đã chọn vị trí mặc định cho danh mục vật tư"
 
 #: src/forms/PurchaseOrderForms.tsx:482
 msgid "Received stock location selected"
-msgstr "Vị trí kho hàng nhận đã được chọn"
+msgstr "Vị trí kho nhận đã được chọn"
 
 #: src/forms/PurchaseOrderForms.tsx:490
 msgid "Default location selected"
@@ -5002,7 +5002,7 @@ msgstr "Thêm số lượng đã có theo gói thay vì các mục đơn lẻ"
 
 #: src/forms/StockForms.tsx:216
 msgid "Enter initial quantity for this stock item"
-msgstr "Nhập số lượng khởi đầu cho kho hàng này"
+msgstr "Nhập số lượng khởi đầu cho tồn kho này"
 
 #: src/forms/StockForms.tsx:226
 msgid "Enter serial numbers for new stock (or leave blank)"
@@ -5017,7 +5017,7 @@ msgstr "Trạng thái tồn kho"
 #: src/tables/stock/StockItemTable.tsx:406
 #: src/tables/stock/StockItemTable.tsx:455
 msgid "Add Stock Item"
-msgstr "Thêm mặt hàng trong kho"
+msgstr "Thêm mặt mặt hàng tồn kho"
 
 #: src/forms/StockForms.tsx:369
 msgid "Select the part to install"
@@ -5165,7 +5165,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:1453
 msgid "Delete Stock Items"
-msgstr "Xóa mặt hàng trong kho"
+msgstr "Xóa mặt mặt hàng tồn kho"
 
 #: src/forms/StockForms.tsx:1454
 msgid "Stock deleted"
@@ -7530,7 +7530,7 @@ msgstr "Vật tư nội bộ"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:111
 msgid "Manufacturer Part Number"
-msgstr "Mã hàng của nhà sản xuất"
+msgstr "Mã vật tư nhà sản xuất"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:128
 #: src/pages/company/SupplierPartDetail.tsx:114
@@ -7549,7 +7549,7 @@ msgstr "Chi tiết"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:159
 msgid "Manufacturer Part Details"
-msgstr "Chi tiết mã hàng nhà sản xuất"
+msgstr "Chi tiết vật tư nhà sản xuất"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:165
 #: src/pages/company/SupplierPartDetail.tsx:253
@@ -7560,23 +7560,23 @@ msgstr "Kho đã nhận hàng"
 #: src/pages/company/ManufacturerPartDetail.tsx:212
 #: src/tables/purchasing/ManufacturerPartTable.tsx:128
 msgid "Edit Manufacturer Part"
-msgstr "Sửa mã hàng nhà sản xuất"
+msgstr "Sửa vật tư nhà sản xuất"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:219
 #: src/tables/purchasing/ManufacturerPartTable.tsx:115
 #: src/tables/purchasing/ManufacturerPartTable.tsx:135
 #: src/tables/purchasing/ManufacturerPartTable.tsx:176
 msgid "Add Manufacturer Part"
-msgstr "Thêm mã hàng nhà sản xuất"
+msgstr "Thêm vật tư nhà sản xuất"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:231
 #: src/tables/purchasing/ManufacturerPartTable.tsx:146
 msgid "Delete Manufacturer Part"
-msgstr "Xóa mã hàng nhà sản xuất"
+msgstr "Xóa vật tư nhà sản xuất"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:246
 msgid "Manufacturer Part Actions"
-msgstr "Thao tác mã hàng nhà sản xuất"
+msgstr "Thao tác vật tư nhà sản xuất"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:281
 #~ msgid "ManufacturerPart"
@@ -7609,7 +7609,7 @@ msgstr "Khả dụng"
 
 #: src/pages/company/SupplierPartDetail.tsx:247
 msgid "Supplier Part Details"
-msgstr "Chi tiết mã hàng nhà cung cấp"
+msgstr "Chi tiết vật tư nhà cung cấp"
 
 #: src/pages/company/SupplierPartDetail.tsx:280
 #: src/pages/part/PartPricingPanel.tsx:113
@@ -7619,23 +7619,23 @@ msgstr "Giá nhà cung cấp"
 
 #: src/pages/company/SupplierPartDetail.tsx:314
 msgid "Supplier Part Actions"
-msgstr "Thao tác mã hàng nhà cung cấp"
+msgstr "Thao tác vật tư nhà cung cấp"
 
 #: src/pages/company/SupplierPartDetail.tsx:338
 #: src/tables/purchasing/SupplierPartTable.tsx:283
 msgid "Edit Supplier Part"
-msgstr "Sửa mã hàng nhà cung cấp"
+msgstr "Sửa vật tư nhà cung cấp"
 
 #: src/pages/company/SupplierPartDetail.tsx:346
 #: src/tables/purchasing/SupplierPartTable.tsx:308
 msgid "Delete Supplier Part"
-msgstr "Xóa mã hàng nhà cung cấp"
+msgstr "Xóa vật tư nhà cung cấp"
 
 #: src/pages/company/SupplierPartDetail.tsx:354
 #: src/tables/purchasing/SupplierPartTable.tsx:203
 #: src/tables/purchasing/SupplierPartTable.tsx:292
 msgid "Add Supplier Part"
-msgstr "Thêm mã hàng nhà cung cấp"
+msgstr "Thêm vật tư nhà cung cấp"
 
 #: src/pages/company/SupplierPartDetail.tsx:394
 #: src/pages/part/PartDetail.tsx:1000
@@ -7779,7 +7779,7 @@ msgstr "Phân bổ lệnh sản xuất"
 #: src/pages/stock/StockDetail.tsx:570
 #: src/tables/part/PartTable.tsx:130
 msgid "Sales Order Allocations"
-msgstr "Phân bổ đơn hàng bán"
+msgstr "Phân bổ đơn bán hàng"
 
 #: src/pages/part/PartDetail.tsx:177
 msgid "Validating BOM"
@@ -8501,7 +8501,7 @@ msgstr "Chi tiết đơn đặt"
 #: src/pages/sales/SalesOrderDetail.tsx:365
 #: src/pages/sales/SalesOrderDetail.tsx:374
 msgid "Line Items"
-msgstr "Dòng hàng hóa"
+msgstr "Dòng hàng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:373
 #: src/pages/sales/ReturnOrderDetail.tsx:351
@@ -8934,7 +8934,7 @@ msgstr "Mục con"
 
 #: src/pages/stock/StockDetail.tsx:662
 msgid "Edit Stock Item"
-msgstr "Sửa hàng trong kho"
+msgstr "Sửa mặt hàng tồn kho"
 
 #: src/pages/stock/StockDetail.tsx:671
 #: src/tables/stock/StockItemTable.tsx:452
@@ -10363,7 +10363,7 @@ msgstr ""
 
 #: src/tables/general/BarcodeScanTable.tsx:35
 msgid "Item"
-msgstr "Hàng hóa"
+msgstr "Mặt hàng"
 
 #: src/tables/general/BarcodeScanTable.tsx:50
 msgid "Model"
@@ -10922,7 +10922,7 @@ msgstr "Bao gồm phụ kiên trong danh mục con"
 
 #: src/tables/part/PartTable.tsx:229
 msgid "Filter by component attribute"
-msgstr "Lọc theo thuộc tính thành phần"
+msgstr "Lọc theo thuộc tính vật tư thành phần"
 
 #: src/tables/part/PartTable.tsx:235
 msgid "Filter by testable attribute"
@@ -10942,7 +10942,7 @@ msgstr "Có IPN"
 
 #: src/tables/part/PartTable.tsx:253
 msgid "Filter by parts which have an internal part number"
-msgstr "Lọc theo sản phẩm có số sản phẩm nội bộ"
+msgstr "Lọc theo vật tư có số vật tư nội bộ"
 
 #: src/tables/part/PartTable.tsx:258
 msgid "Has Stock"
@@ -10950,11 +10950,11 @@ msgstr "Có kho"
 
 #: src/tables/part/PartTable.tsx:259
 msgid "Filter by parts which have stock"
-msgstr "Lọc theo sản phẩm có trong kho"
+msgstr "Lọc theo vật tư có trong kho"
 
 #: src/tables/part/PartTable.tsx:265
 msgid "Filter by parts which have low stock"
-msgstr "Lọc theo sản phẩm có ít hàng"
+msgstr "Lọc theo vật tư có ít hàng"
 
 #: src/tables/part/PartTable.tsx:270
 msgid "Purchaseable"
@@ -10962,7 +10962,7 @@ msgstr "Có thể mua"
 
 #: src/tables/part/PartTable.tsx:271
 msgid "Filter by parts which are purchaseable"
-msgstr "Lọc theo sản phẩm có thể mua"
+msgstr "Lọc theo vật tư có thể mua"
 
 #: src/tables/part/PartTable.tsx:276
 msgid "Salable"
@@ -10970,11 +10970,11 @@ msgstr "Có thể bán"
 
 #: src/tables/part/PartTable.tsx:277
 msgid "Filter by parts which are salable"
-msgstr "Lọc theo sản phẩm có thể bán"
+msgstr "Lọc theo vật tư có thể bán"
 
 #: src/tables/part/PartTable.tsx:283
 msgid "Filter by parts which are virtual"
-msgstr "Lọc theo sản phẩm ảo"
+msgstr "Lọc theo vật tư ảo"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
@@ -11557,7 +11557,7 @@ msgstr "Nhận hạng mục"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:415
 msgid "Receive items"
-msgstr "Nhận hàng hóa"
+msgstr "Nhận hàng"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:160
 msgid "Base units"
@@ -11577,7 +11577,7 @@ msgstr "Đơn vị cơ sở"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:226
 msgid "Add supplier part"
-msgstr "Thêm sản phẩm nhà cung cấp"
+msgstr "Thêm vật tư nhà cung cấp"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:234
 msgid "Import supplier part"
