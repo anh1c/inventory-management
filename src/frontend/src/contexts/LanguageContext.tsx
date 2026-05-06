@@ -18,44 +18,8 @@ export const defaultLocale = 'vi';
  */
 export const getSupportedLanguages = (): Record<string, string> => {
   return {
-    ar: 'العربية',
-    bg: 'Български',
-    cs: 'Čeština',
-    da: 'Dansk',
-    de: 'Deutsch',
-    el: 'Ελληνικά',
-    en: 'English',
-    es: 'Español',
-    es_MX: 'Español (México)',
-    et: 'Eesti',
-    fa: 'فارسی',
-    fi: 'Suomi',
-    fr: 'Français',
-    he: 'עברית',
-    hi: 'हिन्दी',
-    hu: 'Magyar',
-    it: 'Italiano',
-    ja: '日本語',
-    ko: '한국어',
-    lt: 'Lietuvių',
-    lv: 'Latviešu',
-    nl: 'Nederlands',
-    no: 'Norsk',
-    pl: 'Polski',
-    pt: 'Português',
-    pt_BR: 'Português (Brasil)',
-    ro: 'Română',
-    ru: 'Русский',
-    sk: 'Slovenčina',
-    sl: 'Slovenščina',
-    sr: 'Српски',
-    sv: 'Svenska',
-    th: 'ไทย',
-    tr: 'Türkçe',
-    uk: 'Українська',
     vi: 'Tiếng Việt',
-    zh_Hans: '中文（简体）',
-    zh_Hant: '中文（繁體）'
+    en: 'English'
   };
 };
 
@@ -112,7 +76,7 @@ export function LanguageContext({
          * Configure the default Accept-Language header for all requests.
          * - Locally selected locale
          * - Server default locale
-         * - en-us (backup)
+         * - en (backup)
          */
         const locales: (string | undefined)[] = [];
 
@@ -124,8 +88,8 @@ export function LanguageContext({
           locales.push(server.default_locale);
         }
 
-        if (locales.indexOf('en-us') < 0) {
-          locales.push('en-us');
+        if (locales.indexOf('en') < 0) {
+          locales.push('en');
         }
 
         // Ensure that the locales are properly formatted
@@ -190,9 +154,16 @@ export async function activateLocale(locale: string | null) {
   }
 
   const localeDir = locale.split('-')[0]; // Extract the base locale (e.g., 'en' from 'en-US')
+  const catalogLoaders = {
+    vi: () => import('../locales/vi/messages'),
+    en: () => import('../locales/en/messages')
+  };
+  const loadCatalog =
+    catalogLoaders[localeDir as keyof typeof catalogLoaders] ??
+    catalogLoaders[defaultLocale as keyof typeof catalogLoaders];
 
   try {
-    const { messages } = await import(`../locales/${localeDir}/messages.ts`);
+    const { messages } = await loadCatalog();
     i18n.load(locale, messages);
     i18n.activate(locale);
   } catch (err) {
