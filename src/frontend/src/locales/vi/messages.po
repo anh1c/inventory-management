@@ -436,11 +436,11 @@ msgstr "Đơn trả hàng"
 
 #: lib/enums/ModelInformation.tsx:204
 msgid "Return Order Line Item"
-msgstr "Đơn hàng trả lại"
+msgstr "Đơn trả hàng"
 
 #: lib/enums/ModelInformation.tsx:205
 msgid "Return Order Line Items"
-msgstr "Đơn hàng trả lại"
+msgstr "Đơn trả hàng"
 
 #: lib/enums/ModelInformation.tsx:210
 #: src/tables/company/AddressTable.tsx:52
@@ -1129,7 +1129,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:109
 msgid "Active Sales Orders"
-msgstr ""
+msgstr "Đơn bán hàng đang hoạt động"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:111
 msgid "Show the number of sales orders which are currently active"
@@ -1137,7 +1137,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:116
 msgid "Overdue Sales Orders"
-msgstr "Đơn đặt quá hạn"
+msgstr "Đơn bán hàng quá hạn"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:118
 msgid "Show the number of sales orders which are overdue"
@@ -1145,7 +1145,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:123
 msgid "Assigned Sales Orders"
-msgstr ""
+msgstr "Đơn bán hàng được giao"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:125
 msgid "Show the number of sales orders which are assigned to you"
@@ -1162,7 +1162,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:137
 msgid "Active Purchase Orders"
-msgstr ""
+msgstr "Đơn mua hàng đang hoạt động"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:139
 msgid "Show the number of purchase orders which are currently active"
@@ -1170,7 +1170,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:144
 msgid "Overdue Purchase Orders"
-msgstr "Đơn mua quá hạn"
+msgstr "Đơn mua hàng quá hạn"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:146
 msgid "Show the number of purchase orders which are overdue"
@@ -1178,7 +1178,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:151
 msgid "Assigned Purchase Orders"
-msgstr ""
+msgstr "Đơn mua hàng được giao"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:153
 msgid "Show the number of purchase orders which are assigned to you"
@@ -8114,17 +8114,17 @@ msgstr "Giá thành BOM"
 #: src/pages/part/PartPricingPanel.tsx:129
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:249
 msgid "Variant Pricing"
-msgstr "Biến thể giá"
+msgstr "Giá biến thể"
 
 #: src/pages/part/PartPricingPanel.tsx:141
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:258
 msgid "Sale Pricing"
-msgstr "Giá sale"
+msgstr "Giá bán"
 
 #: src/pages/part/PartPricingPanel.tsx:147
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:267
 msgid "Sale History"
-msgstr "Lịch sử sale"
+msgstr "Lịch sử bán hàng"
 
 #: src/pages/part/PartSchedulingDetail.tsx:51
 #: src/pages/part/PartSchedulingDetail.tsx:291
@@ -8399,7 +8399,7 @@ msgstr "Giá mua"
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:44
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:87
 msgid "Sale Price"
-msgstr "Giá sale"
+msgstr "Giá bán"
 
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:69
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:75
@@ -8413,13 +8413,13 @@ msgstr "Biến thể vật tư"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
 msgid "Edit Purchase Order"
-msgstr "Sửa đơn mua"
+msgstr "Sửa đơn mua hàng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:126
 #: src/tables/purchasing/PurchaseOrderTable.tsx:172
 #: src/tables/purchasing/PurchaseOrderTable.tsx:186
 msgid "Add Purchase Order"
-msgstr "Thêm đơn mua"
+msgstr "Thêm đơn mua hàng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:148
 msgid "Supplier Reference"
@@ -8491,7 +8491,7 @@ msgstr "Ngày hoàn thành"
 #: src/pages/sales/ReturnOrderDetail.tsx:321
 #: src/pages/sales/SalesOrderDetail.tsx:359
 msgid "Order Details"
-msgstr "Chi tiết đơn đặt"
+msgstr "Chi tiết đơn hàng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:349
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:358
@@ -8511,25 +8511,25 @@ msgstr "Thêm dòng mở rộng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:420
 msgid "Issue Purchase Order"
-msgstr "Xác nhận đơn hàng"
+msgstr "Phát hành đơn mua hàng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:428
 msgid "Cancel Purchase Order"
-msgstr "Huỷ đơn hàng"
+msgstr "Hủy đơn mua hàng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:436
 msgid "Hold Purchase Order"
-msgstr "Tạm hoãn đơn hàng"
+msgstr "Tạm hoãn đơn mua hàng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:444
 msgid "Complete Purchase Order"
-msgstr "Hoàn thành đơn hàng"
+msgstr "Hoàn thành đơn mua hàng"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:500
 #: src/pages/sales/ReturnOrderDetail.tsx:511
 #: src/pages/sales/SalesOrderDetail.tsx:564
 msgid "Order Actions"
-msgstr "Chức năng đơn đặt"
+msgstr "Chức năng đơn hàng"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:115
 #: src/pages/sales/SalesOrderDetail.tsx:105
@@ -8589,13 +8589,13 @@ msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:326
 msgid "Edit Sales Order"
-msgstr "Sửa đơn hàng sale"
+msgstr "Sửa đơn bán hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:348
 #: src/tables/sales/SalesOrderTable.tsx:122
 #: src/tables/sales/SalesOrderTable.tsx:136
 msgid "Add Sales Order"
-msgstr "Thêm đơn hàng sale"
+msgstr "Thêm đơn bán hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:406
 #: src/tables/sales/SalesOrderTable.tsx:166
@@ -8604,19 +8604,19 @@ msgstr "Phiếu giao hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:458
 msgid "Issue Sales Order"
-msgstr "Xác nhận đơn hàng sale"
+msgstr "Phát hành đơn bán hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:466
 msgid "Cancel Sales Order"
-msgstr "Huỷ đơn hàng sale"
+msgstr "Hủy đơn bán hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:474
 msgid "Hold Sales Order"
-msgstr "Tạm hoãn đơn hàng sale"
+msgstr "Tạm hoãn đơn bán hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:482
 msgid "Ship Sales Order"
-msgstr ""
+msgstr "Giao đơn bán hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:484
 msgid "Ship this order?"
@@ -8628,7 +8628,7 @@ msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:493
 msgid "Complete Sales Order"
-msgstr "Hoàn thành đơn hàng sale"
+msgstr "Hoàn thành đơn bán hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:538
 msgid "Ship Order"
@@ -9135,7 +9135,7 @@ msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:774
 msgid "Line Item"
-msgstr ""
+msgstr "Dòng hàng"
 
 #: src/tables/DownloadAction.tsx:13
 #~ msgid "Excel"
@@ -9224,7 +9224,7 @@ msgstr "Phân công cho tôi"
 
 #: src/tables/Filter.tsx:179
 msgid "Show orders assigned to me"
-msgstr "Hiển thị đơn đặt phân công cho tôi"
+msgstr "Hiển thị đơn hàng phân công cho tôi"
 
 #: src/tables/Filter.tsx:186
 #: src/tables/sales/SalesOrderAllocationTable.tsx:89
@@ -11531,7 +11531,7 @@ msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:233
 msgid "Supplier Code"
-msgstr "Mã nhà cung cấp"
+msgstr "Mã vật tư nhà cung cấp"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:241
 msgid "Supplier Link"
@@ -11539,7 +11539,7 @@ msgstr "Liên kết nhà cung cấp"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:248
 msgid "Manufacturer Code"
-msgstr "Mã nhà sản xuất"
+msgstr "Mã vật tư nhà sản xuất"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:282
 msgid "Show line items which have been received"
