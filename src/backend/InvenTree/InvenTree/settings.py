@@ -932,16 +932,16 @@ LOCALE_CODES = [lang[0] for lang in LANGUAGES]
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
-LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
+LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'vi')
 
 if (
     LANGUAGE_CODE not in LOCALE_CODES
     and LANGUAGE_CODE.split('-')[0] not in LOCALE_CODES
 ):  # pragma: no cover
     logger.warning(
-        'Language code %s not supported - defaulting to en-us', LANGUAGE_CODE
+        'Language code %s not supported - defaulting to vi', LANGUAGE_CODE
     )
-    LANGUAGE_CODE = 'en-us'
+    LANGUAGE_CODE = 'vi'
 
 # Store language settings for 30 days
 LANGUAGE_COOKIE_AGE = 2592000

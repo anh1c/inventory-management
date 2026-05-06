@@ -10,7 +10,7 @@ import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { fetchGlobalStates } from '../states/states';
 
-export const defaultLocale = 'en';
+export const defaultLocale = 'vi';
 
 /*
  * Function which returns a record of supported languages.
@@ -97,7 +97,7 @@ export function LanguageContext({
   useEffect(() => {
     isMounted.current = true;
 
-    let lang: string = language || defaultLocale;
+    let lang: string = language || server.default_locale || defaultLocale;
 
     // Ensure that the selected language is supported
     if (!Object.keys(getSupportedLanguages()).includes(lang)) {
@@ -155,7 +155,7 @@ export function LanguageContext({
     return () => {
       isMounted.current = false;
     };
-  }, [language]);
+  }, [language, server.default_locale]);
 
   if (loadedState === 'loading') {
     return <LoadingOverlay visible={true} />;
