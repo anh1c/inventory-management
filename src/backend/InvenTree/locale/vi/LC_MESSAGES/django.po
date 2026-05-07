@@ -23,23 +23,23 @@ msgstr "API endpoint không tồn tại"
 
 #: InvenTree/api.py:438
 msgid "List of items must be provided for bulk operation"
-msgstr ""
+msgstr "Cần cung cấp danh sách mục cho thao tác hàng loạt"
 
 #: InvenTree/api.py:445
 msgid "Items must be provided as a list"
-msgstr ""
+msgstr "Các mục phải được cung cấp dưới dạng danh sách"
 
 #: InvenTree/api.py:453
 msgid "Invalid items list provided"
-msgstr ""
+msgstr "Danh sách mục không hợp lệ"
 
 #: InvenTree/api.py:458
 msgid "All filter must only be used with true"
-msgstr ""
+msgstr "Bộ lọc tất cả chỉ được dùng với giá trị true"
 
 #: InvenTree/api.py:463
 msgid "No items match the provided criteria"
-msgstr ""
+msgstr "Không có mục nào khớp với tiêu chí đã cung cấp"
 
 #: InvenTree/api.py:487
 msgid "No data provided"
@@ -47,7 +47,7 @@ msgstr "Không có dữ liệu được cung cấp"
 
 #: InvenTree/api.py:503
 msgid "This field must be unique."
-msgstr ""
+msgstr "Trường này phải là duy nhất."
 
 #: InvenTree/api.py:832
 msgid "User does not have permission to view this model"
@@ -102,7 +102,7 @@ msgstr "Nhập ngày"
 
 #: InvenTree/fields.py:169
 msgid "Invalid decimal value"
-msgstr ""
+msgstr "Giá trị thập phân không hợp lệ"
 
 #: InvenTree/fields.py:218 InvenTree/models.py:1233 build/serializers.py:504
 #: build/serializers.py:575 build/serializers.py:1788 company/models.py:827
@@ -125,7 +125,7 @@ msgstr "Giá trị được cung cấp không khớp với mẫu bắt buộc: "
 
 #: InvenTree/helpers.py:614
 msgid "Cannot serialize more than 1000 items at once"
-msgstr ""
+msgstr "Không thể tuần tự hóa hơn 1000 mục cùng lúc"
 
 #: InvenTree/helpers.py:620
 msgid "Empty serial number string"
@@ -139,7 +139,7 @@ msgstr "Trùng lặp sê-ri"
 #: InvenTree/helpers.py:749 InvenTree/helpers.py:768
 #, python-brace-format
 msgid "Invalid group: {group}"
-msgstr ""
+msgstr "Nhóm không hợp lệ: {group}"
 
 #: InvenTree/helpers.py:712
 #, python-brace-format
@@ -153,7 +153,7 @@ msgstr "Không tìm thấy số sê-ri"
 #: InvenTree/helpers.py:785
 #, python-brace-format
 msgid "Number of unique serial numbers ({n}) must match quantity ({q})"
-msgstr ""
+msgstr "Số serial duy nhất ({n}) phải khớp với số lượng ({q})"
 
 #: InvenTree/helpers.py:915
 msgid "Remove HTML tags from this value"
@@ -161,23 +161,23 @@ msgstr "Xóa thẻ HTML từ giá trị này"
 
 #: InvenTree/helpers.py:992
 msgid "Data contains prohibited markdown content"
-msgstr ""
+msgstr "Dữ liệu chứa nội dung markdown bị cấm"
 
 #: InvenTree/helpers_model.py:109
 msgid "Invalid URL: no hostname"
-msgstr ""
+msgstr "URL không hợp lệ: thiếu hostname"
 
 #: InvenTree/helpers_model.py:114
 msgid "Invalid URL: hostname could not be resolved"
-msgstr ""
+msgstr "URL không hợp lệ: không phân giải được hostname"
 
 #: InvenTree/helpers_model.py:120
 msgid "URL points to a private or reserved IP address"
-msgstr ""
+msgstr "URL trỏ tới địa chỉ IP riêng hoặc được dành riêng"
 
 #: InvenTree/helpers_model.py:195
 msgid "Too many redirects"
-msgstr ""
+msgstr "Quá nhiều chuyển hướng"
 
 #: InvenTree/helpers_model.py:200
 msgid "Connection error"
@@ -213,7 +213,7 @@ msgstr "URL được cung cấp không phải là tệp hình ảnh hợp lệ"
 
 #: InvenTree/magic_login.py:31
 msgid "Log in to the app"
-msgstr ""
+msgstr "Đăng nhập vào ứng dụng"
 
 #: InvenTree/magic_login.py:41 company/models.py:175 users/serializers.py:197
 msgid "Email"
@@ -221,7 +221,7 @@ msgstr "Email"
 
 #: InvenTree/middleware.py:183
 msgid "You must enable two-factor authentication before doing anything else."
-msgstr ""
+msgstr "Bạn phải bật xác thực hai yếu tố trước khi thực hiện thao tác khác."
 
 #: InvenTree/models.py:114
 msgid "Error running plugin validation"
@@ -350,7 +350,7 @@ msgstr "Chọn tiền tệ trong các tùy chọn đang có"
 
 #: InvenTree/serializers.py:756
 msgid "This field may not be null."
-msgstr ""
+msgstr "Trường này không được để null."
 
 #: InvenTree/serializers.py:762
 msgid "Invalid value"
@@ -370,7 +370,7 @@ msgstr "Chức năng tải hình ảnh từ URL bên ngoài không được bậ
 
 #: InvenTree/serializers.py:825
 msgid "Failed to download image from remote URL"
-msgstr ""
+msgstr "Không thể tải ảnh từ URL bên ngoài"
 
 #: InvenTree/serializers.py:908
 msgid "Invalid content type format"
@@ -1568,7 +1568,7 @@ msgstr ""
 
 #: common/models.py:145
 msgid "User who last updated this object"
-msgstr ""
+msgstr "Người dùng cập nhật đối tượng này lần cuối"
 
 #: common/models.py:172
 msgid "Unique project code"
@@ -1584,7 +1584,7 @@ msgstr "Người dùng hoặc nhóm có trách nhiệm với dự án này"
 
 #: common/models.py:784 common/models.py:1300 common/models.py:1338
 msgid "Settings key"
-msgstr ""
+msgstr "Khóa thiết lập"
 
 #: common/models.py:788
 msgid "Settings value"
@@ -1976,11 +1976,11 @@ msgstr ""
 
 #: common/models.py:2280
 msgid "Source Plugin"
-msgstr ""
+msgstr "Plugin nguồn"
 
 #: common/models.py:2281
 msgid "Plugin which provides the selection list"
-msgstr ""
+msgstr "Plugin cung cấp danh sách lựa chọn"
 
 #: common/models.py:2286
 msgid "Source String"
@@ -2173,27 +2173,27 @@ msgstr "Trường ghi chú tùy chọn"
 
 #: common/models.py:2842
 msgid "Barcode Scan"
-msgstr ""
+msgstr "Lượt quét mã vạch"
 
 #: common/models.py:2847
 msgid "Barcode data"
-msgstr ""
+msgstr "Dữ liệu mã vạch"
 
 #: common/models.py:2858
 msgid "User who scanned the barcode"
-msgstr ""
+msgstr "Người dùng đã quét mã vạch"
 
 #: common/models.py:2863 importer/models.py:70
 msgid "Timestamp"
-msgstr ""
+msgstr "Dấu thời gian"
 
 #: common/models.py:2864
 msgid "Date and time of the barcode scan"
-msgstr ""
+msgstr "Ngày và giờ quét mã vạch"
 
 #: common/models.py:2870
 msgid "URL endpoint which processed the barcode"
-msgstr ""
+msgstr "Endpoint URL đã xử lý mã vạch"
 
 #: common/models.py:2877 order/models.py:1880 plugin/serializers.py:93
 msgid "Context"
@@ -2201,7 +2201,7 @@ msgstr "Ngữ cảnh"
 
 #: common/models.py:2878
 msgid "Context data for the barcode scan"
-msgstr ""
+msgstr "Dữ liệu ngữ cảnh của lượt quét mã vạch"
 
 #: common/models.py:2885
 msgid "Response"
@@ -2209,7 +2209,7 @@ msgstr ""
 
 #: common/models.py:2886
 msgid "Response data from the barcode scan"
-msgstr ""
+msgstr "Dữ liệu phản hồi từ lượt quét mã vạch"
 
 #: common/models.py:2892 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3059
@@ -2218,7 +2218,7 @@ msgstr "Kết quả"
 
 #: common/models.py:2893
 msgid "Was the barcode scan successful?"
-msgstr ""
+msgstr "Lượt quét mã vạch có thành công không?"
 
 #: common/models.py:2975
 msgid "An error occurred"
@@ -2230,11 +2230,11 @@ msgstr ""
 
 #: common/models.py:3043
 msgid "Email Message"
-msgstr ""
+msgstr "Email"
 
 #: common/models.py:3044
 msgid "Email Messages"
-msgstr ""
+msgstr "Email"
 
 #: common/models.py:3051
 msgid "Announced"
@@ -2310,11 +2310,11 @@ msgstr ""
 
 #: common/models.py:3173
 msgid "Email Thread"
-msgstr ""
+msgstr "Luồng email"
 
 #: common/models.py:3174
 msgid "Email Threads"
-msgstr ""
+msgstr "Luồng email"
 
 #: common/models.py:3180 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:113
@@ -2459,15 +2459,15 @@ msgstr "Tên tập tin"
 #: common/serializers.py:905 importer/models.py:90 report/api.py:41
 #: report/models.py:296 report/serializers.py:71
 msgid "Model Type"
-msgstr ""
+msgstr "Loại dữ liệu"
 
 #: common/serializers.py:790
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr ""
+msgstr "Người dùng không có quyền tạo hoặc sửa tệp đính kèm cho dữ liệu này"
 
 #: common/serializers.py:886
 msgid "User does not have permission to create or edit parameters for this model"
-msgstr ""
+msgstr "Người dùng không có quyền tạo hoặc sửa thông số cho dữ liệu này"
 
 #: common/serializers.py:961 common/serializers.py:1064
 msgid "Selection list is locked"
@@ -2499,19 +2499,19 @@ msgstr "Số đợt nâng cấp cơ sở dữ liệu chờ xử lý"
 
 #: common/setting/system.py:200
 msgid "Active warning codes"
-msgstr ""
+msgstr "Mã cảnh báo đang hoạt động"
 
 #: common/setting/system.py:201
 msgid "A dict of active warning codes"
-msgstr ""
+msgstr "Danh sách mã cảnh báo đang hoạt động"
 
 #: common/setting/system.py:207
 msgid "Instance ID"
-msgstr ""
+msgstr "ID phiên bản"
 
 #: common/setting/system.py:208
 msgid "Unique identifier for this InvenTree instance"
-msgstr ""
+msgstr "Mã định danh duy nhất của phiên bản DTWare này"
 
 #: common/setting/system.py:213
 msgid "Announce ID"
@@ -2547,19 +2547,19 @@ msgstr "Chỉ hiển thị cửa sổ `giới thiệu` với siêu người dùn
 
 #: common/setting/system.py:239
 msgid "Show superuser banner"
-msgstr ""
+msgstr "Hiển thị cảnh báo quản trị cao nhất"
 
 #: common/setting/system.py:240
 msgid "Show a warning banner in the UI when logged in as superuser"
-msgstr ""
+msgstr "Hiển thị cảnh báo trên UI khi đăng nhập bằng tài khoản quản trị cao nhất"
 
 #: common/setting/system.py:245
 msgid "Show admin banner"
-msgstr ""
+msgstr "Hiển thị cảnh báo quản trị"
 
 #: common/setting/system.py:246
 msgid "Show a warning banner in the UI when logged in as admin"
-msgstr ""
+msgstr "Hiển thị cảnh báo trên UI khi đăng nhập bằng tài khoản quản trị"
 
 #: common/setting/system.py:251 company/models.py:147 company/models.py:148
 msgid "Company name"
@@ -2587,11 +2587,11 @@ msgstr "Chọn tiền tệ chính khi tính giá"
 
 #: common/setting/system.py:270
 msgid "Supported Currencies"
-msgstr ""
+msgstr "Tiền tệ được hỗ trợ"
 
 #: common/setting/system.py:271
 msgid "List of supported currency codes"
-msgstr ""
+msgstr "Danh sách mã tiền tệ được hỗ trợ"
 
 #: common/setting/system.py:277
 msgid "Currency Update Interval"
@@ -2645,11 +2645,11 @@ msgstr "Cho phép ghi đè user-agent được dùng để tải về hình ản
 
 #: common/setting/system.py:310
 msgid "Strict URL Validation"
-msgstr ""
+msgstr "Kiểm tra URL nghiêm ngặt"
 
 #: common/setting/system.py:311
 msgid "Require schema specification when validating URLs"
-msgstr ""
+msgstr "Yêu cầu khai báo schema khi kiểm tra URL"
 
 #: common/setting/system.py:316
 msgid "Update Check Interval"
@@ -2701,19 +2701,19 @@ msgstr "Thông báo sẽ bị xóa sau số ngày được chỉ định"
 
 #: common/setting/system.py:361
 msgid "Email Deletion Interval"
-msgstr ""
+msgstr "Khoảng thời gian xóa email"
 
 #: common/setting/system.py:363
 msgid "Email messages will be deleted after specified number of days"
-msgstr ""
+msgstr "Email sẽ bị xóa sau số ngày đã cấu hình"
 
 #: common/setting/system.py:370
 msgid "Protect Email Log"
-msgstr ""
+msgstr "Bảo vệ nhật ký email"
 
 #: common/setting/system.py:371
 msgid "Prevent deletion of email log entries"
-msgstr ""
+msgstr "Ngăn xóa các mục nhật ký email"
 
 #: common/setting/system.py:376
 msgid "Barcode Support"
@@ -2725,19 +2725,19 @@ msgstr "Bật hỗ trợ máy quét mã vạch trong giao diện web"
 
 #: common/setting/system.py:382
 msgid "Store Barcode Results"
-msgstr ""
+msgstr "Lưu kết quả quét mã vạch"
 
 #: common/setting/system.py:383
 msgid "Store barcode scan results in the database"
-msgstr ""
+msgstr "Lưu kết quả quét mã vạch vào cơ sở dữ liệu"
 
 #: common/setting/system.py:388
 msgid "Barcode Scans Maximum Count"
-msgstr ""
+msgstr "Số lượt quét mã vạch tối đa"
 
 #: common/setting/system.py:389
 msgid "Maximum number of barcode scan results to store"
-msgstr ""
+msgstr "Số kết quả quét mã vạch tối đa được lưu"
 
 #: common/setting/system.py:394
 msgid "Barcode Input Delay"
@@ -2757,19 +2757,19 @@ msgstr "Cho phép quét mã vạch qua webcam bên trong trình duyệt"
 
 #: common/setting/system.py:407
 msgid "Barcode Show Data"
-msgstr ""
+msgstr "Hiển thị dữ liệu mã vạch"
 
 #: common/setting/system.py:408
 msgid "Display barcode data in browser as text"
-msgstr ""
+msgstr "Hiển thị dữ liệu mã vạch trên trình duyệt dưới dạng văn bản"
 
 #: common/setting/system.py:413
 msgid "Barcode Generation Plugin"
-msgstr ""
+msgstr "Plugin tạo mã vạch"
 
 #: common/setting/system.py:414
 msgid "Plugin to use for internal barcode data generation"
-msgstr ""
+msgstr "Plugin dùng để tạo dữ liệu mã vạch nội bộ"
 
 #: common/setting/system.py:419
 msgid "Part Revisions"
@@ -2781,19 +2781,19 @@ msgstr "Bật trường phiên bản cho vật tư"
 
 #: common/setting/system.py:425
 msgid "Assembly Revision Only"
-msgstr ""
+msgstr "Chỉ dùng phiên bản cho cụm lắp ráp"
 
 #: common/setting/system.py:426
 msgid "Only allow revisions for assembly parts"
-msgstr ""
+msgstr "Chỉ cho phép phiên bản đối với vật tư lắp ráp"
 
 #: common/setting/system.py:431
 msgid "Allow Deletion from Assembly"
-msgstr ""
+msgstr "Cho phép xóa khỏi cụm lắp ráp"
 
 #: common/setting/system.py:432
 msgid "Allow deletion of parts which are used in an assembly"
-msgstr ""
+msgstr "Cho phép xóa vật tư đang được dùng trong cụm lắp ráp"
 
 #: common/setting/system.py:437
 msgid "IPN Regex"
@@ -3002,11 +3002,11 @@ msgstr "Chỉ sử dụng vật tư biến thể hoạt động để tính toá
 
 #: common/setting/system.py:625
 msgid "Auto Update Pricing"
-msgstr ""
+msgstr "Tự động cập nhật giá"
 
 #: common/setting/system.py:627
 msgid "Automatically update part pricing when internal data changes"
-msgstr ""
+msgstr "Tự động cập nhật giá vật tư khi dữ liệu nội bộ thay đổi"
 
 #: common/setting/system.py:633
 msgid "Pricing Rebuild Interval"
@@ -3034,7 +3034,7 @@ msgstr "Nếu khả dụng, giá nội bộ ghi đè tính toán khoảng giá"
 
 #: common/setting/system.py:654
 msgid "Allow BOM Zero Quantity"
-msgstr ""
+msgstr "Cho phép số lượng BOM bằng 0"
 
 #: common/setting/system.py:656
 msgid "Accept a zero quantity for BOM item for part. Enables using setup quantity to define a quantity required per build, independent of build quantity"
@@ -3074,11 +3074,11 @@ msgstr "Tạo báo cáo trong chế độ gỡ lỗi (đầu ra HTML)"
 
 #: common/setting/system.py:688
 msgid "Log Report Errors"
-msgstr ""
+msgstr "Ghi nhận lỗi báo cáo"
 
 #: common/setting/system.py:689
 msgid "Log errors which occur when generating reports"
-msgstr ""
+msgstr "Ghi nhận lỗi xảy ra khi tạo báo cáo"
 
 #: common/setting/system.py:694 plugin/builtin/labels/label_sheet.py:29
 #: report/models.py:384
@@ -3179,19 +3179,19 @@ msgstr "Hiển thị mặt hàng tồn kho đã được lắp đặt trên bả
 
 #: common/setting/system.py:770
 msgid "Check BOM when installing items"
-msgstr ""
+msgstr "Kiểm tra BOM khi lắp đặt mặt hàng"
 
 #: common/setting/system.py:772
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr ""
+msgstr "Mặt hàng tồn kho được lắp đặt phải tồn tại trong BOM của vật tư cha"
 
 #: common/setting/system.py:778
 msgid "Allow Out of Stock Transfer"
-msgstr ""
+msgstr "Cho phép chuyển khi không còn tồn kho"
 
 #: common/setting/system.py:780
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
-msgstr ""
+msgstr "Cho phép chuyển mặt hàng không còn tồn kho giữa các vị trí kho"
 
 #: common/setting/system.py:786
 msgid "Build Order Reference Pattern"
@@ -3204,60 +3204,60 @@ msgstr "Mẫu bắt buộc cho để trường tham chiếu lệnh sản xuất"
 #: common/setting/system.py:792 common/setting/system.py:852
 #: common/setting/system.py:872 common/setting/system.py:916
 msgid "Require Responsible Owner"
-msgstr ""
+msgstr "Yêu cầu người phụ trách"
 
 #: common/setting/system.py:793 common/setting/system.py:853
 #: common/setting/system.py:873 common/setting/system.py:917
 msgid "A responsible owner must be assigned to each order"
-msgstr ""
+msgstr "Mỗi đơn hàng phải có người phụ trách"
 
 #: common/setting/system.py:798
 msgid "Require Active Part"
-msgstr ""
+msgstr "Yêu cầu vật tư đang hoạt động"
 
 #: common/setting/system.py:799
 msgid "Prevent build order creation for inactive parts"
-msgstr ""
+msgstr "Không cho tạo lệnh sản xuất cho vật tư ngừng hoạt động"
 
 #: common/setting/system.py:804
 msgid "Require Locked Part"
-msgstr ""
+msgstr "Yêu cầu vật tư đã khóa"
 
 #: common/setting/system.py:805
 msgid "Prevent build order creation for unlocked parts"
-msgstr ""
+msgstr "Không cho tạo lệnh sản xuất cho vật tư chưa khóa"
 
 #: common/setting/system.py:810
 msgid "Require Valid BOM"
-msgstr ""
+msgstr "Yêu cầu BOM hợp lệ"
 
 #: common/setting/system.py:811
 msgid "Prevent build order creation unless BOM has been validated"
-msgstr ""
+msgstr "Không cho tạo lệnh sản xuất nếu BOM chưa được xác thực"
 
 #: common/setting/system.py:816
 msgid "Require Closed Child Orders"
-msgstr ""
+msgstr "Yêu cầu đóng lệnh con"
 
 #: common/setting/system.py:818
 msgid "Prevent build order completion until all child orders are closed"
-msgstr ""
+msgstr "Không cho hoàn thành lệnh sản xuất cho đến khi tất cả lệnh con đã đóng"
 
 #: common/setting/system.py:824
 msgid "External Build Orders"
-msgstr ""
+msgstr "Lệnh sản xuất bên ngoài"
 
 #: common/setting/system.py:825
 msgid "Enable external build order functionality"
-msgstr ""
+msgstr "Bật chức năng lệnh sản xuất bên ngoài"
 
 #: common/setting/system.py:830
 msgid "Block Until Tests Pass"
-msgstr ""
+msgstr "Chặn cho đến khi kiểm thử đạt"
 
 #: common/setting/system.py:832
 msgid "Prevent build outputs from being completed until all required tests pass"
-msgstr ""
+msgstr "Không cho hoàn thành thành phẩm đầu ra cho đến khi tất cả kiểm thử bắt buộc đạt"
 
 #: common/setting/system.py:838
 msgid "Enable Return Orders"
@@ -3309,15 +3309,15 @@ msgstr "Cho phép sửa đơn hàng sau khi đã vận chuyển hoặc hoàn th�
 
 #: common/setting/system.py:892
 msgid "Shipment Requires Checking"
-msgstr ""
+msgstr "Phiếu giao hàng cần kiểm tra"
 
 #: common/setting/system.py:894
 msgid "Prevent completion of shipments until items have been checked"
-msgstr ""
+msgstr "Không cho hoàn tất phiếu giao hàng cho đến khi các mặt hàng đã được kiểm tra"
 
 #: common/setting/system.py:900
 msgid "Mark Shipped Orders as Complete"
-msgstr ""
+msgstr "Đánh dấu đơn đã giao là hoàn tất"
 
 #: common/setting/system.py:902
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
@@ -3341,11 +3341,11 @@ msgstr "Cho phép sửa đơn mua hàng sau khi đã vận chuyển hoặc hoàn
 
 #: common/setting/system.py:930
 msgid "Convert Currency"
-msgstr ""
+msgstr "Quy đổi tiền tệ"
 
 #: common/setting/system.py:931
 msgid "Convert item value to base currency when receiving stock"
-msgstr ""
+msgstr "Quy đổi giá trị mặt hàng về tiền tệ cơ sở khi nhận tồn kho"
 
 #: common/setting/system.py:936
 msgid "Auto Complete Purchase Orders"
@@ -3537,35 +3537,35 @@ msgstr "Bật phần mở rộng để trả lời sự kiện bên trong"
 
 #: common/setting/system.py:1103
 msgid "Enable interface integration"
-msgstr ""
+msgstr "Bật tích hợp giao diện"
 
 #: common/setting/system.py:1104
 msgid "Enable plugins to integrate into the user interface"
-msgstr ""
+msgstr "Cho phép plugin tích hợp vào giao diện người dùng"
 
 #: common/setting/system.py:1110
 msgid "Enable mail integration"
-msgstr ""
+msgstr "Bật tích hợp email"
 
 #: common/setting/system.py:1111
 msgid "Enable plugins to process outgoing/incoming mails"
-msgstr ""
+msgstr "Cho phép plugin xử lý email gửi đi/nhận vào"
 
 #: common/setting/system.py:1117
 msgid "Enable project codes"
-msgstr ""
+msgstr "Bật mã dự án"
 
 #: common/setting/system.py:1118
 msgid "Enable project codes for tracking projects"
-msgstr ""
+msgstr "Bật mã dự án để theo dõi dự án"
 
 #: common/setting/system.py:1123
 msgid "Enable Stocktake"
-msgstr ""
+msgstr "Bật kiểm kê"
 
 #: common/setting/system.py:1125
 msgid "Enable functionality for recording historical stock levels and value"
-msgstr ""
+msgstr "Bật chức năng ghi nhận lịch sử mức tồn kho và giá trị"
 
 #: common/setting/system.py:1131
 msgid "Exclude External Locations"
@@ -3625,11 +3625,11 @@ msgstr "Hiển thị tên đầy đủ thay vì tên đăng nhập"
 
 #: common/setting/system.py:1186
 msgid "Display User Profiles"
-msgstr ""
+msgstr "Hiển thị hồ sơ người dùng"
 
 #: common/setting/system.py:1187
 msgid "Display Users Profiles on their profile page"
-msgstr ""
+msgstr "Hiển thị hồ sơ người dùng trên trang hồ sơ"
 
 #: common/setting/system.py:1192
 msgid "Enable Test Station Data"
@@ -3673,11 +3673,11 @@ msgstr "Hiện báo cáo PDF trong trình duyệt, thay vì tải về dạng t�
 
 #: common/setting/user.py:45
 msgid "Barcode Scanner in Form Fields"
-msgstr ""
+msgstr "Máy quét mã vạch trong trường biểu mẫu"
 
 #: common/setting/user.py:46
 msgid "Allow barcode scanner input in form fields"
-msgstr ""
+msgstr "Cho phép nhập bằng máy quét mã vạch trong trường biểu mẫu"
 
 #: common/setting/user.py:51
 msgid "Search Parts"
@@ -3865,11 +3865,11 @@ msgstr "Vị trí thành điều hướng là cố định trên cùng màn hìn
 
 #: common/setting/user.py:195
 msgid "Fixed Table Headers"
-msgstr ""
+msgstr "Cố định tiêu đề bảng"
 
 #: common/setting/user.py:196
 msgid "Table headers are fixed to the top of the table"
-msgstr ""
+msgstr "Tiêu đề bảng được cố định ở đầu bảng"
 
 #: common/setting/user.py:201
 msgid "Show Spotlight"
@@ -3881,11 +3881,11 @@ msgstr ""
 
 #: common/setting/user.py:207
 msgid "Navigation Icons"
-msgstr ""
+msgstr "Biểu tượng điều hướng"
 
 #: common/setting/user.py:208
 msgid "Display icons in the navigation bar"
-msgstr ""
+msgstr "Hiển thị biểu tượng trên thanh điều hướng"
 
 #: common/setting/user.py:213
 msgid "Date Format"
@@ -4361,19 +4361,19 @@ msgstr ""
 
 #: data_exporter/serializers.py:73
 msgid "Export Format"
-msgstr ""
+msgstr "Định dạng xuất"
 
 #: data_exporter/serializers.py:74
 msgid "Select export file format"
-msgstr ""
+msgstr "Chọn định dạng tệp xuất"
 
 #: data_exporter/serializers.py:81
 msgid "Export Plugin"
-msgstr ""
+msgstr "Plugin xuất dữ liệu"
 
 #: data_exporter/serializers.py:82
 msgid "Select export plugin"
-msgstr ""
+msgstr "Chọn plugin xuất dữ liệu"
 
 #: generic/states/fields.py:146
 msgid "Additional status information for this item"
@@ -4409,11 +4409,11 @@ msgstr "Tập tin dữ liệu"
 
 #: importer/models.py:75
 msgid "Data file to import"
-msgstr ""
+msgstr "Tệp dữ liệu cần nhập"
 
 #: importer/models.py:84
 msgid "Columns"
-msgstr ""
+msgstr "Cột"
 
 #: importer/models.py:91
 msgid "Target model type for this import session"
@@ -4421,31 +4421,31 @@ msgstr ""
 
 #: importer/models.py:97
 msgid "Import status"
-msgstr ""
+msgstr "Trạng thái nhập"
 
 #: importer/models.py:107
 msgid "Field Defaults"
-msgstr ""
+msgstr "Giá trị mặc định của trường"
 
 #: importer/models.py:114
 msgid "Field Overrides"
-msgstr ""
+msgstr "Giá trị ghi đè của trường"
 
 #: importer/models.py:121
 msgid "Field Filters"
-msgstr ""
+msgstr "Bộ lọc trường"
 
 #: importer/models.py:127
 msgid "Update Existing Records"
-msgstr ""
+msgstr "Cập nhật bản ghi hiện có"
 
 #: importer/models.py:128
 msgid "If enabled, existing records will be updated with new data"
-msgstr ""
+msgstr "Nếu bật, bản ghi hiện có sẽ được cập nhật bằng dữ liệu mới"
 
 #: importer/models.py:281
 msgid "Some required fields have not been mapped"
-msgstr ""
+msgstr "Một số trường bắt buộc chưa được ánh xạ"
 
 #: importer/models.py:388
 msgid "ID"
@@ -4485,23 +4485,23 @@ msgstr ""
 
 #: importer/models.py:498
 msgid "Field"
-msgstr ""
+msgstr "Trường"
 
 #: importer/models.py:500
 msgid "Column"
-msgstr ""
+msgstr "Cột"
 
 #: importer/models.py:575
 msgid "Row Index"
-msgstr ""
+msgstr "Chỉ số dòng"
 
 #: importer/models.py:578
 msgid "Original row data"
-msgstr ""
+msgstr "Dữ liệu dòng gốc"
 
 #: importer/models.py:583 machine/models.py:111
 msgid "Errors"
-msgstr ""
+msgstr "Lỗi"
 
 #: importer/models.py:585 part/serializers.py:1159
 msgid "Valid"
@@ -4521,11 +4521,11 @@ msgstr ""
 
 #: importer/operations.py:31 importer/operations.py:52
 msgid "Unsupported data file format"
-msgstr ""
+msgstr "Định dạng tệp dữ liệu không được hỗ trợ"
 
 #: importer/operations.py:43
 msgid "Failed to open data file"
-msgstr ""
+msgstr "Không thể mở tệp dữ liệu"
 
 #: importer/operations.py:54
 msgid "Invalid data file dimensions"

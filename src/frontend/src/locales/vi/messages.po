@@ -656,20 +656,20 @@ msgstr "Mã phản hồi của máy chủ {returnCode}"
 
 #: lib/functions/Notification.tsx:46
 msgid "Timeout"
-msgstr ""
+msgstr "Hết thời gian chờ"
 
 #: lib/functions/Notification.tsx:47
 msgid "The request timed out"
-msgstr ""
+msgstr "Yêu cầu đã hết thời gian chờ"
 
 #: lib/hooks/MonitorDataOutput.tsx:57
 #: lib/hooks/MonitorDataOutput.tsx:116
 msgid "Process failed"
-msgstr ""
+msgstr "Tiến trình thất bại"
 
 #: lib/hooks/MonitorDataOutput.tsx:75
 msgid "Process completed successfully"
-msgstr ""
+msgstr "Tiến trình đã hoàn tất thành công"
 
 #: src/components/DashboardItemProxy.tsx:34
 #~ msgid "Title"
@@ -717,15 +717,15 @@ msgstr "Đầu vào máy quét"
 
 #: src/components/barcodes/BarcodeInput.tsx:105
 msgid "Barcode Data"
-msgstr ""
+msgstr "Dữ liệu mã vạch"
 
 #: src/components/barcodes/BarcodeInput.tsx:109
 msgid "No barcode data"
-msgstr ""
+msgstr "Không có dữ liệu mã vạch"
 
 #: src/components/barcodes/BarcodeInput.tsx:110
 msgid "Scan or enter barcode data"
-msgstr ""
+msgstr "Quét hoặc nhập dữ liệu mã vạch"
 
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:64
 msgid "Enter barcode data"
@@ -741,11 +741,11 @@ msgstr "Quét mã vạch"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:121
 msgid "No matching item found"
-msgstr ""
+msgstr "Không tìm thấy mục phù hợp"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:150
 msgid "Barcode does not match the expected model type"
-msgstr ""
+msgstr "Mã vạch không khớp với loại dữ liệu mong đợi"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:161
 #: src/components/editors/NotesEditor.tsx:84
@@ -761,7 +761,7 @@ msgstr "Thành công"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:167
 msgid "Failed to handle barcode"
-msgstr ""
+msgstr "Không thể xử lý mã vạch"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:183
 #: src/pages/Index/Scan.tsx:127
@@ -786,7 +786,7 @@ msgstr "Cao (30%)"
 
 #: src/components/barcodes/QRCode.tsx:107
 msgid "Custom barcode"
-msgstr ""
+msgstr "Mã vạch tùy chỉnh"
 
 #: src/components/barcodes/QRCode.tsx:108
 msgid "A custom barcode is registered for this item. The shown code is not that custom barcode."
@@ -939,16 +939,16 @@ msgstr ""
 
 #: src/components/buttons/StarredToggleButton.tsx:66
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "Hủy theo dõi thông báo"
 
 #: src/components/buttons/StarredToggleButton.tsx:67
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "Theo dõi thông báo"
 
 #: src/components/calendar/Calendar.tsx:118
 #: src/components/calendar/Calendar.tsx:181
 msgid "Calendar Filters"
-msgstr ""
+msgstr "Bộ lọc lịch"
 
 #: src/components/calendar/Calendar.tsx:133
 msgid "Previous month"
@@ -970,7 +970,7 @@ msgstr ""
 #: src/components/calendar/Calendar.tsx:194
 #: src/tables/InvenTreeTableHeader.tsx:292
 msgid "Export data"
-msgstr ""
+msgstr "Xuất dữ liệu"
 
 #: src/components/calendar/OrderCalendar.tsx:132
 msgid "Order Updated"
@@ -1032,7 +1032,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:77
 msgid "Filter dashboard widgets"
-msgstr ""
+msgstr "Lọc tiện ích tổng quan"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:98
 msgid "Add this widget to the dashboard"
@@ -1235,7 +1235,7 @@ msgstr "Thay đổi chế độ màu"
 
 #: src/components/dashboard/widgets/ColorToggleWidget.tsx:23
 msgid "Change the color mode of the user interface"
-msgstr ""
+msgstr "Đổi chế độ màu của giao diện"
 
 #: src/components/dashboard/widgets/LanguageSelectWidget.tsx:18
 msgid "Change Language"
@@ -1243,7 +1243,7 @@ msgstr ""
 
 #: src/components/dashboard/widgets/LanguageSelectWidget.tsx:23
 msgid "Change the language of the user interface"
-msgstr ""
+msgstr "Đổi ngôn ngữ giao diện"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:60
 #: src/components/nav/NotificationDrawer.tsx:94
@@ -1253,11 +1253,11 @@ msgstr "Đánh dấu đã đọc"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:115
 msgid "Requires Superuser"
-msgstr ""
+msgstr "Yêu cầu quyền quản trị cao nhất"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:116
 msgid "This widget requires superuser permissions"
-msgstr ""
+msgstr "Tiện ích này yêu cầu quyền quản trị cao nhất"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:133
 msgid "No News"
@@ -1300,7 +1300,7 @@ msgstr ""
 #: src/pages/core/UserDetail.tsx:203
 #: src/tables/settings/UserTable.tsx:411
 msgid "Superuser"
-msgstr ""
+msgstr "Quản trị cao nhất"
 
 #: src/components/details/Details.tsx:130
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
@@ -1309,7 +1309,7 @@ msgstr ""
 #: src/tables/settings/UserTable.tsx:285
 #: src/tables/settings/UserTable.tsx:406
 msgid "Administrator"
-msgstr ""
+msgstr "Quản trị viên"
 
 #: src/components/details/Details.tsx:130
 #: src/pages/core/UserDetail.tsx:87
@@ -1320,7 +1320,7 @@ msgstr ""
 
 #: src/components/details/Details.tsx:131
 msgid "Email: "
-msgstr ""
+msgstr "Email: "
 
 #: src/components/details/Details.tsx:423
 msgid "No name defined"
@@ -1778,7 +1778,7 @@ msgstr "Gửi email"
 
 #: src/components/forms/AuthenticationForm.tsx:239
 msgid "Passwords do not match"
-msgstr ""
+msgstr "Mật khẩu không khớp"
 
 #: src/components/forms/AuthenticationForm.tsx:256
 msgid "Registration successful"
@@ -1824,7 +1824,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:349
 msgid "This might be related to missing mail settings or could be a deliberate decision."
-msgstr ""
+msgstr "Có thể do thiếu cấu hình email hoặc đây là thiết lập có chủ đích."
 
 #: src/components/forms/DateTimeField.tsx:64
 msgid "Select date and time"
@@ -1942,7 +1942,7 @@ msgstr "Plugins"
 #: src/tables/settings/TemplateTable.tsx:396
 #: src/tables/stock/StockItemTestResultTable.tsx:420
 msgid "Enabled"
-msgstr ""
+msgstr "Đã bật"
 
 #: src/components/forms/InstanceOptions.tsx:144
 msgid "Disabled"
@@ -1955,7 +1955,7 @@ msgstr ""
 #: src/components/forms/InstanceOptions.tsx:151
 #: src/tables/settings/FailedTasksTable.tsx:48
 msgid "Stopped"
-msgstr ""
+msgstr "Đã dừng"
 
 #: src/components/forms/InstanceOptions.tsx:151
 msgid "Running"
@@ -2021,7 +2021,7 @@ msgstr "Không mục nhập nào có sẵn"
 
 #: src/components/forms/fields/TableField.tsx:198
 msgid "Add new row"
-msgstr ""
+msgstr "Thêm dòng mới"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -2151,7 +2151,7 @@ msgstr "Ánh xạ cột"
 
 #: src/components/importer/ImporterDrawer.tsx:46
 msgid "Import Rows"
-msgstr ""
+msgstr "Nhập dòng dữ liệu"
 
 #: src/components/importer/ImporterDrawer.tsx:47
 msgid "Process Data"
@@ -2163,7 +2163,7 @@ msgstr "Hoàn thành nhập dữ liệu"
 
 #: src/components/importer/ImporterDrawer.tsx:92
 msgid "Failed to fetch import session data"
-msgstr ""
+msgstr "Không thể lấy dữ liệu phiên nhập"
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
@@ -2222,7 +2222,7 @@ msgstr "Chức năng mã vạch"
 
 #: src/components/items/ActionDropdown.tsx:176
 msgid "View Barcode"
-msgstr ""
+msgstr "Xem mã vạch"
 
 #: src/components/items/ActionDropdown.tsx:178
 msgid "View barcode"
@@ -2263,7 +2263,7 @@ msgstr "Nhân bản mặt hàng"
 
 #: src/components/items/ColorToggle.tsx:17
 msgid "Toggle color scheme"
-msgstr ""
+msgstr "Đổi bảng màu"
 
 #: src/components/items/DocTooltip.tsx:92
 #: src/components/items/GettingStartedCarousel.tsx:20
@@ -2309,7 +2309,7 @@ msgstr ""
 
 #: src/components/items/OnlyStaff.tsx:11
 msgid "This information is only available for administrative users"
-msgstr ""
+msgstr "Thông tin này chỉ dành cho người dùng quản trị"
 
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -2321,11 +2321,11 @@ msgstr ""
 
 #: src/components/items/RoleTable.tsx:81
 msgid "Updating"
-msgstr ""
+msgstr "Đang cập nhật"
 
 #: src/components/items/RoleTable.tsx:82
 msgid "Updating group roles"
-msgstr ""
+msgstr "Đang cập nhật vai trò nhóm"
 
 #: src/components/items/RoleTable.tsx:118
 #: src/components/settings/ConfigValueList.tsx:42
@@ -2338,20 +2338,20 @@ msgstr "Đã cập nhật"
 
 #: src/components/items/RoleTable.tsx:119
 msgid "Group roles updated"
-msgstr ""
+msgstr "Đã cập nhật vai trò nhóm"
 
 #: src/components/items/RoleTable.tsx:135
 msgid "Role"
-msgstr ""
+msgstr "Vai trò"
 
 #: src/components/items/RoleTable.tsx:140
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:906
 msgid "View"
-msgstr ""
+msgstr "Xem"
 
 #: src/components/items/RoleTable.tsx:145
 msgid "Change"
-msgstr ""
+msgstr "Thay đổi"
 
 #: src/components/items/RoleTable.tsx:150
 #: src/forms/StockForms.tsx:950
@@ -2361,15 +2361,15 @@ msgstr "Thêm"
 
 #: src/components/items/RoleTable.tsx:203
 msgid "Reset group roles"
-msgstr ""
+msgstr "Đặt lại vai trò nhóm"
 
 #: src/components/items/RoleTable.tsx:212
 msgid "Reset"
-msgstr ""
+msgstr "Đặt lại"
 
 #: src/components/items/RoleTable.tsx:215
 msgid "Save group roles"
-msgstr ""
+msgstr "Lưu vai trò nhóm"
 
 #: src/components/items/TransferList.tsx:65
 msgid "No items"
@@ -2593,7 +2593,7 @@ msgstr "Thiết lập email"
 #: src/components/modals/ServerInfoModal.tsx:120
 #: src/components/nav/Alerts.tsx:143
 msgid "Email settings not configured."
-msgstr ""
+msgstr "Chưa cấu hình email."
 
 #: src/components/nav/Alerts.tsx:57
 msgid "Alerts"
@@ -2621,7 +2621,7 @@ msgstr ""
 
 #: src/components/nav/Alerts.tsx:141
 msgid "Email settings"
-msgstr ""
+msgstr "Thiết lập email"
 
 #: src/components/nav/Alerts.tsx:148
 msgid "Database Migrations"
@@ -2651,15 +2651,15 @@ msgstr "Thông báo"
 
 #: src/components/nav/Header.tsx:231
 msgid "Superuser Mode"
-msgstr ""
+msgstr "Chế độ quản trị cao nhất"
 
 #: src/components/nav/Header.tsx:231
 msgid "Admin Mode"
-msgstr ""
+msgstr "Chế độ quản trị"
 
 #: src/components/nav/Header.tsx:237
 msgid "The current user has elevated privileges and should not be used for regular usage."
-msgstr ""
+msgstr "Người dùng hiện tại có quyền cao và không nên dùng cho thao tác thường ngày."
 
 #: src/components/nav/Layout.tsx:144
 msgid "Nothing found..."
@@ -2819,7 +2819,7 @@ msgstr "Bạn chưa có thông báo mới."
 
 #: src/components/nav/NotificationDrawer.tsx:238
 msgid "Error loading notifications."
-msgstr ""
+msgstr "Lỗi khi tải thông báo."
 
 #: src/components/nav/SearchDrawer.tsx:111
 msgid "No Overview Available"
@@ -2896,7 +2896,7 @@ msgstr "Lỗi trong quá trình truy vấn tìm kiếm"
 #: src/components/nav/SearchDrawer.tsx:602
 #: src/tables/part/PartTestTemplateTable.tsx:82
 msgid "No Results"
-msgstr ""
+msgstr "Không có kết quả"
 
 #: src/components/nav/SearchDrawer.tsx:605
 msgid "No results available for search query"
@@ -2914,7 +2914,7 @@ msgstr "Ghi chú"
 
 #: src/components/panels/PanelGroup.tsx:159
 msgid "Plugin Provided"
-msgstr ""
+msgstr "Do plugin cung cấp"
 
 #: src/components/panels/PanelGroup.tsx:293
 msgid "Collapse panels"
@@ -2927,23 +2927,23 @@ msgstr ""
 #: src/components/plugins/LocateItemButton.tsx:68
 #: src/components/plugins/LocateItemButton.tsx:88
 msgid "Locate Item"
-msgstr ""
+msgstr "Định vị mục"
 
 #: src/components/plugins/LocateItemButton.tsx:70
 msgid "Item location requested"
-msgstr ""
+msgstr "Đã yêu cầu định vị mục"
 
 #: src/components/plugins/PluginDrawer.tsx:47
 msgid "Plugin Inactive"
-msgstr ""
+msgstr "Plugin chưa hoạt động"
 
 #: src/components/plugins/PluginDrawer.tsx:50
 msgid "Plugin is not active"
-msgstr ""
+msgstr "Plugin chưa hoạt động"
 
 #: src/components/plugins/PluginDrawer.tsx:59
 msgid "Plugin Information"
-msgstr ""
+msgstr "Thông tin plugin"
 
 #: src/components/plugins/PluginDrawer.tsx:73
 #: src/forms/selectionListFields.tsx:102
@@ -2968,7 +2968,7 @@ msgstr "Mô tả"
 
 #: src/components/plugins/PluginDrawer.tsx:78
 msgid "Author"
-msgstr ""
+msgstr "Tác giả"
 
 #: src/components/plugins/PluginDrawer.tsx:83
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:41
@@ -3010,11 +3010,11 @@ msgstr "Trang web"
 
 #: src/components/plugins/PluginDrawer.tsx:113
 msgid "Package Name"
-msgstr ""
+msgstr "Tên gói"
 
 #: src/components/plugins/PluginDrawer.tsx:119
 msgid "Installation Path"
-msgstr ""
+msgstr "Đường dẫn cài đặt"
 
 #: src/components/plugins/PluginDrawer.tsx:124
 #: src/tables/machine/MachineTypeTable.tsx:182
@@ -3026,7 +3026,7 @@ msgstr "Gắn liền"
 
 #: src/components/plugins/PluginDrawer.tsx:129
 msgid "Package"
-msgstr ""
+msgstr "Gói"
 
 #: src/components/plugins/PluginDrawer.tsx:141
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:55
@@ -3062,31 +3062,31 @@ msgstr "Thiết lập phần bổ sung"
 
 #: src/components/plugins/PluginUIFeature.tsx:103
 msgid "Error occurred while rendering the template editor."
-msgstr ""
+msgstr "Đã xảy ra lỗi khi hiển thị trình sửa mẫu."
 
 #: src/components/plugins/PluginUIFeature.tsx:120
 msgid "Error Loading Plugin Editor"
-msgstr ""
+msgstr "Lỗi khi tải trình sửa plugin"
 
 #: src/components/plugins/PluginUIFeature.tsx:158
 msgid "Error occurred while rendering the template preview."
-msgstr ""
+msgstr "Đã xảy ra lỗi khi hiển thị bản xem trước mẫu."
 
 #: src/components/plugins/PluginUIFeature.tsx:169
 msgid "Error Loading Plugin Preview"
-msgstr ""
+msgstr "Lỗi khi tải bản xem trước plugin"
 
 #: src/components/plugins/RemoteComponent.tsx:111
 msgid "Invalid source or function name"
-msgstr ""
+msgstr "Nguồn hoặc tên hàm không hợp lệ"
 
 #: src/components/plugins/RemoteComponent.tsx:143
 msgid "Error Loading Content"
-msgstr ""
+msgstr "Lỗi khi tải nội dung"
 
 #: src/components/plugins/RemoteComponent.tsx:147
 msgid "Error occurred while loading plugin content"
-msgstr ""
+msgstr "Đã xảy ra lỗi khi tải nội dung plugin"
 
 #: src/components/render/Instance.tsx:238
 #~ msgid "Unknown model: {model}"
@@ -3250,7 +3250,7 @@ msgstr "Số lượng"
 #: src/forms/StockForms.tsx:1189
 #: src/tables/build/BuildLineTable.tsx:96
 msgid "Batch"
-msgstr ""
+msgstr "Lô"
 
 #: src/components/settings/ConfigValueList.tsx:33
 #~ msgid "<0>{0}</0> is set via {1} and was last set {2}"
@@ -3258,21 +3258,21 @@ msgstr ""
 
 #: src/components/settings/ConfigValueList.tsx:36
 msgid "Setting"
-msgstr ""
+msgstr "Thiết lập"
 
 #: src/components/settings/ConfigValueList.tsx:39
 msgid "Source"
-msgstr ""
+msgstr "Nguồn"
 
 #: src/components/settings/QuickAction.tsx:47
 msgid "Act"
-msgstr ""
+msgstr "Thao tác"
 
 #: src/components/settings/QuickAction.tsx:73
 #: src/components/settings/QuickAction.tsx:113
 #: src/tables/settings/ProjectCodeTable.tsx:46
 msgid "Add Project Code"
-msgstr ""
+msgstr "Thêm mã dự án"
 
 #: src/components/settings/QuickAction.tsx:78
 #: src/components/settings/QuickAction.tsx:124
@@ -3280,63 +3280,63 @@ msgstr ""
 #: src/tables/settings/CustomStateTable.tsx:140
 #: src/tables/settings/CustomStateTable.tsx:202
 msgid "Add State"
-msgstr ""
+msgstr "Thêm trạng thái"
 
 #: src/components/settings/QuickAction.tsx:85
 msgid "Open an Issue"
-msgstr ""
+msgstr "Mở yêu cầu hỗ trợ"
 
 #: src/components/settings/QuickAction.tsx:86
 msgid "Report a bug or request a feature on GitHub"
-msgstr ""
+msgstr "Báo lỗi hoặc yêu cầu tính năng trên GitHub"
 
 #: src/components/settings/QuickAction.tsx:88
 msgid "Open Issue"
-msgstr ""
+msgstr "Mở yêu cầu"
 
 #: src/components/settings/QuickAction.tsx:97
 msgid "Add New Group"
-msgstr ""
+msgstr "Thêm nhóm mới"
 
 #: src/components/settings/QuickAction.tsx:98
 msgid "Create a new group to manage your users"
-msgstr ""
+msgstr "Tạo nhóm mới để quản lý người dùng"
 
 #: src/components/settings/QuickAction.tsx:100
 msgid "New Group"
-msgstr ""
+msgstr "Nhóm mới"
 
 #: src/components/settings/QuickAction.tsx:105
 msgid "Add New User"
-msgstr ""
+msgstr "Thêm người dùng mới"
 
 #: src/components/settings/QuickAction.tsx:106
 msgid "Create a new user to manage your groups"
-msgstr ""
+msgstr "Tạo người dùng mới để quản lý nhóm"
 
 #: src/components/settings/QuickAction.tsx:108
 msgid "New User"
-msgstr ""
+msgstr "Người dùng mới"
 
 #: src/components/settings/QuickAction.tsx:114
 msgid "Create a new project code to organize your items"
-msgstr ""
+msgstr "Tạo mã dự án mới để tổ chức dữ liệu"
 
 #: src/components/settings/QuickAction.tsx:116
 msgid "Add Code"
-msgstr ""
+msgstr "Thêm mã"
 
 #: src/components/settings/QuickAction.tsx:121
 msgid "Add Custom State"
-msgstr ""
+msgstr "Thêm trạng thái tùy chỉnh"
 
 #: src/components/settings/QuickAction.tsx:122
 msgid "Create a new custom state for your workflow"
-msgstr ""
+msgstr "Tạo trạng thái tùy chỉnh mới cho quy trình"
 
 #: src/components/settings/SettingItem.tsx:33
 msgid "Do you want to proceed to change this setting?"
-msgstr ""
+msgstr "Bạn có muốn tiếp tục thay đổi thiết lập này không?"
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -3345,7 +3345,7 @@ msgstr ""
 
 #: src/components/settings/SettingItem.tsx:221
 msgid "This setting requires confirmation"
-msgstr ""
+msgstr "Thiết lập này cần xác nhận"
 
 #: src/components/settings/SettingList.tsx:74
 msgid "Edit Setting"
@@ -3353,7 +3353,7 @@ msgstr "Sửa thiết lập"
 
 #: src/components/settings/SettingList.tsx:87
 msgid "Setting {key} updated successfully"
-msgstr ""
+msgstr "Đã cập nhật thiết lập {key}"
 
 #: src/components/settings/SettingList.tsx:120
 msgid "Setting updated"
@@ -3370,15 +3370,15 @@ msgstr "Lỗi sửa thiết lập"
 
 #: src/components/settings/SettingList.tsx:146
 msgid "Error loading settings"
-msgstr ""
+msgstr "Lỗi khi tải thiết lập"
 
 #: src/components/settings/SettingList.tsx:157
 msgid "No Settings"
-msgstr ""
+msgstr "Không có thiết lập"
 
 #: src/components/settings/SettingList.tsx:158
 msgid "There are no configurable settings available"
-msgstr ""
+msgstr "Không có thiết lập nào có thể cấu hình"
 
 #: src/components/settings/SettingList.tsx:197
 msgid "No settings specified"
@@ -3742,15 +3742,15 @@ msgstr "Không có cấu hình cụ thể"
 
 #: src/components/wizards/ImportPartWizard.tsx:105
 msgid "Exact Match"
-msgstr ""
+msgstr "Khớp chính xác"
 
 #: src/components/wizards/ImportPartWizard.tsx:112
 msgid "Current part"
-msgstr ""
+msgstr "Vật tư hiện tại"
 
 #: src/components/wizards/ImportPartWizard.tsx:118
 msgid "Already Imported"
-msgstr ""
+msgstr "Đã nhập"
 
 #: src/components/wizards/ImportPartWizard.tsx:205
 #: src/pages/company/CompanyDetail.tsx:137
@@ -3775,60 +3775,60 @@ msgstr "Đang tải..."
 
 #: src/components/wizards/ImportPartWizard.tsx:223
 msgid "Error fetching suppliers"
-msgstr ""
+msgstr "Lỗi khi lấy danh sách nhà cung cấp"
 
 #: src/components/wizards/ImportPartWizard.tsx:224
 msgid "Select supplier"
-msgstr ""
+msgstr "Chọn nhà cung cấp"
 
 #. placeholder {0}: searchResults.length
 #: src/components/wizards/ImportPartWizard.tsx:246
 msgid "Found {0} results"
-msgstr ""
+msgstr "Tìm thấy {0} kết quả"
 
 #: src/components/wizards/ImportPartWizard.tsx:259
 msgid "Import this part"
-msgstr ""
+msgstr "Nhập vật tư này"
 
 #: src/components/wizards/ImportPartWizard.tsx:313
 msgid "Are you sure you want to import this part into the selected category now?"
-msgstr ""
+msgstr "Bạn có chắc muốn nhập vật tư này vào danh mục đã chọn ngay bây giờ?"
 
 #: src/components/wizards/ImportPartWizard.tsx:326
 msgid "Import Now"
-msgstr ""
+msgstr "Nhập ngay"
 
 #: src/components/wizards/ImportPartWizard.tsx:372
 msgid "Select and edit the parameters you want to add to this part."
-msgstr ""
+msgstr "Chọn và sửa các thông số muốn thêm cho vật tư này."
 
 #: src/components/wizards/ImportPartWizard.tsx:379
 msgid "Default category parameters"
-msgstr ""
+msgstr "Thông số mặc định của danh mục"
 
 #: src/components/wizards/ImportPartWizard.tsx:391
 msgid "Other parameters"
-msgstr ""
+msgstr "Thông số khác"
 
 #: src/components/wizards/ImportPartWizard.tsx:446
 msgid "Add a new parameter"
-msgstr ""
+msgstr "Thêm thông số mới"
 
 #: src/components/wizards/ImportPartWizard.tsx:468
 msgid "Skip"
-msgstr ""
+msgstr "Bỏ qua"
 
 #: src/components/wizards/ImportPartWizard.tsx:476
 msgid "Create Parameters"
-msgstr ""
+msgstr "Tạo thông số"
 
 #: src/components/wizards/ImportPartWizard.tsx:493
 msgid "Create initial stock for the imported part."
-msgstr ""
+msgstr "Tạo tồn kho ban đầu cho vật tư đã nhập."
 
 #: src/components/wizards/ImportPartWizard.tsx:511
 msgid "Next"
-msgstr ""
+msgstr "Tiếp theo"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:1058
@@ -3842,23 +3842,23 @@ msgstr "Đã nhập vật tư thành công!"
 
 #: src/components/wizards/ImportPartWizard.tsx:576
 msgid "Failed to import part: "
-msgstr ""
+msgstr "Không thể nhập vật tư: "
 
 #: src/components/wizards/ImportPartWizard.tsx:641
 msgid "Are you sure, you want to import the supplier and manufacturer part into this part?"
-msgstr ""
+msgstr "Bạn có chắc muốn nhập vật tư nhà cung cấp và vật tư nhà sản xuất vào vật tư này?"
 
 #: src/components/wizards/ImportPartWizard.tsx:655
 msgid "Import"
-msgstr ""
+msgstr "Nhập"
 
 #: src/components/wizards/ImportPartWizard.tsx:692
 msgid "Parameters created successfully!"
-msgstr ""
+msgstr "Đã tạo thông số thành công!"
 
 #: src/components/wizards/ImportPartWizard.tsx:720
 msgid "Failed to create parameters, please fix the errors and try again"
-msgstr ""
+msgstr "Không thể tạo thông số, vui lòng sửa lỗi và thử lại"
 
 #. placeholder {0}: supplierPart?.supplier
 #: src/components/wizards/ImportPartWizard.tsx:740
@@ -3892,11 +3892,11 @@ msgstr "Tìm vật tư nhà cung cấp"
 
 #: src/components/wizards/ImportPartWizard.tsx:807
 msgid "Confirm import"
-msgstr ""
+msgstr "Xác nhận nhập"
 
 #: src/components/wizards/ImportPartWizard.tsx:809
 msgid "Done"
-msgstr ""
+msgstr "Hoàn tất"
 
 #: src/components/wizards/OrderPartsWizard.tsx:75
 msgid "Error fetching part requirements"
@@ -3934,7 +3934,7 @@ msgstr "Còn tồn kho"
 #: src/components/wizards/OrderPartsWizard.tsx:146
 #: src/tables/build/BuildLineTable.tsx:406
 msgid "Required Quantity"
-msgstr ""
+msgstr "Số lượng yêu cầu"
 
 #: src/components/wizards/OrderPartsWizard.tsx:203
 msgid "New Purchase Order"
@@ -4228,15 +4228,15 @@ msgstr "Mở menu điều hướng chính"
 
 #: src/defaults/actions.tsx:87
 msgid "Go to your user settings"
-msgstr ""
+msgstr "Đi tới thiết lập người dùng"
 
 #: src/defaults/actions.tsx:96
 msgid "Import Data"
-msgstr ""
+msgstr "Nhập dữ liệu"
 
 #: src/defaults/actions.tsx:97
 msgid "Import data from a file"
-msgstr ""
+msgstr "Nhập dữ liệu từ tệp"
 
 #: src/defaults/actions.tsx:107
 msgid "Go to Purchase Orders"
@@ -4252,7 +4252,7 @@ msgstr ""
 
 #: src/defaults/actions.tsx:138
 msgid "Scan a barcode or QR code"
-msgstr ""
+msgstr "Quét mã vạch hoặc mã QR"
 
 #: src/defaults/actions.tsx:147
 msgid "Go to Build Orders"
@@ -4260,7 +4260,7 @@ msgstr ""
 
 #: src/defaults/actions.tsx:156
 msgid "Go to System Settings"
-msgstr ""
+msgstr "Đi tới thiết lập hệ thống"
 
 #: src/defaults/actions.tsx:165
 msgid "Go to the Admin Center"
@@ -4268,7 +4268,7 @@ msgstr "Đi đến Trung tâm quản trị"
 
 #: src/defaults/actions.tsx:174
 msgid "Manage InvenTree plugins"
-msgstr ""
+msgstr "Quản lý plugin DTWare"
 
 #: src/defaults/dashboardItems.tsx:29
 #~ msgid "Latest Parts"
@@ -4656,7 +4656,7 @@ msgstr "IPN"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:340
 #: src/tables/stock/StockItemTable.tsx:192
 msgid "Allocated"
-msgstr ""
+msgstr "Đã phân bổ"
 
 #: src/forms/BuildForms.tsx:706
 #: src/forms/SalesOrderForms.tsx:419
@@ -4698,7 +4698,7 @@ msgstr ""
 #: src/tables/build/BuildLineTable.tsx:770
 #: src/tables/build/BuildLineTable.tsx:893
 msgid "Consume Stock"
-msgstr ""
+msgstr "Tiêu hao tồn kho"
 
 #: src/forms/BuildForms.tsx:856
 #: src/forms/BuildForms.tsx:957
@@ -4709,13 +4709,13 @@ msgstr ""
 #: src/tables/build/BuildLineTable.tsx:516
 #: src/tables/part/PartBuildAllocationsTable.tsx:101
 msgid "Fully consumed"
-msgstr ""
+msgstr "Đã tiêu hao đủ"
 
 #: src/forms/BuildForms.tsx:938
 #: src/tables/build/BuildLineTable.tsx:193
 #: src/tables/stock/StockItemTable.tsx:221
 msgid "Consumed"
-msgstr ""
+msgstr "Đã tiêu hao"
 
 #: src/forms/CommonForms.tsx:93
 #: src/forms/PurchaseOrderForms.tsx:173
@@ -4735,11 +4735,11 @@ msgstr ""
 #: src/tables/part/PartCategoryTable.tsx:96
 #: src/tables/part/PartTable.tsx:322
 msgid "Subscribed"
-msgstr ""
+msgstr "Đã theo dõi"
 
 #: src/forms/PartForms.tsx:102
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "Theo dõi thông báo cho vật tư này"
 
 #: src/forms/PartForms.tsx:108
 #~ msgid "Part created"
@@ -4755,7 +4755,7 @@ msgstr "Danh mục phụ kiện cha"
 
 #: src/forms/PartForms.tsx:231
 msgid "Subscribe to notifications for this category"
-msgstr ""
+msgstr "Theo dõi thông báo cho danh mục này"
 
 #: src/forms/PurchaseOrderForms.tsx:421
 #~ msgid "Assign Batch Code{0}"
@@ -4947,7 +4947,7 @@ msgstr ""
 #: src/forms/SalesOrderForms.tsx:216
 #: src/tables/sales/SalesOrderShipmentTable.tsx:210
 msgid "Check Shipment"
-msgstr ""
+msgstr "Xác nhận phiếu giao hàng"
 
 #: src/forms/SalesOrderForms.tsx:217
 msgid "Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct"
@@ -4961,7 +4961,7 @@ msgstr ""
 #: src/forms/SalesOrderForms.tsx:244
 #: src/tables/sales/SalesOrderShipmentTable.tsx:223
 msgid "Uncheck Shipment"
-msgstr ""
+msgstr "Bỏ xác nhận phiếu giao hàng"
 
 #: src/forms/SalesOrderForms.tsx:245
 msgid "Marking the shipment as unchecked indicates that the shipment requires further verification"
@@ -4982,7 +4982,7 @@ msgstr ""
 #: src/forms/SalesOrderForms.tsx:281
 #: src/tables/sales/SalesOrderShipmentTable.tsx:233
 msgid "Complete Shipment"
-msgstr ""
+msgstr "Hoàn tất phiếu giao hàng"
 
 #: src/forms/SalesOrderForms.tsx:527
 msgid "Leave blank to use the order address"
@@ -5284,11 +5284,11 @@ msgstr ""
 
 #: src/functions/auth.tsx:186
 msgid "MFA Login successful"
-msgstr ""
+msgstr "Đăng nhập MFA thành công"
 
 #: src/functions/auth.tsx:187
 msgid "MFA details were automatically provided in the browser"
-msgstr ""
+msgstr "Thông tin MFA đã được trình duyệt cung cấp tự động"
 
 #: src/functions/auth.tsx:217
 msgid "Successfully logged out"
@@ -5300,7 +5300,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:285
 msgid "Your active language has been changed to the one set in your profile"
-msgstr ""
+msgstr "Ngôn ngữ hiện tại đã được đổi theo hồ sơ của bạn"
 
 #: src/functions/auth.tsx:306
 msgid "Theme changed"
@@ -5308,7 +5308,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:307
 msgid "Your active theme has been changed to the one set in your profile"
-msgstr ""
+msgstr "Giao diện hiện tại đã được đổi theo hồ sơ của bạn"
 
 #: src/functions/auth.tsx:342
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
@@ -5337,15 +5337,15 @@ msgstr "Đăng nhập thành công."
 
 #: src/functions/auth.tsx:568
 msgid "Failed to set up MFA"
-msgstr ""
+msgstr "Không thể thiết lập MFA"
 
 #: src/functions/auth.tsx:587
 msgid "MFA Setup successful"
-msgstr ""
+msgstr "Thiết lập MFA thành công"
 
 #: src/functions/auth.tsx:588
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
-msgstr ""
+msgstr "Đã thiết lập MFA qua TOTP thành công; bạn cần đăng nhập lại."
 
 #: src/functions/auth.tsx:603
 msgid "Password set"
@@ -5358,15 +5358,15 @@ msgstr "Mật khẩu đã được đặt mới thành công. Bạn có thể đ
 
 #: src/functions/auth.tsx:678
 msgid "Password could not be changed"
-msgstr ""
+msgstr "Không thể đổi mật khẩu"
 
 #: src/functions/auth.tsx:696
 msgid "The two password fields didn’t match"
-msgstr ""
+msgstr "Hai trường mật khẩu không khớp"
 
 #: src/functions/auth.tsx:712
 msgid "Password Changed"
-msgstr ""
+msgstr "Đã đổi mật khẩu"
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
@@ -5390,15 +5390,15 @@ msgstr ""
 
 #: src/hooks/UseDataExport.tsx:34
 msgid "Exporting Data"
-msgstr ""
+msgstr "Đang xuất dữ liệu"
 
 #: src/hooks/UseDataExport.tsx:111
 msgid "Export Data"
-msgstr ""
+msgstr "Xuất dữ liệu"
 
 #: src/hooks/UseDataExport.tsx:114
 msgid "Export"
-msgstr ""
+msgstr "Xuất"
 
 #: src/hooks/UseForm.tsx:102
 msgid "Item Created"
@@ -5484,35 +5484,35 @@ msgstr "Thao tác tồn kho"
 #: src/pages/Auth/ChangePassword.tsx:32
 #: src/pages/Auth/Reset.tsx:14
 msgid "Reset Password"
-msgstr ""
+msgstr "Đặt lại mật khẩu"
 
 #: src/pages/Auth/ChangePassword.tsx:46
 msgid "Current Password"
-msgstr ""
+msgstr "Mật khẩu hiện tại"
 
 #: src/pages/Auth/ChangePassword.tsx:47
 msgid "Enter your current password"
-msgstr ""
+msgstr "Nhập mật khẩu hiện tại"
 
 #: src/pages/Auth/ChangePassword.tsx:53
 msgid "New Password"
-msgstr ""
+msgstr "Mật khẩu mới"
 
 #: src/pages/Auth/ChangePassword.tsx:54
 msgid "Enter your new password"
-msgstr ""
+msgstr "Nhập mật khẩu mới"
 
 #: src/pages/Auth/ChangePassword.tsx:60
 msgid "Confirm New Password"
-msgstr ""
+msgstr "Xác nhận mật khẩu mới"
 
 #: src/pages/Auth/ChangePassword.tsx:61
 msgid "Confirm your new password"
-msgstr ""
+msgstr "Xác nhận mật khẩu mới của bạn"
 
 #: src/pages/Auth/ChangePassword.tsx:80
 msgid "Confirm"
-msgstr ""
+msgstr "Xác nhận"
 
 #: src/pages/Auth/Layout.tsx:59
 msgid "Log off"
@@ -5562,36 +5562,36 @@ msgstr "Chưa có tài khoản?"
 #: src/pages/Auth/MFA.tsx:29
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:86
 msgid "Multi-Factor Authentication"
-msgstr ""
+msgstr "Xác thực đa yếu tố"
 
 #: src/pages/Auth/MFA.tsx:33
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:219
 msgid "TOTP Code"
-msgstr ""
+msgstr "Mã TOTP"
 
 #: src/pages/Auth/MFA.tsx:35
 msgid "Enter one of your codes: {mfa_types}"
-msgstr ""
+msgstr "Nhập một trong các mã của bạn: {mfa_types}"
 
 #: src/pages/Auth/MFA.tsx:42
 msgid "Remember this device"
-msgstr ""
+msgstr "Ghi nhớ thiết bị này"
 
 #: src/pages/Auth/MFA.tsx:44
 msgid "If enabled, you will not be asked for MFA on this device for 30 days."
-msgstr ""
+msgstr "Nếu bật, bạn sẽ không bị hỏi MFA trên thiết bị này trong 30 ngày."
 
 #: src/pages/Auth/MFA.tsx:53
 msgid "Log in"
-msgstr ""
+msgstr "Đăng nhập"
 
 #: src/pages/Auth/MFASetup.tsx:23
 msgid "MFA Setup Required"
-msgstr ""
+msgstr "Cần thiết lập MFA"
 
 #: src/pages/Auth/MFASetup.tsx:34
 msgid "Add TOTP"
-msgstr ""
+msgstr "Thêm TOTP"
 
 #: src/pages/Auth/Register.tsx:23
 msgid "Go back to login"
@@ -5605,11 +5605,11 @@ msgstr "Về trang đăng nhập"
 #: src/pages/Auth/ResetPassword.tsx:22
 #: src/pages/Auth/VerifyEmail.tsx:19
 msgid "Key invalid"
-msgstr ""
+msgstr "Khóa không hợp lệ"
 
 #: src/pages/Auth/ResetPassword.tsx:23
 msgid "You need to provide a valid key to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Bạn cần cung cấp khóa hợp lệ để đặt mật khẩu mới. Hãy kiểm tra hộp thư để lấy liên kết đặt lại."
 
 #: src/pages/Auth/ResetPassword.tsx:30
 #~ msgid "Token invalid"
@@ -5625,11 +5625,11 @@ msgstr "Đặt mật khẩu mới"
 
 #: src/pages/Auth/ResetPassword.tsx:35
 msgid "The desired new password"
-msgstr ""
+msgstr "Mật khẩu mới mong muốn"
 
 #: src/pages/Auth/ResetPassword.tsx:44
 msgid "Send Password"
-msgstr ""
+msgstr "Gửi mật khẩu"
 
 #: src/pages/Auth/Set-Password.tsx:49
 #~ msgid "No token provided"
@@ -5641,15 +5641,15 @@ msgstr ""
 
 #: src/pages/Auth/VerifyEmail.tsx:20
 msgid "You need to provide a valid key."
-msgstr ""
+msgstr "Bạn cần cung cấp khóa hợp lệ."
 
 #: src/pages/Auth/VerifyEmail.tsx:28
 msgid "Verify Email"
-msgstr ""
+msgstr "Xác minh email"
 
 #: src/pages/Auth/VerifyEmail.tsx:30
 msgid "Verify"
-msgstr ""
+msgstr "Xác minh"
 
 #. placeholder {0}: error.statusText
 #: src/pages/ErrorPage.tsx:16
@@ -5818,7 +5818,7 @@ msgstr "Đã xảy ra lỗi không mong muốn."
 
 #: src/pages/Index/Scan.tsx:63
 msgid "Item already scanned"
-msgstr ""
+msgstr "Mục này đã được quét"
 
 #: src/pages/Index/Scan.tsx:80
 msgid "API Error"
@@ -5851,11 +5851,11 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:192
 #: src/pages/Index/Scan.tsx:196
 msgid "Barcode Scanning"
-msgstr ""
+msgstr "Quét mã vạch"
 
 #: src/pages/Index/Scan.tsx:205
 msgid "Barcode Input"
-msgstr ""
+msgstr "Nhập mã vạch"
 
 #: src/pages/Index/Scan.tsx:212
 msgid "Action"
@@ -5986,7 +5986,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:33
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:113
 msgid "Edit Account Information"
-msgstr ""
+msgstr "Sửa thông tin tài khoản"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:34
 #~ msgid "User details updated"
@@ -5994,7 +5994,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:37
 msgid "Account details updated"
-msgstr ""
+msgstr "Đã cập nhật thông tin tài khoản"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 #~ msgid "User Actions"
@@ -6007,7 +6007,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:136
 msgid "Edit Profile Information"
-msgstr ""
+msgstr "Sửa thông tin hồ sơ"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #~ msgid "Last name"
@@ -6023,7 +6023,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:59
 msgid "Profile details updated"
-msgstr ""
+msgstr "Đã cập nhật thông tin hồ sơ"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
@@ -6032,12 +6032,12 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:65
 #: src/pages/core/UserDetail.tsx:55
 msgid "First Name"
-msgstr ""
+msgstr "Tên"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:66
 #: src/pages/core/UserDetail.tsx:63
 msgid "Last Name"
-msgstr ""
+msgstr "Họ"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:67
 #~ msgid "First name:"
@@ -6055,26 +6055,26 @@ msgstr ""
 #: src/pages/core/UserDetail.tsx:119
 #: src/tables/settings/CustomStateTable.tsx:101
 msgid "Display Name"
-msgstr ""
+msgstr "Tên hiển thị"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:86
 #: src/pages/core/UserDetail.tsx:127
 msgid "Position"
-msgstr ""
+msgstr "Chức vụ"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:967
 msgid "Type"
-msgstr ""
+msgstr "Loại"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:91
 #: src/pages/core/UserDetail.tsx:143
 msgid "Organisation"
-msgstr ""
+msgstr "Tổ chức"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:92
 msgid "Primary Group"
-msgstr ""
+msgstr "Nhóm chính"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:104
 msgid "Account Details"
