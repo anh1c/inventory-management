@@ -16,11 +16,20 @@ export const defaultLocale = 'vi';
  * Function which returns a record of supported languages.
  * Note that this is not a constant, as it is used in the LanguageSelect component
  */
-export const getSupportedLanguages = (): Record<string, string> => {
-  return {
-    vi: 'Tiếng Việt',
-    en: 'English'
-  };
+export const getSupportedLanguages = (
+  locale: string | null = i18n.locale
+): Record<string, string> => {
+  const vietnameseLabels = (locale ?? defaultLocale).startsWith('vi');
+
+  return vietnameseLabels
+    ? {
+        vi: 'Tiếng Việt',
+        en: 'Tiếng Anh'
+      }
+    : {
+        vi: 'Vietnamese',
+        en: 'English'
+      };
 };
 
 export function LanguageContext({

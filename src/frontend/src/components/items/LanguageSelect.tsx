@@ -24,7 +24,7 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
 
   // set language on component load
   useEffect(() => {
-    const languages = getSupportedLanguages();
+    const languages = getSupportedLanguages(locale);
 
     const newLangOptions = Object.keys(languages).map((key) => ({
       value: key,

@@ -22,7 +22,6 @@ import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
 import { StylishText } from '../../../../components/items/StylishText';
 import { SizeMarks } from '../../../../defaults/defaults';
-import { IS_DEV } from '../../../../main';
 import { useLocalState } from '../../../../states/LocalState';
 
 function getLkp(color: string) {
@@ -35,8 +34,8 @@ const LOOKUP = Object.assign(
 
 export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
-  const [userTheme, setTheme, setLanguage] = useLocalState(
-    useShallow((state) => [state.userTheme, state.setTheme, state.setLanguage])
+  const [userTheme, setTheme] = useLocalState(
+    useShallow((state) => [state.userTheme, state.setTheme])
   );
 
   // radius
@@ -69,16 +68,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <LanguageSelect width={200} />
             </Table.Td>
-            <Table.Td>
-              {IS_DEV && (
-                <Button
-                  onClick={() => setLanguage('pseudo-LOCALE', true)}
-                  variant='light'
-                >
-                  <Trans>Use pseudo language</Trans>
-                </Button>
-              )}
-            </Table.Td>
+            <Table.Td />
           </Table.Tr>
           <Table.Tr>
             <Table.Td>
