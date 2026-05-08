@@ -61,41 +61,41 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     return [
       {
         id: 'home',
-        title: t`Dashboard`,
+        title: t`Bảng điều khiển`,
         link: '/',
         icon: 'dashboard'
       },
       {
         id: 'parts',
-        title: t`Parts`,
+        title: t`Linh kiện`,
         hidden: !user.hasViewPermission(ModelType.part),
         link: '/part',
         icon: 'part'
       },
       {
         id: 'stock',
-        title: t`Stock`,
+        title: t`Kho`,
         link: '/stock',
         hidden: !user.hasViewPermission(ModelType.stockitem),
         icon: 'stock'
       },
       {
         id: 'build',
-        title: t`Manufacturing`,
+        title: t`Sản xuất`,
         link: '/manufacturing/',
         hidden: !user.hasViewRole(UserRoles.build),
         icon: 'build'
       },
       {
         id: 'purchasing',
-        title: t`Purchasing`,
+        title: t`Mua hàng`,
         link: '/purchasing/',
         hidden: !user.hasViewRole(UserRoles.purchase_order),
         icon: 'purchase_orders'
       },
       {
         id: 'sales',
-        title: t`Sales`,
+        title: t`Bán hàng`,
         link: '/sales/',
         hidden: !user.hasViewRole(UserRoles.sales_order),
         icon: 'sales_orders'

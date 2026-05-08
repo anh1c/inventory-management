@@ -41,7 +41,7 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
       data={[
         {
           value: '',
-          label: t`Default Language`
+          label: t`Ngôn ngữ mặc định`
         },
         ...langOptions
       ]}
@@ -49,7 +49,7 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
       defaultValue={''}
       onChange={setValue}
       searchable
-      aria-label={t`Select language`}
+      aria-label={t`Chọn ngôn ngữ`}
     />
   );
 }

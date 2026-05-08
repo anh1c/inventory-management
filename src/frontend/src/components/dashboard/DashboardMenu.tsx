@@ -91,7 +91,7 @@ export default function DashboardMenu({
 
             <Menu.Dropdown>
               <Menu.Label>
-                <Trans>Dashboard</Trans>
+                <Trans>Bảng điều khiển</Trans>
               </Menu.Label>
 
               {!editing && !removing && (

@@ -147,8 +147,6 @@ msgstr "Part"
 
 #: lib/enums/ModelInformation.tsx:30
 #: lib/enums/Roles.tsx:35
-#: src/components/nav/NavigationDrawer.tsx:70
-#: src/defaults/links.tsx:36
 #: src/pages/Index/Settings/SystemSettings.tsx:199
 #: src/pages/part/CategoryDetail.tsx:135
 #: src/pages/part/CategoryDetail.tsx:285
@@ -572,7 +570,7 @@ msgstr "Selection Entries"
 #: lib/enums/ModelInformation.tsx:298
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/buttons/StarredToggleButton.tsx:46
-#: src/components/dashboard/DashboardLayout.tsx:281
+#: src/components/dashboard/DashboardLayout.tsx:251
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 #: src/components/forms/fields/ApiFormField.tsx:251
@@ -980,15 +978,15 @@ msgstr "Error updating order"
 msgid "Overdue"
 msgstr "Overdue"
 
-#: src/components/dashboard/DashboardLayout.tsx:282
+#: src/components/dashboard/DashboardLayout.tsx:252
 msgid "Failed to load dashboard widgets."
 msgstr "Failed to load dashboard widgets."
 
-#: src/components/dashboard/DashboardLayout.tsx:293
+#: src/components/dashboard/DashboardLayout.tsx:263
 msgid "No Widgets Selected"
 msgstr "No Widgets Selected"
 
-#: src/components/dashboard/DashboardLayout.tsx:296
+#: src/components/dashboard/DashboardLayout.tsx:266
 msgid "Use the menu to add widgets to the dashboard"
 msgstr "Use the menu to add widgets to the dashboard"
 
@@ -1002,8 +1000,21 @@ msgstr "Accept Layout"
 #: src/defaults/actions.tsx:42
 #: src/defaults/links.tsx:31
 #: src/pages/Index/Home.tsx:8
-msgid "Dashboard"
+msgid "Bảng điều khiển"
 msgstr "Dashboard"
+
+#: src/components/dashboard/DashboardMenu.tsx:94
+#: src/components/nav/NavigationDrawer.tsx:64
+#: src/defaults/actions.tsx:42
+#: src/defaults/links.tsx:31
+#: src/pages/Index/Home.tsx:8
+#~ msgid "Báo cáo"
+#~ msgstr "Reports"
+
+#: src/components/dashboard/DashboardMenu.tsx:94
+#: src/pages/Index/Home.tsx:8
+#~ msgid "Dashboard"
+#~ msgstr "Dashboard"
 
 #: src/components/dashboard/DashboardMenu.tsx:102
 msgid "Edit Layout"
@@ -1025,6 +1036,10 @@ msgstr "Clear Widgets"
 msgid "Remove this widget from the dashboard"
 msgstr "Remove this widget from the dashboard"
 
+#: src/components/dashboard/DashboardWidgetDrawer.tsx:69
+msgid "Thêm tiện ích báo cáo"
+msgstr "Add report widgets"
+
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:77
 msgid "Filter dashboard widgets"
 msgstr "Filter dashboard widgets"
@@ -1041,190 +1056,179 @@ msgstr "No Widgets Available"
 msgid "There are no more widgets available for the dashboard"
 msgstr "There are no more widgets available for the dashboard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:25
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:23
 msgid "Subscribed Parts"
 msgstr "Subscribed Parts"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:26
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:24
 msgid "Show the number of parts which you have subscribed to"
 msgstr "Show the number of parts which you have subscribed to"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:32
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:30
 msgid "Subscribed Categories"
 msgstr "Subscribed Categories"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:33
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:31
 msgid "Show the number of part categories which you have subscribed to"
 msgstr "Show the number of part categories which you have subscribed to"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:42
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:40
 msgid "Invalid BOMs"
 msgstr "Invalid BOMs"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:43
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:41
 msgid "Assemblies requiring bill of materials validation"
 msgstr "Assemblies requiring bill of materials validation"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:54
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:52
 #: src/tables/part/PartTable.tsx:264
 msgid "Low Stock"
 msgstr "Low Stock"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:56
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:54
 msgid "Show the number of parts which are low on stock"
 msgstr "Show the number of parts which are low on stock"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:65
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:63
 msgid "Required for Build Orders"
 msgstr "Required for Build Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:67
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:65
 msgid "Show parts which are required for active build orders"
 msgstr "Show parts which are required for active build orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:72
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:70
 msgid "Expired Stock Items"
 msgstr "Expired Stock Items"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:74
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:72
 msgid "Show the number of stock items which have expired"
 msgstr "Show the number of stock items which have expired"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:80
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:78
 msgid "Stale Stock Items"
 msgstr "Stale Stock Items"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:82
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:80
 msgid "Show the number of stock items which are stale"
 msgstr "Show the number of stock items which are stale"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:88
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:86
 msgid "Active Build Orders"
 msgstr "Active Build Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:90
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:88
 msgid "Show the number of build orders which are currently active"
 msgstr "Show the number of build orders which are currently active"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:95
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:93
 msgid "Overdue Build Orders"
 msgstr "Overdue Build Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:97
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:95
 msgid "Show the number of build orders which are overdue"
 msgstr "Show the number of build orders which are overdue"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:102
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:100
 msgid "Assigned Build Orders"
 msgstr "Assigned Build Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:104
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:102
 msgid "Show the number of build orders which are assigned to you"
 msgstr "Show the number of build orders which are assigned to you"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:109
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:107
 msgid "Active Sales Orders"
 msgstr "Active Sales Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:111
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:109
 msgid "Show the number of sales orders which are currently active"
 msgstr "Show the number of sales orders which are currently active"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:116
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:114
 msgid "Overdue Sales Orders"
 msgstr "Overdue Sales Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:118
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:116
 msgid "Show the number of sales orders which are overdue"
 msgstr "Show the number of sales orders which are overdue"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:123
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:121
 msgid "Assigned Sales Orders"
 msgstr "Assigned Sales Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:125
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:123
 msgid "Show the number of sales orders which are assigned to you"
 msgstr "Show the number of sales orders which are assigned to you"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:130
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:128
 #: src/pages/sales/SalesIndex.tsx:87
 msgid "Pending Shipments"
 msgstr "Pending Shipments"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:132
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:130
 msgid "Show the number of pending sales order shipments"
 msgstr "Show the number of pending sales order shipments"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:137
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:135
 msgid "Active Purchase Orders"
 msgstr "Active Purchase Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:139
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:137
 msgid "Show the number of purchase orders which are currently active"
 msgstr "Show the number of purchase orders which are currently active"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:144
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:142
 msgid "Overdue Purchase Orders"
 msgstr "Overdue Purchase Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:146
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:144
 msgid "Show the number of purchase orders which are overdue"
 msgstr "Show the number of purchase orders which are overdue"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:151
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:149
 msgid "Assigned Purchase Orders"
 msgstr "Assigned Purchase Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:153
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:151
 msgid "Show the number of purchase orders which are assigned to you"
 msgstr "Show the number of purchase orders which are assigned to you"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:158
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:156
 msgid "Active Return Orders"
 msgstr "Active Return Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:160
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:158
 msgid "Show the number of return orders which are currently active"
 msgstr "Show the number of return orders which are currently active"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:165
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:163
 msgid "Overdue Return Orders"
 msgstr "Overdue Return Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:167
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:165
 msgid "Show the number of return orders which are overdue"
 msgstr "Show the number of return orders which are overdue"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:172
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:170
 msgid "Assigned Return Orders"
 msgstr "Assigned Return Orders"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:174
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:172
 msgid "Show the number of return orders which are assigned to you"
 msgstr "Show the number of return orders which are assigned to you"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:194
-#: src/components/dashboard/widgets/GetStartedWidget.tsx:15
-#: src/defaults/links.tsx:86
-msgid "Getting Started"
-msgstr "Getting Started"
-
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:195
 #: src/defaults/links.tsx:89
-msgid "Getting started with InvenTree"
-msgstr "Getting started with InvenTree"
-
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:202
-#: src/components/dashboard/widgets/NewsWidget.tsx:123
-msgid "News Updates"
-msgstr "News Updates"
+#~ msgid "Getting started with InvenTree"
+#~ msgstr "Getting started with InvenTree"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:203
-msgid "The latest news from InvenTree"
-msgstr "The latest news from InvenTree"
+#~ msgid "The latest news from InvenTree"
+#~ msgstr "The latest news from InvenTree"
 
 #: src/components/dashboard/widgets/ColorToggleWidget.tsx:18
-#: src/components/nav/MainMenu.tsx:93
+#: src/components/nav/MainMenu.tsx:94
 msgid "Change Color Mode"
 msgstr "Change Color Mode"
 
@@ -1253,6 +1257,10 @@ msgstr "Requires Superuser"
 #: src/components/dashboard/widgets/NewsWidget.tsx:116
 msgid "This widget requires superuser permissions"
 msgstr "This widget requires superuser permissions"
+
+#: src/components/dashboard/widgets/NewsWidget.tsx:123
+msgid "News Updates"
+msgstr "News Updates"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:133
 msgid "No News"
@@ -1804,7 +1812,7 @@ msgid "Repeat password"
 msgstr "Repeat password"
 
 #: src/components/forms/AuthenticationForm.tsx:332
-#: src/pages/Auth/Login.tsx:128
+#: src/pages/Auth/Login.tsx:137
 #: src/pages/Auth/Register.tsx:13
 msgid "Register"
 msgstr "Register"
@@ -1916,7 +1924,7 @@ msgid "Version"
 msgstr "Version"
 
 #: src/components/forms/InstanceOptions.tsx:137
-#: src/components/modals/AboutInvenTreeModal.tsx:119
+#: src/components/modals/AboutInvenTreeModal.tsx:118
 #: src/components/modals/ServerInfoModal.tsx:34
 msgid "API Version"
 msgstr "API Version"
@@ -2173,7 +2181,7 @@ msgid "Data has been imported successfully"
 msgstr "Data has been imported successfully"
 
 #: src/components/importer/ImporterDrawer.tsx:119
-#: src/components/modals/AboutInvenTreeModal.tsx:200
+#: src/components/modals/AboutInvenTreeModal.tsx:199
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
 #: src/forms/BomForms.tsx:137
@@ -2283,19 +2291,28 @@ msgstr "Unknown error"
 msgid "None"
 msgstr "None"
 
-#: src/components/items/InvenTreeLogo.tsx:36
-#: src/components/items/InvenTreeLogo.tsx:40
+#: src/components/items/InvenTreeLogo.tsx:38
+#: src/components/items/InvenTreeLogo.tsx:47
 msgid "InvenTree Logo"
 msgstr "InvenTree Logo"
 
 #: src/components/items/LanguageSelect.tsx:44
-msgid "Default Language"
+msgid "Ngôn ngữ mặc định"
 msgstr "Default Language"
+
+#: src/components/items/LanguageSelect.tsx:44
+#~ msgid "Default Language"
+#~ msgstr "Default Language"
 
 #: src/components/items/LanguageSelect.tsx:52
 #: src/components/items/LanguageToggle.tsx:21
-msgid "Select language"
+msgid "Chọn ngôn ngữ"
 msgstr "Select language"
+
+#: src/components/items/LanguageSelect.tsx:52
+#: src/components/items/LanguageToggle.tsx:21
+#~ msgid "Select language"
+#~ msgstr "Select language"
 
 #: src/components/items/OnlyStaff.tsx:10
 #: src/components/modals/AboutInvenTreeModal.tsx:50
@@ -2392,66 +2409,92 @@ msgstr "Selected"
 #~ msgstr "Your InvenTree version status is"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:113
-msgid "InvenTree Version"
-msgstr "InvenTree Version"
+msgid "DTWare Version"
+msgstr "DTWare Version"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:125
+#: src/components/modals/AboutInvenTreeModal.tsx:113
+#~ msgid "InvenTree Version"
+#~ msgstr "InvenTree Version"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:124
 msgid "Python Version"
 msgstr "Python Version"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:130
+#: src/components/modals/AboutInvenTreeModal.tsx:129
 msgid "Django Version"
 msgstr "Django Version"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:139
+#: src/components/modals/AboutInvenTreeModal.tsx:138
 msgid "Commit Hash"
 msgstr "Commit Hash"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:144
+#: src/components/modals/AboutInvenTreeModal.tsx:143
 msgid "Commit Date"
 msgstr "Commit Date"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:149
+#: src/components/modals/AboutInvenTreeModal.tsx:148
 msgid "Commit Branch"
 msgstr "Commit Branch"
 
+#: src/components/modals/AboutInvenTreeModal.tsx:159
+#: src/defaults/actions.tsx:65
+#: src/defaults/links.tsx:127
+#: src/defaults/links.tsx:168
+msgid "System Details"
+msgstr "System Details"
+
 #: src/components/modals/AboutInvenTreeModal.tsx:160
-msgid "Version Information"
-msgstr "Version Information"
+#~ msgid "Version Information"
+#~ msgstr "Version Information"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:165
 #~ msgid "Credits"
 #~ msgstr "Credits"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
+msgid "Resources"
+msgstr "Resources"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:168
 #~ msgid "InvenTree Documentation"
 #~ msgstr "InvenTree Documentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
-msgid "Links"
-msgstr "Links"
+#~ msgid "Links"
+#~ msgstr "Links"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 #~ msgid "View Code on GitHub"
 #~ msgstr "View Code on GitHub"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:175
+#: src/components/modals/AboutInvenTreeModal.tsx:174
 #: src/components/nav/NavigationDrawer.tsx:208
-#: src/defaults/actions.tsx:49
 msgid "Documentation"
 msgstr "Documentation"
 
+#: src/components/modals/AboutInvenTreeModal.tsx:175
+msgid "Technical Reference"
+msgstr "Technical Reference"
+
 #: src/components/modals/AboutInvenTreeModal.tsx:176
-msgid "Source Code"
-msgstr "Source Code"
+msgid "Application Access"
+msgstr "Application Access"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:176
+#~ msgid "Source Code"
+#~ msgstr "Source Code"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:177
-msgid "Mobile App"
-msgstr "Mobile App"
+msgid "Support Request"
+msgstr "Support Request"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:178
-msgid "Submit Bug Report"
-msgstr "Submit Bug Report"
+#: src/components/modals/AboutInvenTreeModal.tsx:177
+#~ msgid "Mobile App"
+#~ msgstr "Mobile App"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:189
+msgid "Copy system details"
+msgstr "Copy system details"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:189
 #: src/components/modals/ServerInfoModal.tsx:147
@@ -2459,18 +2502,22 @@ msgstr "Submit Bug Report"
 #~ msgstr "Dismiss"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:190
-msgid "Copy version information"
-msgstr "Copy version information"
+#~ msgid "Copy version information"
+#~ msgstr "Copy version information"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:209
+msgid "Demo Build"
+msgstr "Demo Build"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:210
-msgid "Development Version"
-msgstr "Development Version"
+#~ msgid "Development Version"
+#~ msgstr "Development Version"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:212
+#: src/components/modals/AboutInvenTreeModal.tsx:211
 msgid "Up to Date"
 msgstr "Up to Date"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:214
+#: src/components/modals/AboutInvenTreeModal.tsx:213
 msgid "Update Available"
 msgstr "Update Available"
 
@@ -2665,7 +2712,7 @@ msgstr "Nothing found..."
 #~ msgid "Profile"
 #~ msgstr "Profile"
 
-#: src/components/nav/MainMenu.tsx:54
+#: src/components/nav/MainMenu.tsx:55
 #: src/components/nav/NavigationDrawer.tsx:185
 #: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:21
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:39
@@ -2678,6 +2725,11 @@ msgstr "Settings"
 #~ msgstr "Account settings"
 
 #: src/components/nav/MainMenu.tsx:61
+#: src/pages/Index/Settings/UserSettings.tsx:145
+#~ msgid "Account Settings"
+#~ msgstr "Account Settings"
+
+#: src/components/nav/MainMenu.tsx:62
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:86
@@ -2686,19 +2738,15 @@ msgstr "Settings"
 msgid "User Settings"
 msgstr "User Settings"
 
-#: src/components/nav/MainMenu.tsx:61
-#: src/pages/Index/Settings/UserSettings.tsx:145
-#~ msgid "Account Settings"
-#~ msgstr "Account Settings"
-
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
 #~ msgstr "Current language {locale}"
 
-#: src/components/nav/MainMenu.tsx:69
+#: src/components/nav/MainMenu.tsx:70
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:155
+#: src/defaults/links.tsx:100
 #: src/pages/Index/Settings/SystemSettings.tsx:368
 #: src/pages/Index/Settings/SystemSettings.tsx:373
 msgid "System Settings"
@@ -2708,7 +2756,7 @@ msgstr "System Settings"
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
 
-#: src/components/nav/MainMenu.tsx:78
+#: src/components/nav/MainMenu.tsx:79
 #: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:42
 #: src/defaults/actions.tsx:164
@@ -2717,14 +2765,11 @@ msgstr "System Settings"
 msgid "Admin Center"
 msgstr "Admin Center"
 
-#: src/components/nav/MainMenu.tsx:99
-#: src/defaults/actions.tsx:58
-#: src/defaults/links.tsx:140
-#: src/defaults/links.tsx:186
+#: src/components/nav/MainMenu.tsx:100
 msgid "About InvenTree"
 msgstr "About InvenTree"
 
-#: src/components/nav/MainMenu.tsx:108
+#: src/components/nav/MainMenu.tsx:109
 msgid "Logout"
 msgstr "Logout"
 
@@ -2745,46 +2790,29 @@ msgstr "Logout"
 #~ msgid "Pages"
 #~ msgstr "Pages"
 
+#: src/components/nav/NavigationDrawer.tsx:70
+#: src/defaults/links.tsx:36
+msgid "Linh kiện"
+msgstr "Parts"
+
 #: src/components/nav/NavigationDrawer.tsx:77
-#: src/components/render/Part.tsx:36
-#: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:42
-#: src/forms/StockForms.tsx:803
-#: src/pages/Index/Settings/SystemSettings.tsx:233
-#: src/pages/part/PartDetail.tsx:770
-#: src/pages/stock/LocationDetail.tsx:427
-#: src/pages/stock/LocationDetail.tsx:457
-#: src/pages/stock/StockDetail.tsx:643
-#: src/tables/stock/StockItemTable.tsx:75
-msgid "Stock"
+msgid "Kho"
 msgstr "Stock"
 
 #: src/components/nav/NavigationDrawer.tsx:84
 #: src/defaults/links.tsx:48
-#: src/pages/build/BuildDetail.tsx:775
-#: src/pages/build/BuildIndex.tsx:101
-msgid "Manufacturing"
+msgid "Sản xuất"
 msgstr "Manufacturing"
 
 #: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:54
-#: src/pages/company/ManufacturerDetail.tsx:9
-#: src/pages/company/ManufacturerPartDetail.tsx:268
-#: src/pages/company/SupplierDetail.tsx:9
-#: src/pages/company/SupplierPartDetail.tsx:366
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:568
-#: src/pages/purchasing/PurchasingIndex.tsx:214
-msgid "Purchasing"
+msgid "Mua hàng"
 msgstr "Purchasing"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:60
-#: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:569
-#: src/pages/sales/SalesIndex.tsx:169
-#: src/pages/sales/SalesOrderDetail.tsx:634
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:442
-msgid "Sales"
+msgid "Bán hàng"
 msgstr "Sales"
 
 #: src/components/nav/NavigationDrawer.tsx:180
@@ -3135,6 +3163,18 @@ msgstr "Virtual"
 msgid "No stock"
 msgstr "No stock"
 
+#: src/components/render/Part.tsx:36
+#: src/components/wizards/ImportPartWizard.tsx:808
+#: src/forms/StockForms.tsx:803
+#: src/pages/Index/Settings/SystemSettings.tsx:233
+#: src/pages/part/PartDetail.tsx:770
+#: src/pages/stock/LocationDetail.tsx:427
+#: src/pages/stock/LocationDetail.tsx:457
+#: src/pages/stock/StockDetail.tsx:643
+#: src/tables/stock/StockItemTable.tsx:75
+msgid "Stock"
+msgstr "Stock"
+
 #: src/components/render/Part.tsx:47
 #: src/components/wizards/OrderPartsWizard.tsx:135
 #: src/pages/company/SupplierPartDetail.tsx:198
@@ -3264,13 +3304,13 @@ msgid "Act"
 msgstr "Act"
 
 #: src/components/settings/QuickAction.tsx:73
-#: src/components/settings/QuickAction.tsx:113
+#: src/components/settings/QuickAction.tsx:109
 #: src/tables/settings/ProjectCodeTable.tsx:46
 msgid "Add Project Code"
 msgstr "Add Project Code"
 
 #: src/components/settings/QuickAction.tsx:78
-#: src/components/settings/QuickAction.tsx:124
+#: src/components/settings/QuickAction.tsx:120
 #: src/tables/settings/CustomStateTable.tsx:133
 #: src/tables/settings/CustomStateTable.tsx:140
 #: src/tables/settings/CustomStateTable.tsx:202
@@ -3278,54 +3318,63 @@ msgid "Add State"
 msgstr "Add State"
 
 #: src/components/settings/QuickAction.tsx:85
-msgid "Open an Issue"
-msgstr "Open an Issue"
+#: src/components/settings/QuickAction.tsx:88
+msgid "Open Support"
+msgstr "Open Support"
+
+#: src/components/settings/QuickAction.tsx:85
+#~ msgid "Open an Issue"
+#~ msgstr "Open an Issue"
 
 #: src/components/settings/QuickAction.tsx:86
-msgid "Report a bug or request a feature on GitHub"
-msgstr "Report a bug or request a feature on GitHub"
+msgid "Submit Bug Report"
+msgstr "Submit Bug Report"
+
+#: src/components/settings/QuickAction.tsx:86
+#~ msgid "Report a bug or request a feature on GitHub"
+#~ msgstr "Report a bug or request a feature on GitHub"
 
 #: src/components/settings/QuickAction.tsx:88
-msgid "Open Issue"
-msgstr "Open Issue"
+#~ msgid "Open Issue"
+#~ msgstr "Open Issue"
 
-#: src/components/settings/QuickAction.tsx:97
+#: src/components/settings/QuickAction.tsx:93
 msgid "Add New Group"
 msgstr "Add New Group"
 
-#: src/components/settings/QuickAction.tsx:98
+#: src/components/settings/QuickAction.tsx:94
 msgid "Create a new group to manage your users"
 msgstr "Create a new group to manage your users"
 
-#: src/components/settings/QuickAction.tsx:100
+#: src/components/settings/QuickAction.tsx:96
 msgid "New Group"
 msgstr "New Group"
 
-#: src/components/settings/QuickAction.tsx:105
+#: src/components/settings/QuickAction.tsx:101
 msgid "Add New User"
 msgstr "Add New User"
 
-#: src/components/settings/QuickAction.tsx:106
+#: src/components/settings/QuickAction.tsx:102
 msgid "Create a new user to manage your groups"
 msgstr "Create a new user to manage your groups"
 
-#: src/components/settings/QuickAction.tsx:108
+#: src/components/settings/QuickAction.tsx:104
 msgid "New User"
 msgstr "New User"
 
-#: src/components/settings/QuickAction.tsx:114
+#: src/components/settings/QuickAction.tsx:110
 msgid "Create a new project code to organize your items"
 msgstr "Create a new project code to organize your items"
 
-#: src/components/settings/QuickAction.tsx:116
+#: src/components/settings/QuickAction.tsx:112
 msgid "Add Code"
 msgstr "Add Code"
 
-#: src/components/settings/QuickAction.tsx:121
+#: src/components/settings/QuickAction.tsx:117
 msgid "Add Custom State"
 msgstr "Add Custom State"
 
-#: src/components/settings/QuickAction.tsx:122
+#: src/components/settings/QuickAction.tsx:118
 msgid "Create a new custom state for your workflow"
 msgstr "Create a new custom state for your workflow"
 
@@ -4183,25 +4232,51 @@ msgstr "Order Parts"
 #~ msgstr "About this Inventree instance"
 
 #: src/defaults/actions.tsx:43
-msgid "Go to the InvenTree dashboard"
-msgstr "Go to the InvenTree dashboard"
+msgid "Xem tổng quan vận hành"
+msgstr "View operational overview"
+
+#: src/defaults/actions.tsx:43
+#~ msgid "Go to the InvenTree dashboard"
+#~ msgstr "Go to the InvenTree dashboard"
+
+#: src/defaults/actions.tsx:49
+msgid "Help Center"
+msgstr "Help Center"
 
 #: src/defaults/actions.tsx:50
-msgid "Visit the documentation to learn more about InvenTree"
-msgstr "Visit the documentation to learn more about InvenTree"
+msgid "Open DTWare support resources"
+msgstr "Open DTWare support resources"
+
+#: src/defaults/actions.tsx:50
+#~ msgid "Visit the documentation to learn more about InvenTree"
+#~ msgstr "Visit the documentation to learn more about InvenTree"
+
+#: src/defaults/actions.tsx:58
+#: src/defaults/links.tsx:140
+#: src/defaults/links.tsx:186
+msgid "About DTWare"
+msgstr "About DTWare"
 
 #: src/defaults/actions.tsx:59
-msgid "About the InvenTree org"
-msgstr "About the InvenTree org"
+msgid "View DTWare product information"
+msgstr "View DTWare product information"
+
+#: src/defaults/actions.tsx:59
+#~ msgid "About the InvenTree org"
+#~ msgstr "About the InvenTree org"
 
 #: src/defaults/actions.tsx:65
-msgid "Server Information"
-msgstr "Server Information"
+#~ msgid "Server Information"
+#~ msgstr "Server Information"
+
+#: src/defaults/actions.tsx:66
+msgid "View deployment and version details"
+msgstr "View deployment and version details"
 
 #: src/defaults/actions.tsx:66
 #: src/defaults/links.tsx:169
-msgid "About this InvenTree instance"
-msgstr "About this InvenTree instance"
+#~ msgid "About this InvenTree instance"
+#~ msgstr "About this InvenTree instance"
 
 #: src/defaults/actions.tsx:72
 #: src/defaults/links.tsx:153
@@ -4210,8 +4285,12 @@ msgid "License Information"
 msgstr "License Information"
 
 #: src/defaults/actions.tsx:73
-msgid "Licenses for dependencies of the service"
-msgstr "Licenses for dependencies of the service"
+msgid "View third-party dependency licenses"
+msgstr "View third-party dependency licenses"
+
+#: src/defaults/actions.tsx:73
+#~ msgid "Licenses for dependencies of the service"
+#~ msgstr "Licenses for dependencies of the service"
 
 #: src/defaults/actions.tsx:79
 msgid "Open Navigation"
@@ -4262,8 +4341,12 @@ msgid "Go to the Admin Center"
 msgstr "Go to the Admin Center"
 
 #: src/defaults/actions.tsx:174
-msgid "Manage InvenTree plugins"
-msgstr "Manage InvenTree plugins"
+msgid "Manage DTWare extensions"
+msgstr "Manage DTWare extensions"
+
+#: src/defaults/actions.tsx:174
+#~ msgid "Manage InvenTree plugins"
+#~ msgstr "Manage InvenTree plugins"
 
 #: src/defaults/dashboardItems.tsx:29
 #~ msgid "Latest Parts"
@@ -4310,10 +4393,11 @@ msgid "Local Server"
 msgstr "Local Server"
 
 #: src/defaults/defaultHostList.tsx:12
+#: src/defaults/defaultHostList.tsx:14
 msgid "InvenTree Demo"
 msgstr "InvenTree Demo"
 
-#: src/defaults/defaultHostList.tsx:14
+#: src/defaults/defaultHostList.tsx:16
 msgid "Current Server"
 msgstr "Current Server"
 
@@ -4339,37 +4423,73 @@ msgstr "Current Server"
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
+#: src/defaults/links.tsx:86
+msgid "Getting Started"
+msgstr "Getting Started"
+
+#: src/defaults/links.tsx:89
+msgid "Open the DTWare workspace"
+msgstr "Open the DTWare workspace"
+
 #: src/defaults/links.tsx:93
-msgid "API"
-msgstr "API"
+msgid "API Reference"
+msgstr "API Reference"
+
+#: src/defaults/links.tsx:93
+#~ msgid "API"
+#~ msgstr "API"
 
 #: src/defaults/links.tsx:96
-msgid "InvenTree API documentation"
-msgstr "InvenTree API documentation"
+msgid "Review API capabilities"
+msgstr "Review API capabilities"
+
+#: src/defaults/links.tsx:96
+#~ msgid "InvenTree API documentation"
+#~ msgstr "InvenTree API documentation"
 
 #: src/defaults/links.tsx:100
-msgid "Developer Manual"
-msgstr "Developer Manual"
+#~ msgid "Developer Manual"
+#~ msgstr "Developer Manual"
 
 #: src/defaults/links.tsx:103
-msgid "InvenTree developer manual"
-msgstr "InvenTree developer manual"
+msgid "Configure the DTWare instance"
+msgstr "Configure the DTWare instance"
+
+#: src/defaults/links.tsx:103
+#~ msgid "InvenTree developer manual"
+#~ msgstr "InvenTree developer manual"
 
 #: src/defaults/links.tsx:107
-msgid "FAQ"
-msgstr "FAQ"
+msgid "Support"
+msgstr "Support"
+
+#: src/defaults/links.tsx:107
+#~ msgid "FAQ"
+#~ msgstr "FAQ"
 
 #: src/defaults/links.tsx:110
-msgid "Frequently asked questions"
-msgstr "Frequently asked questions"
+msgid "Open support and administration tools"
+msgstr "Open support and administration tools"
+
+#: src/defaults/links.tsx:110
+#~ msgid "Frequently asked questions"
+#~ msgstr "Frequently asked questions"
 
 #: src/defaults/links.tsx:114
-msgid "GitHub Repository"
-msgstr "GitHub Repository"
+msgid "Application"
+msgstr "Application"
+
+#: src/defaults/links.tsx:114
+#~ msgid "GitHub Repository"
+#~ msgstr "GitHub Repository"
 
 #: src/defaults/links.tsx:117
-msgid "InvenTree source code on GitHub"
-msgstr "InvenTree source code on GitHub"
+msgid "Return to DTWare"
+msgstr "Return to DTWare"
+
+#: src/defaults/links.tsx:117
+#~ msgid "InvenTree source code on GitHub"
+#~ msgstr "InvenTree source code on GitHub"
 
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
@@ -4377,20 +4497,32 @@ msgstr "InvenTree source code on GitHub"
 
 #: src/defaults/links.tsx:127
 #: src/defaults/links.tsx:168
-msgid "System Information"
-msgstr "System Information"
+#~ msgid "System Information"
+#~ msgstr "System Information"
 
 #: src/defaults/links.tsx:134
 #~ msgid "Licenses"
 #~ msgstr "Licenses"
 
+#: src/defaults/links.tsx:169
+msgid "Deployment, version and runtime information"
+msgstr "Deployment, version and runtime information"
+
 #: src/defaults/links.tsx:176
-msgid "Licenses for dependencies of the InvenTree software"
-msgstr "Licenses for dependencies of the InvenTree software"
+msgid "Third-party dependency license information"
+msgstr "Third-party dependency license information"
+
+#: src/defaults/links.tsx:176
+#~ msgid "Licenses for dependencies of the InvenTree software"
+#~ msgstr "Licenses for dependencies of the InvenTree software"
 
 #: src/defaults/links.tsx:187
-msgid "About the InvenTree Project"
-msgstr "About the InvenTree Project"
+msgid "Product information for DTWare"
+msgstr "Product information for DTWare"
+
+#: src/defaults/links.tsx:187
+#~ msgid "About the InvenTree Project"
+#~ msgstr "About the InvenTree Project"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -5509,7 +5641,7 @@ msgstr "Confirm your new password"
 msgid "Confirm"
 msgstr "Confirm"
 
-#: src/pages/Auth/Layout.tsx:59
+#: src/pages/Auth/Layout.tsx:64
 msgid "Log off"
 msgstr "Log off"
 
@@ -5529,15 +5661,15 @@ msgstr "No selection"
 #~ msgid "Register below"
 #~ msgstr "Register below"
 
-#: src/pages/Auth/Login.tsx:107
+#: src/pages/Auth/Login.tsx:108
 msgid "Login"
 msgstr "Login"
 
-#: src/pages/Auth/Login.tsx:113
+#: src/pages/Auth/Login.tsx:122
 msgid "Logging you in"
 msgstr "Logging you in"
 
-#: src/pages/Auth/Login.tsx:120
+#: src/pages/Auth/Login.tsx:129
 msgid "Don't have an account?"
 msgstr "Don't have an account?"
 
@@ -6508,7 +6640,7 @@ msgstr "Remove Provider Link"
 #~ msgid "No tokens configured"
 #~ msgstr "No tokens configured"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:61
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:60
 msgid "Display Settings"
 msgstr "Display Settings"
 
@@ -6517,66 +6649,66 @@ msgstr "Display Settings"
 #~ msgstr "bars"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:66
-#~ msgid "oval"
-#~ msgstr "oval"
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:67
 msgid "Language"
 msgstr "Language"
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:66
+#~ msgid "oval"
+#~ msgstr "oval"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:67
 #~ msgid "dots"
 #~ msgstr "dots"
 
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:75
+msgid "Color Mode"
+msgstr "Color Mode"
+
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:78
-msgid "Use pseudo language"
-msgstr "Use pseudo language"
+#~ msgid "Use pseudo language"
+#~ msgstr "Use pseudo language"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
 #~ msgid "Theme"
 #~ msgstr "Theme"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:85
-msgid "Color Mode"
-msgstr "Color Mode"
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:86
+msgid "Highlight color"
+msgstr "Highlight color"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
 #~ msgid "Primary color"
 #~ msgstr "Primary color"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:96
-msgid "Highlight color"
-msgstr "Highlight color"
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:110
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:100
 msgid "Example"
 msgstr "Example"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:116
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:106
 msgid "White color"
 msgstr "White color"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:139
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:129
 msgid "Black color"
 msgstr "Black color"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:162
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:152
 msgid "Border Radius"
 msgstr "Border Radius"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:178
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:168
 msgid "Loader"
 msgstr "Loader"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:185
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:175
 msgid "Bars"
 msgstr "Bars"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:186
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:176
 msgid "Oval"
 msgstr "Oval"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:187
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:177
 msgid "Dots"
 msgstr "Dots"
 
@@ -6819,8 +6951,12 @@ msgstr "Info"
 #~ msgstr "Plugin Error Stack"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:37
-msgid "External plugins are not enabled for this InvenTree installation."
-msgstr "External plugins are not enabled for this InvenTree installation."
+msgid "External plugins are not enabled for this DTWare installation."
+msgstr "External plugins are not enabled for this DTWare installation."
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:37
+#~ msgid "External plugins are not enabled for this InvenTree installation."
+#~ msgstr "External plugins are not enabled for this InvenTree installation."
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
 #~ msgid "Warning"
@@ -7389,6 +7525,11 @@ msgstr "Cancel order"
 msgid "Build Order"
 msgstr "Build Order"
 
+#: src/pages/build/BuildDetail.tsx:775
+#: src/pages/build/BuildIndex.tsx:101
+msgid "Manufacturing"
+msgstr "Manufacturing"
+
 #: src/pages/build/BuildIndex.tsx:23
 #~ msgid "Build order created"
 #~ msgstr "Build order created"
@@ -7517,6 +7658,23 @@ msgstr "Delete Company"
 #: src/pages/company/CompanyDetail.tsx:312
 msgid "Company Actions"
 msgstr "Company Actions"
+
+#: src/pages/company/CustomerDetail.tsx:9
+#: src/pages/sales/ReturnOrderDetail.tsx:569
+#: src/pages/sales/SalesIndex.tsx:169
+#: src/pages/sales/SalesOrderDetail.tsx:634
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:442
+msgid "Sales"
+msgstr "Sales"
+
+#: src/pages/company/ManufacturerDetail.tsx:9
+#: src/pages/company/ManufacturerPartDetail.tsx:268
+#: src/pages/company/SupplierDetail.tsx:9
+#: src/pages/company/SupplierPartDetail.tsx:366
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:568
+#: src/pages/purchasing/PurchasingIndex.tsx:214
+msgid "Purchasing"
+msgstr "Purchasing"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:77
 #: src/pages/company/SupplierPartDetail.tsx:90
@@ -12718,21 +12876,21 @@ msgstr "No user information"
 #~ msgstr "Total"
 
 #: src/views/MobileAppView.tsx:25
-msgid "Mobile viewport detected"
-msgstr "Mobile viewport detected"
-
-#: src/views/MobileAppView.tsx:25
 #~ msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
 #~ msgstr "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
 
-#: src/views/MobileAppView.tsx:28
+#: src/views/MobileAppView.tsx:26
+msgid "Mobile viewport detected"
+msgstr "Mobile viewport detected"
+
+#: src/views/MobileAppView.tsx:29
 msgid "InvenTree UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
 msgstr "InvenTree UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
 
-#: src/views/MobileAppView.tsx:34
+#: src/views/MobileAppView.tsx:35
 msgid "Read the docs"
 msgstr "Read the docs"
 
-#: src/views/MobileAppView.tsx:42
+#: src/views/MobileAppView.tsx:43
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignore and continue to Desktop view"

@@ -39,8 +39,8 @@ export function getActions(navigate: NavigateFunction) {
     const _actions: SpotlightActionData[] = [
       {
         id: 'dashboard',
-        label: t`Dashboard`,
-        description: t`View operational overview`,
+        label: t`Bảng điều khiển`,
+        description: t`Xem tổng quan vận hành`,
         onClick: () => navigate('/'),
         leftSection: <IconLink size='1.2rem' />
       },

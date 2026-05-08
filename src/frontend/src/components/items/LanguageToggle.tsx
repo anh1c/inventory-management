@@ -18,7 +18,7 @@ export function LanguageToggle() {
       }}
       aria-label='Open language options'
     >
-      <Tooltip label={t`Select language`}>
+      <Tooltip label={t`Chọn ngôn ngữ`}>
         <ActionIcon
           onClick={() => toggle.toggle()}
           size='lg'

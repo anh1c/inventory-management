@@ -66,7 +66,7 @@ export default function DashboardWidgetDrawer({
       onClose={onClose}
       title={
         <Group justify='space-between' wrap='nowrap'>
-          <StylishText size='lg'>Add Dashboard Widgets</StylishText>
+          <StylishText size='lg'>{t`Thêm tiện ích báo cáo`}</StylishText>
         </Group>
       }
     >

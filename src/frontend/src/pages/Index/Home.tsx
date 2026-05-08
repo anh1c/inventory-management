@@ -5,7 +5,7 @@ import PageTitle from '../../components/nav/PageTitle';
 export default function Home() {
   return (
     <>
-      <PageTitle title={t`Dashboard`} />
+      <PageTitle title={t`Bảng điều khiển`} />
       <DashboardLayout />
     </>
   );
