@@ -43,6 +43,7 @@ import {
   RenderSelectionList
 } from './Generic';
 import {
+  RenderContract,
   RenderPurchaseOrder,
   RenderReturnOrder,
   RenderReturnOrderLineItem,
@@ -69,6 +70,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.builditem]: RenderBuildItem,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
+  [ModelType.contract]: RenderContract,
   [ModelType.parameter]: RenderParameter,
   [ModelType.parametertemplate]: RenderParameterTemplate,
   [ModelType.manufacturerpart]: RenderManufacturerPart,

@@ -49,6 +49,148 @@ from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
 
+class ContractBriefSerializer(InvenTreeModelSerializer):
+    """Brief serializer for linked Contract objects."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.Contract
+        fields = ['pk', 'reference', 'contract_type', 'title']
+
+
+@register_importer()
+class ContractSerializer(
+    DataImportExportSerializerMixin,
+    FilterableSerializerMixin,
+    InvenTreeModelSerializer,
+):
+    """Serializer for the Contract model class."""
+
+    project_code_label = common.filters.enable_project_label_filter()
+    project_code_detail = common.filters.enable_project_code_filter()
+
+    sales_contract_detail = OptionalField(
+        serializer_class=ContractBriefSerializer,
+        serializer_kwargs={
+            'source': 'sales_contract',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['sales_contract'],
+    )
+
+    sales_order_count = serializers.IntegerField(read_only=True)
+    purchase_order_count = serializers.IntegerField(read_only=True)
+    purchase_contract_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.Contract
+        fields = [
+            'pk',
+            'reference',
+            'contract_type',
+            'title',
+            'project_code',
+            'project_code_detail',
+            'project_code_label',
+            'sales_contract',
+            'sales_contract_detail',
+            'sales_orders',
+            'purchase_orders',
+            'sales_order_count',
+            'purchase_order_count',
+            'purchase_contract_count',
+            'party_a_name',
+            'party_a_representative',
+            'party_b_name',
+            'party_b_representative',
+            'issue_date',
+            'effective_date',
+            'work_scope',
+            'delivery_terms',
+            'payment_terms',
+            'warranty_terms',
+            'total_amount',
+            'vat_rate',
+            'vat_amount',
+            'grand_total',
+            'amount_text',
+            'notes',
+            'creation_date',
+            'created_by',
+            'updated_at',
+        ]
+        read_only_fields = [
+            'creation_date',
+            'updated_at',
+            'sales_order_count',
+            'purchase_order_count',
+            'purchase_contract_count',
+        ]
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add contract relationship counts to the queryset."""
+        return queryset.annotate(
+            sales_order_count=SubqueryCount('sales_orders'),
+            purchase_order_count=SubqueryCount('purchase_orders'),
+            purchase_contract_count=SubqueryCount('purchase_contracts'),
+        )
+
+    def validate(self, data):
+        """Validate contract order relationships and derived values."""
+        data = super().validate(data)
+
+        contract_type = data.get(
+            'contract_type', getattr(self.instance, 'contract_type', None)
+        )
+        issue_date = data.get('issue_date', getattr(self.instance, 'issue_date', None))
+        effective_date = data.get(
+            'effective_date', getattr(self.instance, 'effective_date', None)
+        )
+
+        if issue_date and effective_date and effective_date <= issue_date:
+            raise ValidationError({
+                'effective_date': _('Ngày hiệu lực phải sau ngày ký hợp đồng')
+            })
+
+        if contract_type == order.models.Contract.ContractType.SALES and data.get(
+            'sales_contract'
+        ):
+            raise ValidationError({
+                'sales_contract': _('Sales contracts cannot link to another sales contract')
+            })
+
+        if contract_type == order.models.Contract.ContractType.PURCHASE:
+            sales_contract = data.get(
+                'sales_contract', getattr(self.instance, 'sales_contract', None)
+            )
+            if sales_contract and sales_contract.contract_type != order.models.Contract.ContractType.SALES:
+                raise ValidationError({
+                    'sales_contract': _('Linked sales contract must be a sales contract')
+                })
+            if sales_contract:
+                data['project_code'] = sales_contract.project_code
+
+        total_amount = data.get(
+            'total_amount', getattr(self.instance, 'total_amount', Decimal(0))
+        )
+        vat_rate = data.get('vat_rate', getattr(self.instance, 'vat_rate', Decimal(0)))
+        vat_amount = (total_amount * vat_rate / Decimal(100)).quantize(
+            Decimal('0.0001')
+        )
+
+        data['vat_amount'] = vat_amount
+        data['grand_total'] = (total_amount + vat_amount).quantize(Decimal('0.0001'))
+
+        return data
+
+
 class TotalPriceMixin(serializers.Serializer):
     """Serializer mixin which provides total price fields."""
 
@@ -388,6 +530,7 @@ class PurchaseOrderSerializer(
             'supplier',
             'supplier_detail',
             'supplier_reference',
+            'sales_order',
             'supplier_name',
             'total_price',
             'order_currency',

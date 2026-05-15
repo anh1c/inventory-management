@@ -57,10 +57,16 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({
   partId,
-  customerId
+  customerId,
+  hasProjectCode,
+  onSelectSalesOrder,
+  selectedSalesOrderId
 }: Readonly<{
   partId?: number;
   customerId?: number;
+  hasProjectCode?: boolean;
+  onSelectSalesOrder?: (record: any) => void;
+  selectedSalesOrderId?: number;
 }>) {
   const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index', {
     initialFilters: [
@@ -217,7 +223,8 @@ export function SalesOrderTable({
           params: {
             customer_detail: true,
             part: partId,
-            customer: customerId
+            customer: customerId,
+            has_project_code: hasProjectCode
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
@@ -225,7 +232,12 @@ export function SalesOrderTable({
           enableSelection: true,
           enableDownload: true,
           enableReports: true,
-          enableLabels: true
+          enableLabels: true,
+          onRowClick: onSelectSalesOrder,
+          rowStyle: (record: any) =>
+            record.pk === selectedSalesOrderId
+              ? { backgroundColor: 'var(--mantine-color-blue-light)' }
+              : undefined
         }}
       />
     </>

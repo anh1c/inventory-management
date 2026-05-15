@@ -8,14 +8,16 @@ import type { PanelType } from './Panel';
 
 export default function AttachmentPanel({
   model_type,
-  model_id
+  model_id,
+  label
 }: {
   model_type: ModelType;
   model_id: number | undefined;
+  label?: string;
 }): PanelType {
   return {
     name: 'attachments',
-    label: t`Attachments`,
+    label: label ?? t`Attachments`,
     icon: <IconPaperclip />,
     content:
       model_type && model_id ? (

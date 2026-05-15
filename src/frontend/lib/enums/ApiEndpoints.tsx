@@ -163,6 +163,7 @@ export enum ApiEndpoints {
   generate_serial_number = 'generate/serial-number/',
 
   // Order API endpoints
+  contract_list = 'order/contract/',
   purchase_order_list = 'order/po/',
   purchase_order_issue = 'order/po/:id/issue/',
   purchase_order_hold = 'order/po/:id/hold/',

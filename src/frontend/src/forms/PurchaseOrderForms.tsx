@@ -244,6 +244,13 @@ export function usePurchaseOrderFields({
         }
       },
       supplier_reference: {},
+      sales_order: {
+        field_type: 'related field',
+        model: ModelType.salesorder,
+        api_url: apiUrl(ApiEndpoints.sales_order_list),
+        icon: <IconLink />,
+        description: t`Liên kết đơn mua hàng này với hợp đồng hoặc đơn bán hàng nguồn. Mã dự án mặc định được xử lý bởi hệ thống backend.`
+      },
       project_code: {
         icon: <IconList />
       },

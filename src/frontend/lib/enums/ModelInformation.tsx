@@ -155,6 +155,15 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.project_code_list,
     icon: 'list_details'
   },
+  contract: {
+    label: () => t`Contract`,
+    label_multiple: () => t`Contracts`,
+    url_overview: '/contracts/index/sales-contracts',
+    url_detail: '/contracts/:pk/',
+    api_endpoint: ApiEndpoints.contract_list,
+    admin_url: '/order/contract/',
+    icon: 'batch'
+  },
   purchaseorder: {
     label: () => t`Purchase Order`,
     label_multiple: () => t`Purchase Orders`,

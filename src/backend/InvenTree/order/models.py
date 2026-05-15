@@ -556,6 +556,273 @@ class Order(
         raise NotImplementedError(f'get_status_class() not implemented for {__class__}')
 
 
+class Contract(
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeMetadataModel,
+):
+    """A first-class commercial contract linked to project codes and orders."""
+
+    class ContractType(models.TextChoices):
+        """Supported contract directions."""
+
+        SALES = 'sales', _('Sales Contract')
+        PURCHASE = 'purchase', _('Purchase Contract')
+
+    IMPORT_ID_FIELDS = ['reference']
+
+    class Meta:
+        """Metaclass options."""
+
+        verbose_name = _('Contract')
+        verbose_name_plural = _('Contracts')
+        ordering = ['-reference']
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-contract-list')
+
+    def get_absolute_url(self):
+        """Return the web URL for this model."""
+        return pui_url('/contracts/index')
+
+    def __str__(self):
+        """Render a string representation of this Contract."""
+        return self.reference
+
+    def save(self, *args, **kwargs):
+        """Set automatic and derived fields before saving."""
+        if not self.creation_date:
+            self.creation_date = InvenTree.helpers.current_date()
+
+        if self.contract_type == self.ContractType.PURCHASE and self.sales_contract_id:
+            self.project_code = self.sales_contract.project_code
+
+        self.vat_amount = (self.total_amount * self.vat_rate / Decimal(100)).quantize(
+            Decimal('0.0001')
+        )
+        self.grand_total = (self.total_amount + self.vat_amount).quantize(
+            Decimal('0.0001')
+        )
+        self.updated_at = InvenTree.helpers.current_time()
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validate contract relationships."""
+        super().clean()
+
+        if self.sales_contract and self.sales_contract.contract_type != self.ContractType.SALES:
+            raise ValidationError({
+                'sales_contract': _('Linked sales contract must be a sales contract')
+            })
+
+        if self.contract_type == self.ContractType.SALES and self.sales_contract_id:
+            raise ValidationError({
+                'sales_contract': _('Sales contracts cannot link to another sales contract')
+            })
+
+        if self.issue_date and self.effective_date and self.effective_date <= self.issue_date:
+            raise ValidationError({
+                'effective_date': _('Ngày hiệu lực phải sau ngày ký hợp đồng')
+            })
+
+        if (
+            self.contract_type == self.ContractType.PURCHASE
+            and self.sales_contract_id
+            and self.project_code_id != self.sales_contract.project_code_id
+        ):
+            raise ValidationError({
+                'project_code': _('Project code must match the linked sales contract')
+            })
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        verbose_name=_('Reference'),
+        help_text=_('Contract reference'),
+    )
+
+    contract_type = models.CharField(
+        max_length=16,
+        choices=ContractType.choices,
+        default=ContractType.SALES,
+        verbose_name=_('Contract Type'),
+        help_text=_('Sales or purchase contract'),
+    )
+
+    title = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Title'),
+        help_text=_('Contract title'),
+    )
+
+    project_code = models.ForeignKey(
+        common_models.ProjectCode,
+        on_delete=models.PROTECT,
+        verbose_name=_('Project Code'),
+        help_text=_('Project code for this contract'),
+    )
+
+    sales_contract = models.ForeignKey(
+        'order.Contract',
+        on_delete=models.SET_NULL,
+        related_name='purchase_contracts',
+        null=True,
+        blank=True,
+        verbose_name=_('Sales Contract'),
+        help_text=_('Sales contract linked to this purchase contract'),
+    )
+
+    sales_orders = models.ManyToManyField(
+        'order.SalesOrder',
+        related_name='contracts',
+        blank=True,
+        verbose_name=_('Sales Orders'),
+        help_text=_('Sales orders included in this contract'),
+    )
+
+    purchase_orders = models.ManyToManyField(
+        'order.PurchaseOrder',
+        related_name='contracts',
+        blank=True,
+        verbose_name=_('Purchase Orders'),
+        help_text=_('Purchase orders included in this contract'),
+    )
+
+    party_a_name = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Party A'),
+        help_text=_('Party A company or organization'),
+    )
+
+    party_a_representative = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Party A Representative'),
+    )
+
+    party_b_name = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Party B'),
+        help_text=_('Party B company or organization'),
+    )
+
+    party_b_representative = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Party B Representative'),
+    )
+
+    issue_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Issue Date'),
+        help_text=_('Date the contract was signed or issued'),
+    )
+
+    effective_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Effective Date'),
+        help_text=_('Date the contract takes effect'),
+    )
+
+    work_scope = models.TextField(
+        blank=True,
+        verbose_name=_('Scope of Work'),
+        help_text=_('Contract work scope or supplied goods'),
+    )
+
+    delivery_terms = models.TextField(
+        blank=True,
+        verbose_name=_('Delivery Terms'),
+        help_text=_('Delivery schedule and location'),
+    )
+
+    payment_terms = models.TextField(
+        blank=True,
+        verbose_name=_('Payment Terms'),
+        help_text=_('Payment method and milestones'),
+    )
+
+    warranty_terms = models.TextField(
+        blank=True,
+        verbose_name=_('Warranty Terms'),
+        help_text=_('Warranty period and terms'),
+    )
+
+    total_amount = models.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Contract Value'),
+        help_text=_('Contract value before VAT'),
+    )
+
+    vat_rate = models.DecimalField(
+        max_digits=7,
+        decimal_places=4,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('VAT Rate'),
+        help_text=_('VAT rate as a percentage'),
+    )
+
+    vat_amount = models.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('VAT Amount'),
+    )
+
+    grand_total = models.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Total Contract Value'),
+        help_text=_('Contract value including VAT'),
+    )
+
+    amount_text = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Amount In Words'),
+    )
+
+    notes = models.TextField(
+        blank=True,
+        verbose_name=_('Notes'),
+    )
+
+    creation_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Creation Date'),
+    )
+
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='+',
+        verbose_name=_('Created By'),
+    )
+
+    updated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Updated At'),
+    )
+
+
 class PurchaseOrder(TotalPriceMixin, Order):
     """A PurchaseOrder represents goods shipped inwards from an external supplier.
 
@@ -575,6 +842,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Purchase Order')
+
+    def save(self, *args, **kwargs):
+        """Custom save method for PurchaseOrder models."""
+        if self.sales_order and self.sales_order.project_code:
+            self.project_code = self.sales_order.project_code
+
+        super().save(*args, **kwargs)
 
     def clean_line_item(self, line):
         """Clean a line item for this PurchaseOrder."""
@@ -677,6 +951,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         blank=True,
         verbose_name=_('Supplier Reference'),
         help_text=_('Supplier order reference code'),
+    )
+
+    sales_order = models.ForeignKey(
+        'order.SalesOrder',
+        on_delete=models.SET_NULL,
+        related_name='purchase_orders',
+        null=True,
+        blank=True,
+        verbose_name=_('Sales Order'),
+        help_text=_('Sales order linked to this purchase order'),
     )
 
     received_by = models.ForeignKey(

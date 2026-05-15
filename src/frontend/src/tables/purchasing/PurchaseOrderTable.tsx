@@ -58,11 +58,17 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function PurchaseOrderTable({
   supplierId,
   supplierPartId,
-  externalBuildId
+  externalBuildId,
+  salesOrderId,
+  onSelectPurchaseOrder,
+  selectedPurchaseOrderId
 }: Readonly<{
   supplierId?: number;
   supplierPartId?: number;
   externalBuildId?: number;
+  salesOrderId?: number;
+  onSelectPurchaseOrder?: (record: any) => void;
+  selectedPurchaseOrderId?: number;
 }>) {
   const table = useTable('purchase-order', {
     initialFilters: [
@@ -172,7 +178,8 @@ export function PurchaseOrderTable({
     title: t`Add Purchase Order`,
     fields: purchaseOrderFields,
     initialData: {
-      supplier: supplierId
+      supplier: supplierId,
+      sales_order: salesOrderId
     },
     follow: true,
     modelType: ModelType.purchaseorder,
@@ -202,7 +209,8 @@ export function PurchaseOrderTable({
             supplier_detail: true,
             supplier: supplierId,
             supplier_part: supplierPartId,
-            external_build: externalBuildId
+            external_build: externalBuildId,
+            sales_order: salesOrderId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
@@ -210,7 +218,12 @@ export function PurchaseOrderTable({
           enableSelection: true,
           enableDownload: true,
           enableReports: true,
-          enableLabels: true
+          enableLabels: true,
+          onRowClick: onSelectPurchaseOrder,
+          rowStyle: (record: any) =>
+            record.pk === selectedPurchaseOrderId
+              ? { backgroundColor: 'var(--mantine-color-blue-light)' }
+              : undefined
         }}
       />
     </>

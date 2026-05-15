@@ -1,12 +1,26 @@
 import { t } from '@lingui/core/macro';
-import { Badge, Group, Paper, Stack, Text } from '@mantine/core';
+import {
+  Badge,
+  Box,
+  Center,
+  Group,
+  LoadingOverlay,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconExclamationCircle,
   IconExternalLink,
+  IconFileDownload,
   IconFileUpload,
+  IconGridDots,
+  IconLayoutGrid,
+  IconListDetails,
   IconUpload,
   IconX
 } from '@tabler/icons-react';
@@ -15,6 +29,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
+  RowActions,
   type RowAction,
   RowDeleteAction,
   RowEditAction
@@ -26,9 +41,14 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { AttachmentLink } from '../../components/items/AttachmentLink';
+import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
+import {
+  AttachmentLink,
+  attachmentIcon
+} from '../../components/items/AttachmentLink';
 import { useApi } from '../../contexts/ApiContext';
 import { formatFileSize } from '../../defaults/formatters';
+import { generateUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -37,24 +57,86 @@ import {
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 
+type AttachmentDisplayMode = 'table' | 'grid' | 'compact';
+
+type AttachmentRecord = Record<string, unknown> & {
+  pk: number;
+  attachment?: string | null;
+  link?: string | null;
+  comment?: string | null;
+  upload_date?: string | null;
+  file_size?: number | null;
+  user_detail?: {
+    username?: string | null;
+  } | null;
+};
+
+function isAttachmentDisplayMode(value: string): value is AttachmentDisplayMode {
+  return value === 'table' || value === 'grid' || value === 'compact';
+}
+
+function isAttachmentRecord(value: unknown): value is AttachmentRecord {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'pk' in value &&
+    typeof value.pk === 'number'
+  );
+}
+
+function attachmentSource(record: AttachmentRecord) {
+  if (record.attachment) {
+    return { attachment: record.attachment, external: false };
+  }
+
+  if (record.link) {
+    return { attachment: record.link, external: true };
+  }
+
+  return undefined;
+}
+
+function attachmentMetadata(record: AttachmentRecord): ReactNode {
+  return (
+    <Group gap='xs' wrap='wrap'>
+      <Text size='xs' c='dimmed'>
+        {record.attachment && typeof record.file_size === 'number'
+          ? formatFileSize(record.file_size)
+          : t`External link`}
+      </Text>
+      {record.upload_date && (
+        <Text size='xs' c='dimmed'>
+          {record.upload_date}
+        </Text>
+      )}
+      {record.user_detail?.username && (
+        <Badge size='xs'>{record.user_detail.username}</Badge>
+      )}
+    </Group>
+  );
+}
+
 /**
  * Define set of columns to display for the attachment table
  */
-function attachmentTableColumns(): TableColumn[] {
+function attachmentTableColumns(): TableColumn<AttachmentRecord>[] {
   return [
     {
       accessor: 'attachment',
       sortable: false,
       switchable: false,
       noWrap: true,
-      render: (record: any) => {
-        if (record.attachment) {
-          return <AttachmentLink attachment={record.attachment} />;
-        } else if (record.link) {
-          return <AttachmentLink attachment={record.link} external />;
-        } else {
-          return '-';
-        }
+      render: (record) => {
+        const source = attachmentSource(record);
+
+        return source ? (
+          <AttachmentLink
+            attachment={source.attachment}
+            external={source.external}
+          />
+        ) : (
+          '-'
+        );
       },
       noContext: true
     },
@@ -62,7 +144,7 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'comment',
       sortable: false,
 
-      render: (record: any) => {
+      render: (record) => {
         return record.comment;
       }
     },
@@ -70,7 +152,7 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'upload_date',
       sortable: true,
 
-      render: (record: any) => {
+      render: (record) => {
         return (
           <Group justify='space-between'>
             <Text>{record.upload_date}</Text>
@@ -85,12 +167,14 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'file_size',
       sortable: true,
       switchable: true,
-      render: (record: any) => {
+      render: (record) => {
         if (!record.attachment) {
           return '-';
-        } else {
+        } else if (typeof record.file_size === 'number') {
           return formatFileSize(record.file_size);
         }
+
+        return '-';
       }
     }
   ];
@@ -108,6 +192,89 @@ function UploadProgress({
       <Text size='sm'>{t`Uploading file ${filename}`}</Text>
       <ProgressBar value={progress} progressLabel={false} />
     </Stack>
+  );
+}
+
+function downloadAttachment(attachment: string) {
+  const link = document.createElement('a');
+  link.href = generateUrl(attachment);
+  link.download = attachment.split('/').pop() ?? '';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function AttachmentCard({
+  mode,
+  record,
+  rowActions
+}: Readonly<{
+  mode: Exclude<AttachmentDisplayMode, 'table'>;
+  record: AttachmentRecord;
+  rowActions: (record: AttachmentRecord) => RowAction[];
+}>) {
+  const source = attachmentSource(record);
+  const icon = attachmentIcon(source?.attachment ?? '', mode === 'grid' ? 34 : 24);
+
+  return (
+    <Paper p='sm' radius='md' withBorder shadow='xs'>
+      <Group align={mode === 'grid' ? 'flex-start' : 'center'} wrap='nowrap'>
+        <Center c='dimmed'>{icon}</Center>
+        <Stack gap={4} flex={1} miw={0}>
+          {source ? (
+            <AttachmentLink
+              attachment={source.attachment}
+              external={source.external}
+            />
+          ) : (
+            <Text size='sm'>-</Text>
+          )}
+          {mode === 'grid' && record.comment && (
+            <Text size='xs' c='dimmed' lineClamp={2}>
+              {record.comment}
+            </Text>
+          )}
+          {attachmentMetadata(record)}
+        </Stack>
+        <RowActions actions={rowActions(record)} />
+      </Group>
+    </Paper>
+  );
+}
+
+function AttachmentCollectionView({
+  mode,
+  records,
+  rowActions,
+  loading
+}: Readonly<{
+  mode: Exclude<AttachmentDisplayMode, 'table'>;
+  records: AttachmentRecord[];
+  rowActions: (record: AttachmentRecord) => RowAction[];
+  loading: boolean;
+}>) {
+  return (
+    <Box pos='relative' mih={120}>
+      <LoadingOverlay visible={loading} />
+      {records.length === 0 && !loading ? (
+        <Paper p='md' radius='md' withBorder>
+          <Text size='sm' c='dimmed'>
+            {t`No attachments found`}
+          </Text>
+        </Paper>
+      ) : (
+        <SimpleGrid cols={mode === 'grid' ? 3 : 2} spacing='sm'>
+          {records.map((record) => (
+            <AttachmentCard
+              key={`attachment-card-${record.pk}`}
+              mode={mode}
+              record={record}
+              rowActions={rowActions}
+            />
+          ))}
+        </SimpleGrid>
+      )}
+    </Box>
   );
 }
 
@@ -221,6 +388,13 @@ export function AttachmentTable({
     number | undefined
   >(undefined);
 
+  const [attachmentDisplayMode, setAttachmentDisplayMode] =
+    useState<AttachmentDisplayMode>('table');
+
+  const attachmentRecords = useMemo(() => {
+    return table.records.filter(isAttachmentRecord);
+  }, [table.records]);
+
   const uploadFields: ApiFormFieldSet = useMemo(() => {
     const fields: ApiFormFieldSet = {
       model_type: {
@@ -322,10 +496,50 @@ export function AttachmentTable({
     ];
   }, [user, model_type]);
 
+  const displayModeControl = useMemo(() => {
+    return (
+      <SegmentedIconControl
+        value={attachmentDisplayMode}
+        onChange={(value) => {
+          if (isAttachmentDisplayMode(value)) {
+            setAttachmentDisplayMode(value);
+          }
+        }}
+        data={[
+          {
+            value: 'table',
+            label: t`Detailed list`,
+            icon: <IconListDetails />
+          },
+          {
+            value: 'grid',
+            label: t`Tile grid`,
+            icon: <IconLayoutGrid />
+          },
+          {
+            value: 'compact',
+            label: t`Compact icons`,
+            icon: <IconGridDots />
+          }
+        ]}
+      />
+    );
+  }, [attachmentDisplayMode]);
+
   // Construct row actions for the attachment table
   const rowActions = useCallback(
-    (record: any): RowAction[] => {
+    (record: AttachmentRecord): RowAction[] => {
       return [
+        {
+          title: t`Download`,
+          icon: <IconFileDownload />,
+          hidden: !record.attachment,
+          onClick: () => {
+            if (record.attachment) {
+              downloadAttachment(record.attachment);
+            }
+          }
+        },
         RowEditAction({
           hidden: !user.hasChangePermission(model_type),
           onClick: () => {
@@ -342,7 +556,7 @@ export function AttachmentTable({
         })
       ];
     },
-    [user, model_type]
+    [user, model_type, canDelete, editAttachment, deleteAttachment]
   );
 
   return (
@@ -352,24 +566,43 @@ export function AttachmentTable({
       {deleteAttachment.modal}
       <Stack gap='xs'>
         {validPk && (
-          <InvenTreeTable
-            key='attachment-table'
-            url={url}
-            tableState={table}
-            columns={tableColumns}
-            props={{
-              noRecordsText: t`No attachments found`,
-              enableSelection: canDelete,
-              enableBulkDelete: canDelete,
-              tableActions: tableActions,
-              tableFilters: tableFilters,
-              rowActions: rowActions,
-              params: {
-                model_type: model_type,
-                model_id: model_id
-              }
-            }}
-          />
+          <Group justify='space-between' align='center' wrap='nowrap'>
+            <Group gap={5} wrap='nowrap'>
+              {tableActions}
+            </Group>
+            {displayModeControl}
+          </Group>
+        )}
+        {validPk && (
+          <>
+            <Box hidden={attachmentDisplayMode !== 'table'}>
+              <InvenTreeTable<AttachmentRecord>
+                key='attachment-table'
+                url={url}
+                tableState={table}
+                columns={tableColumns}
+                props={{
+                  noRecordsText: t`No attachments found`,
+                  enableSelection: canDelete,
+                  enableBulkDelete: canDelete,
+                  tableFilters: tableFilters,
+                  rowActions: rowActions,
+                  params: {
+                    model_type: model_type,
+                    model_id: model_id
+                  }
+                }}
+              />
+            </Box>
+            {attachmentDisplayMode !== 'table' && (
+              <AttachmentCollectionView
+                mode={attachmentDisplayMode}
+                records={attachmentRecords}
+                rowActions={rowActions}
+                loading={table.isLoading}
+              />
+            )}
+          </>
         )}
         {allowDragAndDrop && validPk && (
           <Paper p='md' shadow='xs' radius='md'>

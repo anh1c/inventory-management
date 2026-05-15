@@ -101,6 +101,15 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         icon: 'sales_orders'
       },
       {
+        id: 'contracts',
+        title: t`Hợp đồng`,
+        link: '/contracts/',
+        hidden:
+          !user.hasViewRole(UserRoles.sales_order) &&
+          !user.hasViewRole(UserRoles.purchase_order),
+        icon: 'batch'
+      },
+      {
         id: 'users',
         title: t`Users`,
         link: '/core/index/users',

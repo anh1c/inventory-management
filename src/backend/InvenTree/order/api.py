@@ -294,6 +294,118 @@ class LineItemFilter(FilterSet):
         return queryset.filter(**filters)
 
 
+class ContractFilter(FilterSet):
+    """Custom API filters for the ContractList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.Contract
+        fields = ['contract_type', 'project_code', 'sales_contract']
+
+    project_code = rest_filters.ModelChoiceFilter(
+        queryset=common.models.ProjectCode.objects.all(),
+        field_name='project_code',
+        label=_('Project Code'),
+    )
+
+    sales_contract = rest_filters.ModelChoiceFilter(
+        queryset=models.Contract.objects.filter(contract_type=models.Contract.ContractType.SALES),
+        field_name='sales_contract',
+        label=_('Sales Contract'),
+    )
+
+    sales_order = rest_filters.ModelChoiceFilter(
+        queryset=models.SalesOrder.objects.all(),
+        label=_('Sales Order'),
+        method='filter_sales_order',
+    )
+
+    def filter_sales_order(self, queryset, name, sales_order):
+        """Filter by linked sales order."""
+        return queryset.filter(sales_orders=sales_order)
+
+    purchase_order = rest_filters.ModelChoiceFilter(
+        queryset=models.PurchaseOrder.objects.all(),
+        label=_('Purchase Order'),
+        method='filter_purchase_order',
+    )
+
+    def filter_purchase_order(self, queryset, name, purchase_order):
+        """Filter by linked purchase order."""
+        return queryset.filter(purchase_orders=purchase_order)
+
+
+class ContractOutputOptions(OutputConfiguration):
+    """Output options for the Contract endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('project_code_detail'),
+        InvenTreeOutputOption('sales_contract_detail'),
+    ]
+
+
+class ContractMixin(SerializerContextMixin):
+    """Mixin class for Contract endpoints."""
+
+    queryset = models.Contract.objects.all().prefetch_related(
+        'project_code', 'sales_contract', 'sales_orders', 'purchase_orders'
+    )
+    serializer_class = serializers.ContractSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return the annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        return serializers.ContractSerializer.annotate_queryset(queryset)
+
+
+class ContractList(
+    ContractMixin,
+    OrderCreateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
+):
+    """API endpoint for accessing a list of Contract objects."""
+
+    filterset_class = ContractFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    output_options = ContractOutputOptions
+
+    ordering_field_aliases = {
+        'project_code': ['project_code__code'],
+    }
+
+    search_fields = [
+        'reference',
+        'title',
+        'project_code__code',
+        'party_a_name',
+        'party_b_name',
+        'work_scope',
+    ]
+
+    ordering_fields = [
+        'reference',
+        'contract_type',
+        'project_code',
+        'issue_date',
+        'effective_date',
+        'total_amount',
+        'grand_total',
+        'creation_date',
+        'updated_at',
+    ]
+
+    ordering = '-reference'
+
+
+class ContractDetail(ContractMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a Contract object."""
+
+    output_options = ContractOutputOptions
+
+
 class PurchaseOrderFilter(OrderFilter):
     """Custom API filters for the PurchaseOrderList endpoint."""
 
@@ -301,7 +413,13 @@ class PurchaseOrderFilter(OrderFilter):
         """Metaclass options."""
 
         model = models.PurchaseOrder
-        fields = ['supplier']
+        fields = ['supplier', 'sales_order']
+
+    sales_order = rest_filters.ModelChoiceFilter(
+        queryset=models.SalesOrder.objects.all(),
+        field_name='sales_order',
+        label=_('Sales Order'),
+    )
 
     part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.all(),
@@ -1926,6 +2044,21 @@ class OrderCalendarExport(ICalFeed):
 
 
 order_api_urls = [
+
+    # API endpoints for contracts
+    path(
+        'contract/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.Contract),
+                    path('', ContractDetail.as_view(), name='api-contract-detail'),
+                ]),
+            ),
+            path('', ContractList.as_view(), name='api-contract-list'),
+        ]),
+    ),
     # API endpoints for purchase orders
     path(
         'po/',

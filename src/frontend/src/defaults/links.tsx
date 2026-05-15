@@ -8,6 +8,7 @@ import type { UserStateProps } from '@lib/types/User';
 import {
   IconBox,
   IconBuildingFactory2,
+  IconClipboardText,
   IconDashboard,
   IconPackages,
   IconShoppingCart,
@@ -22,6 +23,7 @@ type NavTab = {
   title: string;
   icon: ReactNode;
   role?: UserRoles;
+  roles?: UserRoles[];
 };
 
 export function getNavTabs(user: UserStateProps): NavTab[] {
@@ -60,10 +62,17 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       title: t`Bán hàng`,
       icon: <IconTruckDelivery />,
       role: UserRoles.sales_order
+    },
+    {
+      name: 'contracts',
+      title: t`Hợp đồng`,
+      icon: <IconClipboardText />,
+      roles: [UserRoles.sales_order, UserRoles.purchase_order]
     }
   ];
 
   return navTabs.filter((tab) => {
+    if (tab.roles) return tab.roles.some((role) => user.hasViewRole(role));
     if (!tab.role) return true;
     return user.hasViewRole(tab.role);
   });

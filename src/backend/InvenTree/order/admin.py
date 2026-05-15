@@ -23,6 +23,42 @@ class GeneralExtraLineMeta:
     clean_model_instances = True
 
 
+@admin.register(models.Contract)
+class ContractAdmin(admin.ModelAdmin):
+    """Admin class for the Contract model."""
+
+    list_display = (
+        'reference',
+        'contract_type',
+        'project_code',
+        'title',
+        'issue_date',
+        'grand_total',
+        'creation_date',
+    )
+
+    search_fields = [
+        'reference',
+        'title',
+        'project_code__code',
+        'party_a_name',
+        'party_b_name',
+        'work_scope',
+    ]
+
+    list_filter = ['contract_type', 'project_code']
+
+    autocomplete_fields = [
+        'project_code',
+        'sales_contract',
+        'sales_orders',
+        'purchase_orders',
+        'created_by',
+    ]
+
+    filter_horizontal = ['sales_orders', 'purchase_orders']
+
+
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
     """Inline admin class for the PurchaseOrderLineItem model."""
 
@@ -38,9 +74,21 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
 
     exclude = ['reference_int']
 
-    list_display = ('reference', 'supplier', 'status', 'description', 'creation_date')
+    list_display = (
+        'reference',
+        'supplier',
+        'sales_order',
+        'status',
+        'description',
+        'creation_date',
+    )
 
-    search_fields = ['reference', 'supplier__name', 'description']
+    search_fields = [
+        'reference',
+        'supplier__name',
+        'sales_order__reference',
+        'description',
+    ]
 
     inlines = [PurchaseOrderLineItemInlineAdmin]
 
@@ -53,6 +101,7 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
         'project_code',
         'received_by',
         'responsible',
+        'sales_order',
     ]
 
 

@@ -68,6 +68,14 @@ export const PurchasingIndex = Loadable(
   lazy(() => import('./pages/purchasing/PurchasingIndex'))
 );
 
+export const ContractsIndex = Loadable(
+  lazy(() => import('./pages/contracts/ContractsIndex'))
+);
+
+export const ContractDetail = Loadable(
+  lazy(() => import('./pages/contracts/ContractDetail'))
+);
+
 export const PurchaseOrderDetail = Loadable(
   lazy(() => import('./pages/purchasing/PurchaseOrderDetail'))
 );
@@ -186,6 +194,11 @@ export const routes = (
           path='manufacturer-part/:id/*'
           element={<ManufacturerPartDetail />}
         />
+      </Route>
+      <Route path='contracts/'>
+        <Route index element={<Navigate to='index/' replace />} />
+        <Route path='index/*' element={<ContractsIndex />} />
+        <Route path=':id/*' element={<ContractDetail />} />
       </Route>
       <Route path='company/:id/*' element={<CompanyDetail />} />
       <Route path='sales/'>

@@ -18,6 +18,7 @@ export enum ModelType {
   company = 'company',
   parameter = 'parameter',
   parametertemplate = 'parametertemplate',
+  contract = 'contract',
   purchaseorder = 'purchaseorder',
   purchaseorderlineitem = 'purchaseorderlineitem',
   salesorder = 'salesorder',

@@ -123,3 +123,26 @@ export function RenderSalesOrderShipment({
     />
   );
 }
+
+
+/**
+ * Inline rendering of a single Contract instance
+ */
+export function RenderContract(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.reference}
+      secondary={instance.title}
+      suffix={
+        <Text size='xs'>
+          {instance.contract_type === 'purchase' ? t`Hợp đồng mua` : t`Hợp đồng bán`}
+        </Text>
+      }
+    />
+  );
+}
