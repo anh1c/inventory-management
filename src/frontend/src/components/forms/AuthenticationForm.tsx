@@ -54,16 +54,15 @@ export function AuthenticationForm() {
 
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
-  function handleLogin() {
+  function handleLogin(values = classicForm.values) {
     setIsLoggingIn(true);
 
     if (classicLoginMode === true) {
       doBasicLogin(
-        classicForm.values.username,
-        classicForm.values.password,
-
+        values.username,
+        values.password,
         navigate,
-        classicForm.values.code
+        values.code
       )
         .then((success) => {
           setIsLoggingIn(false);
@@ -128,13 +127,14 @@ export function AuthenticationForm() {
           />
         </>
       ) : null}
-      <form onSubmit={classicForm.onSubmit(() => {})}>
+      <form onSubmit={classicForm.onSubmit((values) => handleLogin(values))}>
         {classicLoginMode ? (
           <Stack gap={0}>
             <TextInput
               required
               label={t`Username`}
               aria-label='login-username'
+              autoComplete='username'
               placeholder={t`Your username`}
               {...classicForm.getInputProps('username')}
             />
@@ -142,6 +142,7 @@ export function AuthenticationForm() {
               required
               label={t`Password`}
               aria-label='login-password'
+              autoComplete='current-password'
               placeholder={t`Your password`}
               {...classicForm.getInputProps('password')}
             />
@@ -192,7 +193,7 @@ export function AuthenticationForm() {
               <Trans>Use username and password</Trans>
             )}
           </Anchor>
-          <Button type='submit' disabled={isLoggingIn} onClick={handleLogin}>
+          <Button type='submit' disabled={isLoggingIn}>
             {isLoggingIn ? (
               <Loader size='sm' />
             ) : (
