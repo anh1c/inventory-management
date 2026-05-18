@@ -1,13 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
-  IconBuildingStore,
   IconCalendar,
   IconCubeSend,
   IconFileInvoice,
   IconListDetails,
+  IconReceiptRefund,
   IconTable,
-  IconTruckReturn
+  IconUsersGroup
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
@@ -97,7 +97,7 @@ export default function SalesIndex() {
       SegmentedControlPanel({
         name: 'returnorders',
         label: t`Return Orders`,
-        icon: <IconTruckReturn />,
+        icon: <IconReceiptRefund />,
         hidden: !user.hasViewRole(UserRoles.return_order),
         selection: returnOrderView,
         onChange: setReturnOrderView,
@@ -131,7 +131,7 @@ export default function SalesIndex() {
       SegmentedControlPanel({
         name: 'customers',
         label: t`Customers`,
-        icon: <IconBuildingStore />,
+        icon: <IconUsersGroup />,
         selection: customersView,
         onChange: setCustomersView,
         options: [
