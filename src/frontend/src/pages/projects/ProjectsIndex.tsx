@@ -19,13 +19,13 @@ export default function ProjectsIndex() {
   return (
     <Stack gap='sm'>
       <PageDetail
-        title={t`Dự án`}
-        subtitle={t`Tạo, bật/tắt và cấu hình mã dự án dùng cho hợp đồng, đơn mua và đơn bán`}
+        title={t`Projects`}
+        subtitle={t`Create, enable, and configure project codes used for contracts, purchase orders, and sales orders`}
         icon={<IconListDetails size={18} />}
       />
       <Alert color='blue' icon={<IconInfoCircle />}>
         <Text size='sm'>
-          {t`Mã dự án là khóa nghiệp vụ để gom hợp đồng mua/bán và đơn mua/bán theo cùng một dự án.`}
+          {t`Project codes group sales and purchase contracts and orders under the same project.`}
         </Text>
       </Alert>
       <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />

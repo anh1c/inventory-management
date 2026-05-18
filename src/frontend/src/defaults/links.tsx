@@ -31,12 +31,12 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
   const navTabs: NavTab[] = [
     {
       name: 'home',
-      title: t`Bảng điều khiển`,
+      title: t`Dashboard`,
       icon: <IconDashboard />
     },
     {
       name: 'part',
-      title: t`Linh kiện`,
+      title: t`Parts`,
       icon: <IconBox />,
       role: UserRoles.part
     },
@@ -48,31 +48,31 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     },
     {
       name: 'manufacturing',
-      title: t`Sản xuất`,
+      title: t`Manufacturing`,
       icon: <IconBuildingFactory2 />,
       role: UserRoles.build
     },
     {
       name: 'purchasing',
-      title: t`Mua hàng`,
+      title: t`Purchasing`,
       icon: <IconShoppingCart />,
       role: UserRoles.purchase_order
     },
     {
       name: 'sales',
-      title: t`Bán hàng`,
+      title: t`Sales`,
       icon: <IconTruckDelivery />,
       role: UserRoles.sales_order
     },
     {
       name: 'contracts',
-      title: t`Hợp đồng`,
+      title: t`Contracts`,
       icon: <IconClipboardText />,
       roles: [UserRoles.sales_order, UserRoles.purchase_order]
     },
     {
       name: 'projects',
-      title: t`Dự án`,
+      title: t`Projects`,
       icon: <IconListDetails />,
       role: UserRoles.admin
     }

@@ -76,9 +76,9 @@ export function ContractTable({
     return (
       <Paper p='sm' radius='sm' shadow='xs'>
         <Stack gap='xs'>
-          <Text fw={600}>{t`Tài liệu hợp đồng`}</Text>
+          <Text fw={600}>{t`Contract Documents`}</Text>
           <Text size='sm' c='dimmed'>
-            {t`Chọn tài liệu để upload sau khi hợp đồng được tạo thành công.`}
+            {t`Choose documents to upload after the contract is created successfully.`}
           </Text>
           <Dropzone
             multiple
@@ -96,7 +96,7 @@ export function ContractTable({
               <Dropzone.Idle>
                 <IconFileUpload color='var(--mantine-color-dimmed)' />
               </Dropzone.Idle>
-              <Text size='sm'>{t`Kéo thả hoặc chọn file hợp đồng để upload`}</Text>
+              <Text size='sm'>{t`Drag and drop or select contract files to upload`}</Text>
             </Group>
           </Dropzone>
           {pendingDocuments.length > 0 && (
@@ -104,7 +104,7 @@ export function ContractTable({
               {pendingDocuments.map((file, index) => (
                 <Group key={`${file.name}-${index}`} justify='space-between' gap='xs'>
                   <Text size='sm'>{file.name}</Text>
-                  <Tooltip label={t`Xóa khỏi danh sách upload`}>
+                  <Tooltip label={t`Remove from upload list`}>
                     <ActionIcon
                       variant='subtle'
                       color='red'
@@ -128,7 +128,7 @@ export function ContractTable({
 
   const newContract = useCreateApiFormModal({
     url: ApiEndpoints.contract_list,
-    title: contractType === 'purchase' ? t`Thêm hợp đồng mua` : t`Thêm hợp đồng bán`,
+    title: contractType === 'purchase' ? t`Add Purchase Contract` : t`Add Sales Contract`,
     fields: contractFields,
     initialData: {
       contract_type: contractType,
@@ -146,8 +146,8 @@ export function ContractTable({
         void uploadPendingDocuments(record.pk, documents)
           .then(() => {
             notifications.show({
-              title: t`Tài liệu hợp đồng đã được upload`,
-              message: t`Đã upload ${documents.length} tài liệu cho hợp đồng`,
+              title: t`Contract documents uploaded`,
+              message: t`Uploaded ${documents.length} documents for this contract`,
               color: 'green',
               icon: <IconCircleCheck />
             });
@@ -155,8 +155,8 @@ export function ContractTable({
           })
           .catch(() => {
             notifications.show({
-              title: t`Không thể upload tài liệu hợp đồng`,
-              message: t`Hợp đồng đã được tạo nhưng một số tài liệu chưa upload thành công`,
+              title: t`Could not upload contract documents`,
+              message: t`The contract was created but some documents could not be uploaded`,
               color: 'red',
               icon: <IconX />
             });
@@ -169,7 +169,7 @@ export function ContractTable({
     return [
       <AddItemButton
         key='add-contract'
-        tooltip={contractType === 'purchase' ? t`Thêm hợp đồng mua` : t`Thêm hợp đồng bán`}
+        tooltip={contractType === 'purchase' ? t`Add Purchase Contract` : t`Add Sales Contract`}
         onClick={() => newContract.open()}
         hidden={
           !user.hasAddRole(UserRoles.purchase_order) &&
@@ -201,40 +201,40 @@ export function ContractTable({
       }),
       {
         accessor: 'contract_type',
-        title: t`Loại hợp đồng`,
+        title: t`Contract Type`,
         sortable: true,
         render: (record: any) => (
           <Badge color={record.contract_type === 'purchase' ? 'orange' : 'blue'}>
-            {record.contract_type === 'purchase' ? t`Hợp đồng mua` : t`Hợp đồng bán`}
+            {record.contract_type === 'purchase' ? t`Purchase Contract` : t`Sales Contract`}
           </Badge>
         )
       },
-      DescriptionColumn({ accessor: 'title', title: t`Tiêu đề` }),
+      DescriptionColumn({ accessor: 'title', title: t`Title` }),
       ProjectCodeColumn({}),
       {
         accessor: 'sales_order_count',
-        title: t`Đơn bán`,
+        title: t`Sales Orders`,
         sortable: true
       },
       {
         accessor: 'purchase_order_count',
-        title: t`Đơn mua`,
+        title: t`Purchase Orders`,
         sortable: true
       },
       {
         accessor: 'purchase_contract_count',
-        title: t`Hợp đồng mua liên kết`,
+        title: t`Linked Purchase Contracts`,
         sortable: true,
         defaultVisible: contractType !== 'purchase'
       },
       {
         accessor: 'issue_date',
-        title: t`Ngày ký`,
+        title: t`Issue Date`,
         sortable: true
       },
       {
         accessor: 'grand_total',
-        title: t`Tổng giá trị`,
+        title: t`Total Value`,
         sortable: true,
         render: (record: any) => formatCurrency(record.grand_total, { currency: 'VND' })
       },

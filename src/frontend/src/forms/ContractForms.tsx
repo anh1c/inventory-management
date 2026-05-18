@@ -43,7 +43,7 @@ export function useContractFields({
   }, [totalAmount, calculatedVatAmount]);
   const effectiveDateError = useMemo(() => {
     if (issueDate && effectiveDate && effectiveDate <= issueDate) {
-      return t`Ngày hiệu lực phải sau ngày ký hợp đồng`;
+      return t`Effective date must be after the contract issue date`;
     }
 
     return undefined;
@@ -53,35 +53,35 @@ export function useContractFields({
     contract_type: {
       field_type: 'choice',
       choices: [
-        { value: 'sales', display_name: t`Hợp đồng bán` },
-        { value: 'purchase', display_name: t`Hợp đồng mua` }
+        { value: 'sales', display_name: t`Sales Contract` },
+        { value: 'purchase', display_name: t`Purchase Contract` }
       ],
       hidden: !!contractType
     },
     reference: {
       field_type: 'string',
-      label: t`Số hợp đồng`,
-      description: t`Số hoặc mã tham chiếu hợp đồng`
+      label: t`Contract Number`,
+      description: t`Contract number or reference code`
     },
     title: {
       field_type: 'string',
-      label: t`Tên hợp đồng`,
-      description: t`Tên gọi hoặc mô tả ngắn của hợp đồng`
+      label: t`Contract Name`,
+      description: t`Contract name or short description`
     },
     project_code: {
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.project_code_list),
-      label: t`Mã dự án`,
+      label: t`Project Code`,
       description: selectedProjectCode
-        ? t`Mã dự án được lấy tự động từ hợp đồng bán liên kết`
-        : t`Mã dự án liên kết với hợp đồng`,
+        ? t`Project code is automatically taken from the linked sales contract`
+        : t`Project code linked to this contract`,
       disabled: isPurchaseContract && !!selectedProjectCode,
       value: selectedProjectCode
     },
     sales_contract: {
       field_type: 'related field',
-      label: t`Hợp đồng bán liên kết`,
-      description: t`Hợp đồng bán làm nguồn cho hợp đồng mua này`,
+      label: t`Linked Sales Contract`,
+      description: t`Sales contract used as the source for this purchase contract`,
       hidden: isSalesContract,
       api_url: apiUrl(ApiEndpoints.contract_list),
       filters: {
@@ -94,8 +94,8 @@ export function useContractFields({
       model: ModelType.salesorder,
       api_url: apiUrl(ApiEndpoints.sales_order_list),
       multiple: true,
-      label: t`Đơn bán liên kết`,
-      description: t`Chọn một hoặc nhiều đơn bán thuộc hợp đồng bán này`,
+      label: t`Linked Sales Orders`,
+      description: t`Select one or more sales orders included in this sales contract`,
       hidden: isPurchaseContract,
       filters: selectedProjectCode ? { project_code: selectedProjectCode } : undefined
     },
@@ -104,99 +104,99 @@ export function useContractFields({
       model: ModelType.purchaseorder,
       api_url: apiUrl(ApiEndpoints.purchase_order_list),
       multiple: true,
-      label: t`Đơn mua liên kết`,
-      description: t`Chọn một hoặc nhiều đơn mua thuộc hợp đồng mua này`,
+      label: t`Linked Purchase Orders`,
+      description: t`Select one or more purchase orders included in this purchase contract`,
       hidden: isSalesContract,
       filters: selectedProjectCode ? { project_code: selectedProjectCode } : undefined
     },
     party_a_name: {
       field_type: 'string',
-      label: t`Bên A`,
-      description: t`Tên pháp nhân hoặc tổ chức của Bên A`
+      label: t`Party A`,
+      description: t`Legal entity or organization name for Party A`
     },
     party_a_representative: {
       field_type: 'string',
-      label: t`Đại diện Bên A`,
-      description: t`Người đại diện ký hợp đồng của Bên A`
+      label: t`Party A Representative`,
+      description: t`Authorized signatory for Party A`
     },
     party_b_name: {
       field_type: 'string',
-      label: t`Bên B`,
-      description: t`Tên pháp nhân hoặc tổ chức của Bên B`
+      label: t`Party B`,
+      description: t`Legal entity or organization name for Party B`
     },
     party_b_representative: {
       field_type: 'string',
-      label: t`Đại diện Bên B`,
-      description: t`Người đại diện ký hợp đồng của Bên B`
+      label: t`Party B Representative`,
+      description: t`Authorized signatory for Party B`
     },
     issue_date: {
       field_type: 'date',
-      label: t`Ngày ký hợp đồng`,
-      description: t`Ngày hai bên ký kết hợp đồng`,
+      label: t`Contract Issue Date`,
+      description: t`Date the contract is signed by both parties`,
       onValueChange: (value: any) => setIssueDate(value)
     },
     effective_date: {
       field_type: 'date',
-      label: t`Ngày hiệu lực`,
-      description: t`Ngày hợp đồng bắt đầu có hiệu lực`,
+      label: t`Effective Date`,
+      description: t`Date the contract becomes effective`,
       error: effectiveDateError,
       onValueChange: (value: any) => setEffectiveDate(value)
     },
     work_scope: {
       field_type: 'string',
-      label: t`Nội dung công việc`,
-      description: t`Phạm vi cung cấp hàng hóa, vật tư, thiết bị hoặc dịch vụ`
+      label: t`Scope of Work`,
+      description: t`Scope of goods, materials, equipment, or services supplied`
     },
     delivery_terms: {
       field_type: 'string',
-      label: t`Điều kiện giao hàng`,
-      description: t`Tiến độ, địa điểm và điều kiện thực hiện/giao hàng`
+      label: t`Delivery Terms`,
+      description: t`Schedule, location, and delivery or execution conditions`
     },
     payment_terms: {
       field_type: 'string',
-      label: t`Điều khoản thanh toán`,
-      description: t`Phương thức thanh toán, tạm ứng, nghiệm thu, quyết toán`
+      label: t`Payment Terms`,
+      description: t`Payment method, advance payment, acceptance, and final settlement`
     },
     warranty_terms: {
       field_type: 'string',
-      label: t`Điều khoản bảo hành`,
-      description: t`Thời hạn và điều kiện bảo hành`
+      label: t`Warranty Terms`,
+      description: t`Warranty period and conditions`
     },
     total_amount: {
       field_type: 'decimal',
-      label: t`Giá trị trước VAT`,
-      description: t`Giá trị hợp đồng chưa bao gồm thuế VAT`,
+      label: t`Pre-VAT Value`,
+      description: t`Contract value excluding VAT`,
       onValueChange: (value: any) => setTotalAmount(Number(value ?? 0))
     },
     vat_rate: {
       field_type: 'decimal',
-      label: t`Thuế suất VAT (%)`,
-      description: t`Tỷ lệ thuế giá trị gia tăng áp dụng cho hợp đồng`,
+      label: t`VAT Rate (%)`,
+      description: t`Value-added tax rate applied to this contract`,
       onValueChange: (value: any) => setVatRate(Number(value ?? 0))
     },
     vat_amount: {
       field_type: 'decimal',
-      label: t`Tiền VAT`,
-      description: t`Số tiền thuế giá trị gia tăng`,
+      label: t`VAT Amount`,
+      description: t`Value-added tax amount`,
       disabled: true,
       value: calculatedVatAmount
     },
     grand_total: {
       field_type: 'decimal',
-      label: t`Tổng giá trị hợp đồng`,
-      description: t`Giá trị hợp đồng đã bao gồm VAT`,
+      label: t`Total Contract Value`,
+      description: t`Contract value including VAT`,
       disabled: true,
       value: calculatedGrandTotal
     },
     amount_text: {
       field_type: 'string',
-      label: t`Tổng giá trị bằng chữ`,
-      description: t`Diễn giải tổng giá trị hợp đồng bằng chữ`
+      label: t`Amount In Words`,
+      description: t`Text representation of the total contract value`
     },
     notes: {
       field_type: 'string',
-      label: t`Ghi chú`,
-      description: t`Thông tin bổ sung liên quan đến hợp đồng`
+      label: t`Notes`,
+      description: t`Additional information related to this contract`
     }
   };
 }

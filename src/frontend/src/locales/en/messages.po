@@ -79,7 +79,7 @@ msgid "Actions"
 msgstr "Actions"
 
 #: lib/components/SearchInput.tsx:34
-#: src/components/forms/fields/RelatedModelField.tsx:493
+#: src/components/forms/fields/RelatedModelField.tsx:545
 #: src/components/nav/Header.tsx:190
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
@@ -147,6 +147,7 @@ msgstr "Part"
 
 #: lib/enums/ModelInformation.tsx:30
 #: lib/enums/Roles.tsx:35
+#: src/defaults/links.tsx:39
 #: src/pages/Index/Settings/SystemSettings.tsx:199
 #: src/pages/part/CategoryDetail.tsx:135
 #: src/pages/part/CategoryDetail.tsx:285
@@ -333,7 +334,12 @@ msgid "Companies"
 msgstr "Companies"
 
 #: lib/enums/ModelInformation.tsx:152
+#: src/forms/ContractForms.tsx:74
 #: src/pages/build/BuildDetail.tsx:335
+#: src/pages/contracts/ContractDetail.tsx:116
+#: src/pages/contracts/ContractDetail.tsx:174
+#: src/pages/contracts/ContractsIndex.tsx:98
+#: src/pages/contracts/ContractsIndex.tsx:168
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:254
 #: src/pages/sales/ReturnOrderDetail.tsx:232
 #: src/pages/sales/SalesOrderDetail.tsx:225
@@ -348,15 +354,20 @@ msgstr "Project Code"
 msgid "Project Codes"
 msgstr "Project Codes"
 
-#: lib/enums/ModelInformation.tsx:159
+#: lib/enums/ModelInformation.tsx:160
 msgid "Contract"
 msgstr ""
 
-#: lib/enums/ModelInformation.tsx:160
+#: lib/enums/ModelInformation.tsx:161
+#: src/defaults/links.tsx:69
+#: src/pages/contracts/ContractDetail.tsx:372
+#: src/pages/contracts/ContractDetail.tsx:376
+#: src/pages/contracts/ContractDetail.tsx:379
+#: src/pages/contracts/ContractsIndex.tsx:284
 msgid "Contracts"
 msgstr ""
 
-#: lib/enums/ModelInformation.tsx:168
+#: lib/enums/ModelInformation.tsx:169
 #: src/components/wizards/OrderPartsWizard.tsx:338
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:565
@@ -367,7 +378,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr "Purchase Order"
 
-#: lib/enums/ModelInformation.tsx:169
+#: lib/enums/ModelInformation.tsx:170
 #: lib/enums/Roles.tsx:39
 #: src/defaults/actions.tsx:106
 #: src/pages/Index/Settings/SystemSettings.tsx:303
@@ -375,18 +386,19 @@ msgstr "Purchase Order"
 #: src/pages/company/SupplierPartDetail.tsx:267
 #: src/pages/part/PartDetail.tsx:841
 #: src/pages/purchasing/PurchasingIndex.tsx:66
+#: src/tables/contract/ContractTable.tsx:221
 msgid "Purchase Orders"
 msgstr "Purchase Orders"
 
-#: lib/enums/ModelInformation.tsx:178
+#: lib/enums/ModelInformation.tsx:179
 msgid "Purchase Order Line"
 msgstr "Purchase Order Line"
 
-#: lib/enums/ModelInformation.tsx:179
+#: lib/enums/ModelInformation.tsx:180
 msgid "Purchase Order Lines"
 msgstr "Purchase Order Lines"
 
-#: lib/enums/ModelInformation.tsx:184
+#: lib/enums/ModelInformation.tsx:185
 #: src/pages/build/BuildDetail.tsx:308
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:24
 #: src/pages/sales/SalesOrderDetail.tsx:629
@@ -400,32 +412,34 @@ msgstr "Purchase Order Lines"
 msgid "Sales Order"
 msgstr "Sales Order"
 
-#: lib/enums/ModelInformation.tsx:185
+#: lib/enums/ModelInformation.tsx:186
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:116
 #: src/pages/Index/Settings/SystemSettings.tsx:319
 #: src/pages/company/CompanyDetail.tsx:224
+#: src/pages/contracts/ContractsIndex.tsx:93
 #: src/pages/part/PartDetail.tsx:853
 #: src/pages/sales/SalesIndex.tsx:53
+#: src/tables/contract/ContractTable.tsx:216
 msgid "Sales Orders"
 msgstr "Sales Orders"
 
-#: lib/enums/ModelInformation.tsx:194
+#: lib/enums/ModelInformation.tsx:195
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:439
 msgid "Sales Order Shipment"
 msgstr "Sales Order Shipment"
 
-#: lib/enums/ModelInformation.tsx:195
+#: lib/enums/ModelInformation.tsx:196
 msgid "Sales Order Shipments"
 msgstr "Sales Order Shipments"
 
-#: lib/enums/ModelInformation.tsx:203
+#: lib/enums/ModelInformation.tsx:204
 #: src/pages/sales/ReturnOrderDetail.tsx:564
 #: src/tables/stock/StockTrackingTable.tsx:174
 msgid "Return Order"
 msgstr "Return Order"
 
-#: lib/enums/ModelInformation.tsx:204
+#: lib/enums/ModelInformation.tsx:205
 #: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:127
 #: src/pages/Index/Settings/SystemSettings.tsx:336
@@ -435,25 +449,25 @@ msgstr "Return Order"
 msgid "Return Orders"
 msgstr "Return Orders"
 
-#: lib/enums/ModelInformation.tsx:213
+#: lib/enums/ModelInformation.tsx:214
 msgid "Return Order Line Item"
 msgstr "Return Order Line Item"
 
-#: lib/enums/ModelInformation.tsx:214
+#: lib/enums/ModelInformation.tsx:215
 msgid "Return Order Line Items"
 msgstr "Return Order Line Items"
 
-#: lib/enums/ModelInformation.tsx:219
+#: lib/enums/ModelInformation.tsx:220
 #: src/tables/company/AddressTable.tsx:52
 msgid "Address"
 msgstr "Address"
 
-#: lib/enums/ModelInformation.tsx:220
+#: lib/enums/ModelInformation.tsx:221
 #: src/pages/company/CompanyDetail.tsx:266
 msgid "Addresses"
 msgstr "Addresses"
 
-#: lib/enums/ModelInformation.tsx:226
+#: lib/enums/ModelInformation.tsx:227
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:135
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:230
@@ -462,22 +476,22 @@ msgstr "Addresses"
 msgid "Contact"
 msgstr "Contact"
 
-#: lib/enums/ModelInformation.tsx:227
+#: lib/enums/ModelInformation.tsx:228
 #: src/pages/company/CompanyDetail.tsx:260
 #: src/pages/core/CoreIndex.tsx:33
 msgid "Contacts"
 msgstr "Contacts"
 
-#: lib/enums/ModelInformation.tsx:233
+#: lib/enums/ModelInformation.tsx:234
 #: src/tables/ColumnRenderers.tsx:648
 msgid "Owner"
 msgstr "Owner"
 
-#: lib/enums/ModelInformation.tsx:234
+#: lib/enums/ModelInformation.tsx:235
 msgid "Owners"
 msgstr "Owners"
 
-#: lib/enums/ModelInformation.tsx:240
+#: lib/enums/ModelInformation.tsx:241
 #: src/pages/Auth/ChangePassword.tsx:36
 #: src/pages/core/UserDetail.tsx:220
 #: src/tables/ColumnRenderers.tsx:599
@@ -492,7 +506,7 @@ msgstr "Owners"
 msgid "User"
 msgstr "User"
 
-#: lib/enums/ModelInformation.tsx:241
+#: lib/enums/ModelInformation.tsx:242
 #: src/components/nav/NavigationDrawer.tsx:114
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:21
@@ -500,12 +514,12 @@ msgstr "User"
 msgid "Users"
 msgstr "Users"
 
-#: lib/enums/ModelInformation.tsx:247
+#: lib/enums/ModelInformation.tsx:248
 #: src/pages/core/GroupDetail.tsx:78
 msgid "Group"
 msgstr "Group"
 
-#: lib/enums/ModelInformation.tsx:248
+#: lib/enums/ModelInformation.tsx:249
 #: src/components/nav/NavigationDrawer.tsx:120
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:27
@@ -515,73 +529,73 @@ msgstr "Group"
 msgid "Groups"
 msgstr "Groups"
 
-#: lib/enums/ModelInformation.tsx:255
+#: lib/enums/ModelInformation.tsx:256
 msgid "Import Session"
 msgstr "Import Session"
 
-#: lib/enums/ModelInformation.tsx:256
+#: lib/enums/ModelInformation.tsx:257
 msgid "Import Sessions"
 msgstr "Import Sessions"
 
-#: lib/enums/ModelInformation.tsx:263
+#: lib/enums/ModelInformation.tsx:264
 msgid "Label Template"
 msgstr "Label Template"
 
-#: lib/enums/ModelInformation.tsx:264
+#: lib/enums/ModelInformation.tsx:265
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:209
 msgid "Label Templates"
 msgstr "Label Templates"
 
-#: lib/enums/ModelInformation.tsx:271
+#: lib/enums/ModelInformation.tsx:272
 msgid "Report Template"
 msgstr "Report Template"
 
-#: lib/enums/ModelInformation.tsx:272
+#: lib/enums/ModelInformation.tsx:273
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:215
 msgid "Report Templates"
 msgstr "Report Templates"
 
-#: lib/enums/ModelInformation.tsx:279
+#: lib/enums/ModelInformation.tsx:280
 #: src/components/plugins/PluginDrawer.tsx:153
 msgid "Plugin Configuration"
 msgstr "Plugin Configuration"
 
-#: lib/enums/ModelInformation.tsx:280
+#: lib/enums/ModelInformation.tsx:281
 msgid "Plugin Configurations"
 msgstr "Plugin Configurations"
 
-#: lib/enums/ModelInformation.tsx:287
+#: lib/enums/ModelInformation.tsx:288
 msgid "Content Type"
 msgstr "Content Type"
 
-#: lib/enums/ModelInformation.tsx:288
+#: lib/enums/ModelInformation.tsx:289
 msgid "Content Types"
 msgstr "Content Types"
 
-#: lib/enums/ModelInformation.tsx:293
+#: lib/enums/ModelInformation.tsx:294
 msgid "Selection List"
 msgstr "Selection List"
 
-#: lib/enums/ModelInformation.tsx:294
+#: lib/enums/ModelInformation.tsx:295
 #: src/pages/Index/Settings/AdminCenter/ParameterPanel.tsx:21
 msgid "Selection Lists"
 msgstr "Selection Lists"
 
-#: lib/enums/ModelInformation.tsx:300
+#: lib/enums/ModelInformation.tsx:301
 msgid "Selection Entry"
 msgstr "Selection Entry"
 
-#: lib/enums/ModelInformation.tsx:301
+#: lib/enums/ModelInformation.tsx:302
 msgid "Selection Entries"
 msgstr "Selection Entries"
 
-#: lib/enums/ModelInformation.tsx:307
+#: lib/enums/ModelInformation.tsx:308
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/buttons/StarredToggleButton.tsx:46
 #: src/components/dashboard/DashboardLayout.tsx:251
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
-#: src/components/forms/fields/ApiFormField.tsx:251
+#: src/components/forms/fields/ApiFormField.tsx:252
 #: src/components/forms/fields/TableField.tsx:45
 #: src/components/importer/ImportDataSelector.tsx:215
 #: src/components/importer/ImporterColumnSelector.tsx:278
@@ -611,7 +625,7 @@ msgstr "Selection Entries"
 msgid "Error"
 msgstr "Error"
 
-#: lib/enums/ModelInformation.tsx:308
+#: lib/enums/ModelInformation.tsx:309
 #: src/tables/machine/MachineListTable.tsx:402
 #: src/tables/machine/MachineTypeTable.tsx:297
 msgid "Errors"
@@ -671,10 +685,6 @@ msgstr "Process failed"
 #: lib/hooks/MonitorDataOutput.tsx:75
 msgid "Process completed successfully"
 msgstr "Process completed successfully"
-
-#: src/components/DashboardItemProxy.tsx:34
-#~ msgid "Title"
-#~ msgstr "Title"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:103
 msgid "Error while scanning"
@@ -1006,7 +1016,6 @@ msgstr "Accept Layout"
 #: src/components/dashboard/DashboardMenu.tsx:94
 #: src/components/nav/NavigationDrawer.tsx:64
 #: src/defaults/actions.tsx:42
-#: src/defaults/links.tsx:33
 #: src/pages/Index/Home.tsx:8
 msgid "Bảng điều khiển"
 msgstr "Dashboard"
@@ -1018,11 +1027,6 @@ msgstr "Dashboard"
 #: src/pages/Index/Home.tsx:8
 #~ msgid "Báo cáo"
 #~ msgstr "Reports"
-
-#: src/components/dashboard/DashboardMenu.tsx:94
-#: src/pages/Index/Home.tsx:8
-#~ msgid "Dashboard"
-#~ msgstr "Dashboard"
 
 #: src/components/dashboard/DashboardMenu.tsx:102
 msgid "Edit Layout"
@@ -1390,7 +1394,7 @@ msgid "Image has been uploaded successfully"
 msgstr "Image has been uploaded successfully"
 
 #: src/components/details/DetailsImage.tsx:230
-#: src/tables/general/AttachmentTable.tsx:212
+#: src/tables/general/AttachmentTable.tsx:368
 msgid "Upload Error"
 msgstr "Upload Error"
 
@@ -1972,7 +1976,7 @@ msgstr "Stopped"
 msgid "Running"
 msgstr "Running"
 
-#: src/components/forms/fields/ApiFormField.tsx:206
+#: src/components/forms/fields/ApiFormField.tsx:207
 msgid "Select file to upload"
 msgstr "Select file to upload"
 
@@ -2012,13 +2016,13 @@ msgstr "Select pack"
 msgid "{0} icons"
 msgstr "{0} icons"
 
-#: src/components/forms/fields/RelatedModelField.tsx:494
+#: src/components/forms/fields/RelatedModelField.tsx:546
 #: src/components/modals/AboutInvenTreeModal.tsx:91
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:397
 msgid "Loading"
 msgstr "Loading"
 
-#: src/components/forms/fields/RelatedModelField.tsx:496
+#: src/components/forms/fields/RelatedModelField.tsx:548
 msgid "No results found"
 msgstr "No results found"
 
@@ -2446,8 +2450,8 @@ msgstr "Commit Branch"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:159
 #: src/defaults/actions.tsx:65
-#: src/defaults/links.tsx:136
-#: src/defaults/links.tsx:177
+#: src/defaults/links.tsx:143
+#: src/defaults/links.tsx:184
 msgid "System Details"
 msgstr "System Details"
 
@@ -2754,7 +2758,7 @@ msgstr "User Settings"
 #: src/components/nav/NavigationDrawer.tsx:155
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:155
-#: src/defaults/links.tsx:109
+#: src/defaults/links.tsx:116
 #: src/pages/Index/Settings/SystemSettings.tsx:368
 #: src/pages/Index/Settings/SystemSettings.tsx:373
 msgid "System Settings"
@@ -2799,36 +2803,27 @@ msgstr "Logout"
 #~ msgstr "Pages"
 
 #: src/components/nav/NavigationDrawer.tsx:70
-#: src/defaults/links.tsx:38
 msgid "Linh kiện"
 msgstr "Parts"
 
 #: src/components/nav/NavigationDrawer.tsx:77
-#: src/defaults/links.tsx:44
+#: src/defaults/links.tsx:45
 msgid "Kho"
 msgstr "Stock"
 
 #: src/components/nav/NavigationDrawer.tsx:84
-#: src/defaults/links.tsx:50
 msgid "Sản xuất"
 msgstr "Manufacturing"
 
 #: src/components/nav/NavigationDrawer.tsx:91
-#: src/defaults/links.tsx:56
 msgid "Mua hàng"
 msgstr "Purchasing"
 
 #: src/components/nav/NavigationDrawer.tsx:98
-#: src/defaults/links.tsx:62
 msgid "Bán hàng"
 msgstr "Sales"
 
 #: src/components/nav/NavigationDrawer.tsx:105
-#: src/defaults/links.tsx:68
-#: src/pages/contracts/ContractDetail.tsx:372
-#: src/pages/contracts/ContractDetail.tsx:376
-#: src/pages/contracts/ContractDetail.tsx:379
-#: src/pages/contracts/ContractsIndex.tsx:284
 msgid "Hợp đồng"
 msgstr ""
 
@@ -2947,6 +2942,8 @@ msgid "Attachments"
 msgstr "Attachments"
 
 #: src/components/panels/NotesPanel.tsx:25
+#: src/forms/ContractForms.tsx:198
+#: src/pages/contracts/ContractDetail.tsx:288
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Notes"
@@ -3158,20 +3155,10 @@ msgid "Shipment"
 msgstr "Shipment"
 
 #: src/components/render/Order.tsx:143
-#: src/forms/ContractForms.tsx:56
-#: src/pages/contracts/ContractDetail.tsx:59
-#: src/pages/contracts/ContractsIndex.tsx:93
-#: src/pages/contracts/ContractsIndex.tsx:258
-#: src/tables/contract/ContractTable.tsx:208
 msgid "Hợp đồng mua"
 msgstr ""
 
 #: src/components/render/Order.tsx:143
-#: src/forms/ContractForms.tsx:55
-#: src/pages/contracts/ContractDetail.tsx:63
-#: src/pages/contracts/ContractsIndex.tsx:156
-#: src/pages/contracts/ContractsIndex.tsx:233
-#: src/tables/contract/ContractTable.tsx:208
 msgid "Hợp đồng bán"
 msgstr ""
 
@@ -4287,8 +4274,8 @@ msgstr "Open DTWare support resources"
 #~ msgstr "Visit the documentation to learn more about InvenTree"
 
 #: src/defaults/actions.tsx:58
-#: src/defaults/links.tsx:149
-#: src/defaults/links.tsx:195
+#: src/defaults/links.tsx:156
+#: src/defaults/links.tsx:202
 msgid "About DTWare"
 msgstr "About DTWare"
 
@@ -4314,8 +4301,8 @@ msgstr "View deployment and version details"
 #~ msgstr "About this InvenTree instance"
 
 #: src/defaults/actions.tsx:72
-#: src/defaults/links.tsx:162
-#: src/defaults/links.tsx:184
+#: src/defaults/links.tsx:169
+#: src/defaults/links.tsx:191
 msgid "License Information"
 msgstr "License Information"
 
@@ -4444,11 +4431,45 @@ msgstr "Current Server"
 #~ msgid "Demo"
 #~ msgstr "Demo"
 
+#: src/defaults/links.tsx:34
+msgid "Dashboard"
+msgstr "Dashboard"
+
 #: src/defaults/links.tsx:41
 #: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:217
 #~ msgid "Playground"
 #~ msgstr "Playground"
+
+#: src/defaults/links.tsx:51
+#: src/pages/build/BuildDetail.tsx:775
+#: src/pages/build/BuildIndex.tsx:101
+msgid "Manufacturing"
+msgstr "Manufacturing"
+
+#: src/defaults/links.tsx:57
+#: src/pages/company/ManufacturerDetail.tsx:9
+#: src/pages/company/ManufacturerPartDetail.tsx:268
+#: src/pages/company/SupplierDetail.tsx:9
+#: src/pages/company/SupplierPartDetail.tsx:366
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:568
+#: src/pages/purchasing/PurchasingIndex.tsx:214
+msgid "Purchasing"
+msgstr "Purchasing"
+
+#: src/defaults/links.tsx:63
+#: src/pages/company/CustomerDetail.tsx:9
+#: src/pages/sales/ReturnOrderDetail.tsx:569
+#: src/pages/sales/SalesIndex.tsx:169
+#: src/pages/sales/SalesOrderDetail.tsx:634
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:442
+msgid "Sales"
+msgstr "Sales"
+
+#: src/defaults/links.tsx:75
+#: src/pages/projects/ProjectsIndex.tsx:22
+msgid "Projects"
+msgstr ""
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
@@ -4462,53 +4483,45 @@ msgstr "Current Server"
 #~ msgid "API"
 #~ msgstr "API"
 
-#: src/defaults/links.tsx:95
-msgid "Getting Started"
-msgstr "Getting Started"
-
 #: src/defaults/links.tsx:96
 #~ msgid "InvenTree API documentation"
 #~ msgstr "InvenTree API documentation"
-
-#: src/defaults/links.tsx:98
-msgid "Open the DTWare workspace"
-msgstr "Open the DTWare workspace"
 
 #: src/defaults/links.tsx:100
 #~ msgid "Developer Manual"
 #~ msgstr "Developer Manual"
 
 #: src/defaults/links.tsx:102
-msgid "API Reference"
-msgstr "API Reference"
+msgid "Getting Started"
+msgstr "Getting Started"
 
 #: src/defaults/links.tsx:103
 #~ msgid "InvenTree developer manual"
 #~ msgstr "InvenTree developer manual"
 
 #: src/defaults/links.tsx:105
-msgid "Review API capabilities"
-msgstr "Review API capabilities"
+msgid "Open the DTWare workspace"
+msgstr "Open the DTWare workspace"
 
 #: src/defaults/links.tsx:107
 #~ msgid "FAQ"
 #~ msgstr "FAQ"
+
+#: src/defaults/links.tsx:109
+msgid "API Reference"
+msgstr "API Reference"
 
 #: src/defaults/links.tsx:110
 #~ msgid "Frequently asked questions"
 #~ msgstr "Frequently asked questions"
 
 #: src/defaults/links.tsx:112
-msgid "Configure the DTWare instance"
-msgstr "Configure the DTWare instance"
+msgid "Review API capabilities"
+msgstr "Review API capabilities"
 
 #: src/defaults/links.tsx:114
 #~ msgid "GitHub Repository"
 #~ msgstr "GitHub Repository"
-
-#: src/defaults/links.tsx:116
-msgid "Support"
-msgstr "Support"
 
 #: src/defaults/links.tsx:117
 #~ msgid "InvenTree source code on GitHub"
@@ -4519,21 +4532,29 @@ msgstr "Support"
 #~ msgstr "Licenses for packages used by InvenTree"
 
 #: src/defaults/links.tsx:119
-msgid "Open support and administration tools"
-msgstr "Open support and administration tools"
+msgid "Configure the DTWare instance"
+msgstr "Configure the DTWare instance"
 
 #: src/defaults/links.tsx:123
-msgid "Application"
-msgstr "Application"
+msgid "Support"
+msgstr "Support"
 
 #: src/defaults/links.tsx:126
-msgid "Return to DTWare"
-msgstr "Return to DTWare"
+msgid "Open support and administration tools"
+msgstr "Open support and administration tools"
 
 #: src/defaults/links.tsx:127
 #: src/defaults/links.tsx:168
 #~ msgid "System Information"
 #~ msgstr "System Information"
+
+#: src/defaults/links.tsx:130
+msgid "Application"
+msgstr "Application"
+
+#: src/defaults/links.tsx:133
+msgid "Return to DTWare"
+msgstr "Return to DTWare"
 
 #: src/defaults/links.tsx:134
 #~ msgid "Licenses"
@@ -4543,19 +4564,19 @@ msgstr "Return to DTWare"
 #~ msgid "Licenses for dependencies of the InvenTree software"
 #~ msgstr "Licenses for dependencies of the InvenTree software"
 
-#: src/defaults/links.tsx:178
+#: src/defaults/links.tsx:185
 msgid "Deployment, version and runtime information"
 msgstr "Deployment, version and runtime information"
-
-#: src/defaults/links.tsx:185
-msgid "Third-party dependency license information"
-msgstr "Third-party dependency license information"
 
 #: src/defaults/links.tsx:187
 #~ msgid "About the InvenTree Project"
 #~ msgstr "About the InvenTree Project"
 
-#: src/defaults/links.tsx:196
+#: src/defaults/links.tsx:192
+msgid "Third-party dependency license information"
+msgstr "Third-party dependency license information"
+
+#: src/defaults/links.tsx:203
 msgid "Product information for DTWare"
 msgstr "Product information for DTWare"
 
@@ -4891,27 +4912,67 @@ msgstr "Select project code for this line item"
 #~ msgstr "Company updated"
 
 #: src/forms/ContractForms.tsx:45
-msgid "Ngày hiệu lực phải sau ngày ký hợp đồng"
+#~ msgid "Ngày hiệu lực phải sau ngày ký hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:46
+msgid "Effective date must be after the contract issue date"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:56
+#: src/pages/contracts/ContractDetail.tsx:63
+#: src/pages/contracts/ContractsIndex.tsx:156
+#: src/pages/contracts/ContractsIndex.tsx:233
+#: src/tables/contract/ContractTable.tsx:208
+msgid "Sales Contract"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:57
+#: src/pages/contracts/ContractDetail.tsx:59
+#: src/pages/contracts/ContractsIndex.tsx:93
+#: src/pages/contracts/ContractsIndex.tsx:258
+#: src/tables/contract/ContractTable.tsx:208
+msgid "Purchase Contract"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:62
 #: src/pages/contracts/ContractDetail.tsx:96
 #: src/pages/contracts/ContractDetail.tsx:156
-msgid "Số hợp đồng"
+#~ msgid "Số hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:63
+#: src/pages/contracts/ContractDetail.tsx:96
+#: src/pages/contracts/ContractDetail.tsx:156
+msgid "Contract Number"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:63
-msgid "Số hoặc mã tham chiếu hợp đồng"
+#~ msgid "Số hoặc mã tham chiếu hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:64
+msgid "Contract number or reference code"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:67
 #: src/pages/contracts/ContractDetail.tsx:110
 #: src/pages/contracts/ContractDetail.tsx:168
-msgid "Tên hợp đồng"
+#~ msgid "Tên hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:68
+#: src/pages/contracts/ContractDetail.tsx:110
+#: src/pages/contracts/ContractDetail.tsx:168
+msgid "Contract Name"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:68
-msgid "Tên gọi hoặc mô tả ngắn của hợp đồng"
+#~ msgid "Tên gọi hoặc mô tả ngắn của hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:69
+msgid "Contract name or short description"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:73
@@ -4919,15 +4980,23 @@ msgstr ""
 #: src/pages/contracts/ContractDetail.tsx:174
 #: src/pages/contracts/ContractsIndex.tsx:98
 #: src/pages/contracts/ContractsIndex.tsx:168
-msgid "Mã dự án"
-msgstr ""
+#~ msgid "Mã dự án"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:75
-msgid "Mã dự án được lấy tự động từ hợp đồng bán liên kết"
+#~ msgid "Mã dự án được lấy tự động từ hợp đồng bán liên kết"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:76
+msgid "Project code is automatically taken from the linked sales contract"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:76
-msgid "Mã dự án liên kết với hợp đồng"
+#~ msgid "Mã dự án liên kết với hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:77
+msgid "Project code linked to this contract"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:82
@@ -4935,153 +5004,318 @@ msgstr ""
 #: src/pages/contracts/ContractDetail.tsx:181
 #: src/pages/contracts/ContractDetail.tsx:332
 #: src/pages/contracts/ContractsIndex.tsx:195
-msgid "Hợp đồng bán liên kết"
+#~ msgid "Hợp đồng bán liên kết"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:83
+#: src/pages/contracts/ContractDetail.tsx:128
+#: src/pages/contracts/ContractDetail.tsx:181
+#: src/pages/contracts/ContractDetail.tsx:332
+#: src/pages/contracts/ContractsIndex.tsx:195
+msgid "Linked Sales Contract"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:83
-msgid "Hợp đồng bán làm nguồn cho hợp đồng mua này"
+#~ msgid "Hợp đồng bán làm nguồn cho hợp đồng mua này"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:84
+msgid "Sales contract used as the source for this purchase contract"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:97
+msgid "Linked Sales Orders"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:98
+msgid "Select one or more sales orders included in this sales contract"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:103
 #: src/pages/contracts/ContractDetail.tsx:192
-msgid "Bên A"
-msgstr ""
+#~ msgid "Bên A"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:104
-msgid "Tên pháp nhân hoặc tổ chức của Bên A"
+#~ msgid "Tên pháp nhân hoặc tổ chức của Bên A"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:107
+msgid "Linked Purchase Orders"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:108
+msgid "Select one or more purchase orders included in this purchase contract"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:108
 #: src/pages/contracts/ContractDetail.tsx:198
-msgid "Đại diện Bên A"
-msgstr ""
+#~ msgid "Đại diện Bên A"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:109
-msgid "Người đại diện ký hợp đồng của Bên A"
-msgstr ""
+#~ msgid "Người đại diện ký hợp đồng của Bên A"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:113
 #: src/pages/contracts/ContractDetail.tsx:204
-msgid "Bên B"
+#~ msgid "Bên B"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:114
+#: src/pages/contracts/ContractDetail.tsx:192
+msgid "Party A"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:114
-msgid "Tên pháp nhân hoặc tổ chức của Bên B"
+#~ msgid "Tên pháp nhân hoặc tổ chức của Bên B"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:115
+msgid "Legal entity or organization name for Party A"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:118
 #: src/pages/contracts/ContractDetail.tsx:210
-msgid "Đại diện Bên B"
+#~ msgid "Đại diện Bên B"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:119
+#: src/pages/contracts/ContractDetail.tsx:198
+msgid "Party A Representative"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:119
-msgid "Người đại diện ký hợp đồng của Bên B"
+#~ msgid "Người đại diện ký hợp đồng của Bên B"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:120
+msgid "Authorized signatory for Party A"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:123
-msgid "Ngày ký hợp đồng"
+#~ msgid "Ngày ký hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:124
+#: src/pages/contracts/ContractDetail.tsx:204
+msgid "Party B"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:124
-msgid "Ngày hai bên ký kết hợp đồng"
+#~ msgid "Ngày hai bên ký kết hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:125
+msgid "Legal entity or organization name for Party B"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:129
+#: src/pages/contracts/ContractDetail.tsx:210
+msgid "Party B Representative"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:129
 #: src/pages/contracts/ContractDetail.tsx:222
-msgid "Ngày hiệu lực"
+#~ msgid "Ngày hiệu lực"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:130
+msgid "Authorized signatory for Party B"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:130
-msgid "Ngày hợp đồng bắt đầu có hiệu lực"
+#~ msgid "Ngày hợp đồng bắt đầu có hiệu lực"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:134
+msgid "Contract Issue Date"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:135
+msgid "Date the contract is signed by both parties"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:136
 #: src/pages/contracts/ContractDetail.tsx:264
-msgid "Nội dung công việc"
-msgstr ""
+#~ msgid "Nội dung công việc"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:137
-msgid "Phạm vi cung cấp hàng hóa, vật tư, thiết bị hoặc dịch vụ"
+#~ msgid "Phạm vi cung cấp hàng hóa, vật tư, thiết bị hoặc dịch vụ"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:140
+#: src/pages/contracts/ContractDetail.tsx:222
+msgid "Effective Date"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:141
+msgid "Date the contract becomes effective"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:141
 #: src/pages/contracts/ContractDetail.tsx:270
-msgid "Điều kiện giao hàng"
-msgstr ""
+#~ msgid "Điều kiện giao hàng"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:142
-msgid "Tiến độ, địa điểm và điều kiện thực hiện/giao hàng"
-msgstr ""
+#~ msgid "Tiến độ, địa điểm và điều kiện thực hiện/giao hàng"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:146
 #: src/pages/contracts/ContractDetail.tsx:276
-msgid "Điều khoản thanh toán"
+#~ msgid "Điều khoản thanh toán"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:147
+#: src/pages/contracts/ContractDetail.tsx:264
+msgid "Scope of Work"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:147
-msgid "Phương thức thanh toán, tạm ứng, nghiệm thu, quyết toán"
+#~ msgid "Phương thức thanh toán, tạm ứng, nghiệm thu, quyết toán"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:148
+msgid "Scope of goods, materials, equipment, or services supplied"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:151
-msgid "Điều khoản bảo hành"
+#~ msgid "Điều khoản bảo hành"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:152
+#: src/pages/contracts/ContractDetail.tsx:270
+msgid "Delivery Terms"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:152
-msgid "Thời hạn và điều kiện bảo hành"
+#~ msgid "Thời hạn và điều kiện bảo hành"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:153
+msgid "Schedule, location, and delivery or execution conditions"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:156
 #: src/pages/contracts/ContractDetail.tsx:231
-msgid "Giá trị trước VAT"
+#~ msgid "Giá trị trước VAT"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:157
+#: src/pages/contracts/ContractDetail.tsx:276
+msgid "Payment Terms"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:157
-msgid "Giá trị hợp đồng chưa bao gồm thuế VAT"
+#~ msgid "Giá trị hợp đồng chưa bao gồm thuế VAT"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:158
+msgid "Payment method, advance payment, acceptance, and final settlement"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:162
-msgid "Thuế suất VAT (%)"
+msgid "Warranty Terms"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:162
+#~ msgid "Thuế suất VAT (%)"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:163
+msgid "Warranty period and conditions"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:163
-msgid "Tỷ lệ thuế giá trị gia tăng áp dụng cho hợp đồng"
+#~ msgid "Tỷ lệ thuế giá trị gia tăng áp dụng cho hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:167
+#: src/pages/contracts/ContractDetail.tsx:231
+msgid "Pre-VAT Value"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:168
+msgid "Contract value excluding VAT"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:168
 #: src/pages/contracts/ContractDetail.tsx:243
-msgid "Tiền VAT"
-msgstr ""
+#~ msgid "Tiền VAT"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:169
-msgid "Số tiền thuế giá trị gia tăng"
+#~ msgid "Số tiền thuế giá trị gia tăng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:173
+msgid "VAT Rate (%)"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:174
+msgid "Value-added tax rate applied to this contract"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:175
 #: src/pages/contracts/ContractDetail.tsx:123
 #: src/pages/contracts/ContractDetail.tsx:249
-msgid "Tổng giá trị hợp đồng"
-msgstr ""
+#~ msgid "Tổng giá trị hợp đồng"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:176
-msgid "Giá trị hợp đồng đã bao gồm VAT"
+#~ msgid "Giá trị hợp đồng đã bao gồm VAT"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:179
+#: src/pages/contracts/ContractDetail.tsx:243
+msgid "VAT Amount"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:180
+msgid "Value-added tax amount"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:182
 #: src/pages/contracts/ContractDetail.tsx:255
-msgid "Tổng giá trị bằng chữ"
-msgstr ""
+#~ msgid "Tổng giá trị bằng chữ"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:183
-msgid "Diễn giải tổng giá trị hợp đồng bằng chữ"
+#~ msgid "Diễn giải tổng giá trị hợp đồng bằng chữ"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:186
+#: src/pages/contracts/ContractDetail.tsx:123
+#: src/pages/contracts/ContractDetail.tsx:249
+msgid "Total Contract Value"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:187
+msgid "Contract value including VAT"
 msgstr ""
 
 #: src/forms/ContractForms.tsx:187
 #: src/pages/contracts/ContractDetail.tsx:288
-msgid "Ghi chú"
-msgstr ""
+#~ msgid "Ghi chú"
+#~ msgstr ""
 
 #: src/forms/ContractForms.tsx:188
-msgid "Thông tin bổ sung liên quan đến hợp đồng"
+#~ msgid "Thông tin bổ sung liên quan đến hợp đồng"
+#~ msgstr ""
+
+#: src/forms/ContractForms.tsx:193
+#: src/pages/contracts/ContractDetail.tsx:255
+msgid "Amount In Words"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:194
+msgid "Text representation of the total contract value"
+msgstr ""
+
+#: src/forms/ContractForms.tsx:199
+msgid "Additional information related to this contract"
 msgstr ""
 
 #: src/forms/PartForms.tsx:101
@@ -7485,6 +7719,7 @@ msgid "External"
 msgstr "External"
 
 #: src/pages/build/BuildDetail.tsx:263
+#: src/pages/contracts/ContractsIndex.tsx:136
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:142
 #: src/pages/sales/ReturnOrderDetail.tsx:109
 #: src/pages/sales/SalesOrderDetail.tsx:99
@@ -7758,11 +7993,6 @@ msgstr "Cancel order"
 msgid "Build Order"
 msgstr "Build Order"
 
-#: src/pages/build/BuildDetail.tsx:775
-#: src/pages/build/BuildIndex.tsx:101
-msgid "Manufacturing"
-msgstr "Manufacturing"
-
 #: src/pages/build/BuildIndex.tsx:23
 #~ msgid "Build order created"
 #~ msgstr "Build order created"
@@ -7892,23 +8122,6 @@ msgstr "Delete Company"
 msgid "Company Actions"
 msgstr "Company Actions"
 
-#: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:569
-#: src/pages/sales/SalesIndex.tsx:169
-#: src/pages/sales/SalesOrderDetail.tsx:634
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:442
-msgid "Sales"
-msgstr "Sales"
-
-#: src/pages/company/ManufacturerDetail.tsx:9
-#: src/pages/company/ManufacturerPartDetail.tsx:268
-#: src/pages/company/SupplierDetail.tsx:9
-#: src/pages/company/SupplierPartDetail.tsx:366
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:568
-#: src/pages/purchasing/PurchasingIndex.tsx:214
-msgid "Purchasing"
-msgstr "Purchasing"
-
 #: src/pages/company/ManufacturerPartDetail.tsx:77
 #: src/pages/company/SupplierPartDetail.tsx:90
 msgid "Internal Part"
@@ -8030,79 +8243,154 @@ msgstr "No Stock"
 
 #: src/pages/contracts/ContractDetail.tsx:87
 #: src/pages/contracts/ContractsIndex.tsx:188
-msgid "Hợp đồng mua này chưa được liên kết với hợp đồng bán."
+msgid "This purchase contract is not linked to a sales contract."
+msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:87
+#: src/pages/contracts/ContractsIndex.tsx:188
+#~ msgid "Hợp đồng mua này chưa được liên kết với hợp đồng bán."
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:104
+#: src/pages/contracts/ContractDetail.tsx:162
+#: src/pages/contracts/ContractsIndex.tsx:152
+#: src/tables/contract/ContractTable.tsx:204
+msgid "Contract Type"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:104
 #: src/pages/contracts/ContractDetail.tsx:162
 #: src/pages/contracts/ContractsIndex.tsx:152
 #: src/tables/contract/ContractTable.tsx:204
-msgid "Loại hợp đồng"
-msgstr ""
+#~ msgid "Loại hợp đồng"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:216
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:279
+#: src/pages/sales/ReturnOrderDetail.tsx:258
+#: src/pages/sales/SalesOrderDetail.tsx:250
+#: src/tables/contract/ContractTable.tsx:232
+msgid "Issue Date"
+msgstr "Issue Date"
 
 #: src/pages/contracts/ContractDetail.tsx:216
 #: src/tables/contract/ContractTable.tsx:232
-msgid "Ngày ký"
+#~ msgid "Ngày ký"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:237
+msgid "VAT Rate"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:237
-msgid "Thuế suất VAT"
+#~ msgid "Thuế suất VAT"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:282
+msgid "Warranty"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:282
-msgid "Bảo hành"
+#~ msgid "Bảo hành"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:295
+msgid "Contract Information"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:295
-msgid "Thông tin hợp đồng"
+#~ msgid "Thông tin hợp đồng"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:296
+msgid "Contract Parties"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:296
-msgid "Các bên ký kết"
+#~ msgid "Các bên ký kết"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:297
+msgid "Contract Value"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:297
-msgid "Giá trị hợp đồng"
+#~ msgid "Giá trị hợp đồng"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:298
+msgid "Terms"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:298
-msgid "Điều khoản"
+#~ msgid "Điều khoản"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:323
+msgid "Contract Details"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:323
-msgid "Chi tiết hợp đồng"
+#~ msgid "Chi tiết hợp đồng"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:331
+#: src/pages/contracts/ContractsIndex.tsx:111
+#: src/tables/contract/ContractTable.tsx:226
+msgid "Linked Purchase Contracts"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:331
 #: src/pages/contracts/ContractsIndex.tsx:111
 #: src/tables/contract/ContractTable.tsx:226
-msgid "Hợp đồng mua liên kết"
+#~ msgid "Hợp đồng mua liên kết"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:344
+#: src/tables/contract/ContractTable.tsx:79
+msgid "Contract Documents"
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:344
 #: src/tables/contract/ContractTable.tsx:79
-msgid "Tài liệu hợp đồng"
+#~ msgid "Tài liệu hợp đồng"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractDetail.tsx:394
+msgid "Purchase contracts in the table are filtered by this sales contract."
 msgstr ""
 
 #: src/pages/contracts/ContractDetail.tsx:394
-msgid "Các hợp đồng mua trong bảng được lọc theo hợp đồng bán này."
+#~ msgid "Các hợp đồng mua trong bảng được lọc theo hợp đồng bán này."
+#~ msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:79
+msgid "Select a sales contract to view and create linked purchase contracts."
 msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:79
-msgid "Chọn một hợp đồng bán để xem và tạo các hợp đồng mua liên kết."
-msgstr ""
+#~ msgid "Chọn một hợp đồng bán để xem và tạo các hợp đồng mua liên kết."
+#~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:81
 #~ msgid "Chọn một hợp đồng mua hàng để xem hợp đồng bán hàng nguồn."
 #~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:86
-msgid "Hợp đồng bán đang chọn"
+msgid "Selected Sales Contract"
+msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:86
+#~ msgid "Hợp đồng bán đang chọn"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:87
+msgid "Each sales contract can link to multiple purchase contracts with the same project code."
 msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:87
-msgid "Mỗi hợp đồng bán có thể liên kết với nhiều hợp đồng mua cùng mã dự án."
-msgstr ""
+#~ msgid "Mỗi hợp đồng bán có thể liên kết với nhiều hợp đồng mua cùng mã dự án."
+#~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:89
 #~ msgid "Hợp đồng mua hàng đã chọn chưa liên kết với hợp đồng bán hàng."
@@ -8110,8 +8398,8 @@ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:93
 #: src/tables/contract/ContractTable.tsx:216
-msgid "Đơn bán"
-msgstr ""
+#~ msgid "Đơn bán"
+#~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:96
 #~ msgid "Nguồn từ hợp đồng bán hàng"
@@ -8130,16 +8418,20 @@ msgstr ""
 #~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:112
-msgid "Xem nhanh các hợp đồng mua được map trực tiếp với hợp đồng bán đang chọn."
+msgid "Quickly view purchase contracts mapped directly to the selected sales contract."
 msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:112
+#~ msgid "Xem nhanh các hợp đồng mua được map trực tiếp với hợp đồng bán đang chọn."
+#~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:113
 #~ msgid "Chọn một hợp đồng bán để xem các hợp đồng mua được map ở tab bên dưới."
 #~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:136
-msgid "Mã tham chiếu"
-msgstr ""
+#~ msgid "Mã tham chiếu"
+#~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:141
 #~ msgid "Hợp đồng bán hàng"
@@ -8155,16 +8447,25 @@ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:163
 #: src/tables/contract/ContractTable.tsx:212
-msgid "Tiêu đề"
-msgstr ""
+msgid "Title"
+msgstr "Title"
+
+#: src/pages/contracts/ContractsIndex.tsx:163
+#: src/tables/contract/ContractTable.tsx:212
+#~ msgid "Tiêu đề"
+#~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:177
 #~ msgid "Tệp bán hàng"
 #~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:178
-msgid "Chọn một hợp đồng mua để xem hợp đồng bán được liên kết."
+msgid "Select a purchase contract to view its linked sales contract."
 msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:178
+#~ msgid "Chọn một hợp đồng mua để xem hợp đồng bán được liên kết."
+#~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:187
 #~ msgid "Chọn hợp đồng bán hàng để upload, sửa hoặc xóa tệp đại diện."
@@ -8175,8 +8476,12 @@ msgstr ""
 #~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:196
-msgid "Thông tin hợp đồng bán được map trực tiếp với hợp đồng mua đang chọn."
+msgid "Sales contract information mapped directly to the selected purchase contract."
 msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:196
+#~ msgid "Thông tin hợp đồng bán được map trực tiếp với hợp đồng mua đang chọn."
+#~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:203
 #~ msgid "Chọn hợp đồng mua hàng để upload, sửa hoặc xóa tệp đại diện."
@@ -8187,20 +8492,36 @@ msgstr ""
 #~ msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:238
-msgid "Danh sách hợp đồng bán"
+msgid "Sales Contract List"
+msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:238
+#~ msgid "Danh sách hợp đồng bán"
+#~ msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:239
+msgid "A contract is a separate record with a project code and can include multiple sales orders."
 msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:239
-msgid "Hợp đồng là đối tượng riêng, có mã dự án và có thể chứa nhiều đơn bán."
+#~ msgid "Hợp đồng là đối tượng riêng, có mã dự án và có thể chứa nhiều đơn bán."
+#~ msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:242
+msgid "Select a sales contract to immediately view mapped purchase contracts below this list."
 msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:242
-msgid "Chọn một hợp đồng bán để xem ngay các hợp đồng mua được map bên dưới danh sách này."
+#~ msgid "Chọn một hợp đồng bán để xem ngay các hợp đồng mua được map bên dưới danh sách này."
+#~ msgstr ""
+
+#: src/pages/contracts/ContractsIndex.tsx:285
+msgid "Manage sales contracts, purchase contracts, project codes, and related orders"
 msgstr ""
 
 #: src/pages/contracts/ContractsIndex.tsx:285
-msgid "Quản lý hợp đồng bán, hợp đồng mua, mã dự án và đơn hàng liên quan"
-msgstr ""
+#~ msgid "Quản lý hợp đồng bán, hợp đồng mua, mã dự án và đơn hàng liên quan"
+#~ msgstr ""
 
 #: src/pages/core/CoreIndex.tsx:46
 #: src/pages/core/GroupDetail.tsx:81
@@ -8971,6 +9292,14 @@ msgstr "Supplier Price"
 msgid "Variant Part"
 msgstr "Variant Part"
 
+#: src/pages/projects/ProjectsIndex.tsx:23
+msgid "Create, enable, and configure project codes used for contracts, purchase orders, and sales orders"
+msgstr ""
+
+#: src/pages/projects/ProjectsIndex.tsx:28
+msgid "Project codes group sales and purchase contracts and orders under the same project."
+msgstr ""
+
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
 msgid "Edit Purchase Order"
 msgstr "Edit Purchase Order"
@@ -9031,12 +9360,6 @@ msgstr "Contact Email"
 #: src/pages/sales/SalesOrderDetail.tsx:217
 msgid "Contact Phone"
 msgstr "Contact Phone"
-
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:279
-#: src/pages/sales/ReturnOrderDetail.tsx:258
-#: src/pages/sales/SalesOrderDetail.tsx:250
-msgid "Issue Date"
-msgstr "Issue Date"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:304
 #: src/pages/sales/ReturnOrderDetail.tsx:282
@@ -10845,55 +11168,97 @@ msgid "Add contact"
 msgstr "Add contact"
 
 #: src/tables/contract/ContractTable.tsx:81
-msgid "Chọn tài liệu để upload sau khi hợp đồng được tạo thành công."
+msgid "Choose documents to upload after the contract is created successfully."
+msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:81
+#~ msgid "Chọn tài liệu để upload sau khi hợp đồng được tạo thành công."
+#~ msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:99
+msgid "Drag and drop or select contract files to upload"
 msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:99
-msgid "Kéo thả hoặc chọn file hợp đồng để upload"
+#~ msgid "Kéo thả hoặc chọn file hợp đồng để upload"
+#~ msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:107
+msgid "Remove from upload list"
 msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:107
-msgid "Xóa khỏi danh sách upload"
+#~ msgid "Xóa khỏi danh sách upload"
+#~ msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:131
+#: src/tables/contract/ContractTable.tsx:172
+msgid "Add Purchase Contract"
 msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:131
 #: src/tables/contract/ContractTable.tsx:172
-msgid "Thêm hợp đồng mua"
+msgid "Add Sales Contract"
 msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:131
 #: src/tables/contract/ContractTable.tsx:172
-msgid "Thêm hợp đồng bán"
+#~ msgid "Thêm hợp đồng mua"
+#~ msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:131
+#: src/tables/contract/ContractTable.tsx:172
+#~ msgid "Thêm hợp đồng bán"
+#~ msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:149
+msgid "Contract documents uploaded"
 msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:149
-msgid "Tài liệu hợp đồng đã được upload"
-msgstr ""
+#~ msgid "Tài liệu hợp đồng đã được upload"
+#~ msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/tables/contract/ContractTable.tsx:150
-msgid "Đã upload {0} tài liệu cho hợp đồng"
+msgid "Uploaded {0} documents for this contract"
+msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:150
+#~ msgid "Đã upload {0} tài liệu cho hợp đồng"
+#~ msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:158
+msgid "Could not upload contract documents"
 msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:158
-msgid "Không thể upload tài liệu hợp đồng"
+#~ msgid "Không thể upload tài liệu hợp đồng"
+#~ msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:159
+msgid "The contract was created but some documents could not be uploaded"
 msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:159
-msgid "Hợp đồng đã được tạo nhưng một số tài liệu chưa upload thành công"
-msgstr ""
+#~ msgid "Hợp đồng đã được tạo nhưng một số tài liệu chưa upload thành công"
+#~ msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:221
-msgid "Đơn mua"
+#~ msgid "Đơn mua"
+#~ msgstr ""
+
+#: src/tables/contract/ContractTable.tsx:237
+msgid "Total Value"
 msgstr ""
 
 #: src/tables/contract/ContractTable.tsx:237
-msgid "Tổng giá trị"
-msgstr ""
+#~ msgid "Tổng giá trị"
+#~ msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:110
-msgid "Uploading file {filename}"
-msgstr "Uploading file {filename}"
+#: src/tables/general/AttachmentTable.tsx:105
+msgid "External link"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:139
 #~ msgid "File uploaded"
@@ -10903,72 +11268,89 @@ msgstr "Uploading file {filename}"
 #~ msgid "File {0} uploaded successfully"
 #~ msgstr "File {0} uploaded successfully"
 
-#: src/tables/general/AttachmentTable.tsx:171
-#: src/tables/general/AttachmentTable.tsx:185
-msgid "Uploading File"
-msgstr "Uploading File"
-
-#: src/tables/general/AttachmentTable.tsx:196
-msgid "File Uploaded"
-msgstr "File Uploaded"
-
-#: src/tables/general/AttachmentTable.tsx:197
-msgid "File {name} uploaded successfully"
-msgstr "File {name} uploaded successfully"
-
-#: src/tables/general/AttachmentTable.tsx:213
-msgid "File could not be uploaded"
-msgstr "File could not be uploaded"
+#: src/tables/general/AttachmentTable.tsx:192
+msgid "Uploading file {filename}"
+msgstr "Uploading file {filename}"
 
 #: src/tables/general/AttachmentTable.tsx:254
 #~ msgid "Upload attachment"
 #~ msgstr "Upload attachment"
 
-#: src/tables/general/AttachmentTable.tsx:264
-msgid "Upload Attachment"
-msgstr "Upload Attachment"
-
-#: src/tables/general/AttachmentTable.tsx:274
-msgid "Edit Attachment"
-msgstr "Edit Attachment"
-
-#: src/tables/general/AttachmentTable.tsx:288
-msgid "Delete Attachment"
-msgstr "Delete Attachment"
-
-#: src/tables/general/AttachmentTable.tsx:298
-msgid "Is Link"
-msgstr "Is Link"
-
-#: src/tables/general/AttachmentTable.tsx:299
-msgid "Show link attachments"
-msgstr "Show link attachments"
-
-#: src/tables/general/AttachmentTable.tsx:303
-msgid "Is File"
-msgstr "Is File"
-
-#: src/tables/general/AttachmentTable.tsx:304
-msgid "Show file attachments"
-msgstr "Show file attachments"
-
-#: src/tables/general/AttachmentTable.tsx:313
-msgid "Add attachment"
-msgstr "Add attachment"
-
-#: src/tables/general/AttachmentTable.tsx:324
-msgid "Add external link"
-msgstr "Add external link"
-
-#: src/tables/general/AttachmentTable.tsx:341
-msgid "Download"
-msgstr ""
-
-#: src/tables/general/AttachmentTable.tsx:378
+#: src/tables/general/AttachmentTable.tsx:262
+#: src/tables/general/AttachmentTable.tsx:585
 msgid "No attachments found"
 msgstr "No attachments found"
 
-#: src/tables/general/AttachmentTable.tsx:417
+#: src/tables/general/AttachmentTable.tsx:327
+#: src/tables/general/AttachmentTable.tsx:341
+msgid "Uploading File"
+msgstr "Uploading File"
+
+#: src/tables/general/AttachmentTable.tsx:352
+msgid "File Uploaded"
+msgstr "File Uploaded"
+
+#: src/tables/general/AttachmentTable.tsx:353
+msgid "File {name} uploaded successfully"
+msgstr "File {name} uploaded successfully"
+
+#: src/tables/general/AttachmentTable.tsx:369
+msgid "File could not be uploaded"
+msgstr "File could not be uploaded"
+
+#: src/tables/general/AttachmentTable.tsx:427
+msgid "Upload Attachment"
+msgstr "Upload Attachment"
+
+#: src/tables/general/AttachmentTable.tsx:437
+msgid "Edit Attachment"
+msgstr "Edit Attachment"
+
+#: src/tables/general/AttachmentTable.tsx:451
+msgid "Delete Attachment"
+msgstr "Delete Attachment"
+
+#: src/tables/general/AttachmentTable.tsx:461
+msgid "Is Link"
+msgstr "Is Link"
+
+#: src/tables/general/AttachmentTable.tsx:462
+msgid "Show link attachments"
+msgstr "Show link attachments"
+
+#: src/tables/general/AttachmentTable.tsx:466
+msgid "Is File"
+msgstr "Is File"
+
+#: src/tables/general/AttachmentTable.tsx:467
+msgid "Show file attachments"
+msgstr "Show file attachments"
+
+#: src/tables/general/AttachmentTable.tsx:476
+msgid "Add attachment"
+msgstr "Add attachment"
+
+#: src/tables/general/AttachmentTable.tsx:487
+msgid "Add external link"
+msgstr "Add external link"
+
+#: src/tables/general/AttachmentTable.tsx:511
+msgid "Detailed list"
+msgstr ""
+
+#: src/tables/general/AttachmentTable.tsx:516
+msgid "Tile grid"
+msgstr ""
+
+#: src/tables/general/AttachmentTable.tsx:521
+msgid "Compact icons"
+msgstr ""
+
+#: src/tables/general/AttachmentTable.tsx:534
+msgid "Download"
+msgstr ""
+
+#: src/tables/general/AttachmentTable.tsx:633
 msgid "Drag attachment file here to upload"
 msgstr "Drag attachment file here to upload"
 

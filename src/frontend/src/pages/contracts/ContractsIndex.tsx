@@ -76,26 +76,26 @@ function SelectedSalesContract({
   if (!contract) {
     return (
       <Alert color='blue' icon={<IconInfoCircle />}>
-        {t`Chọn một hợp đồng bán để xem và tạo các hợp đồng mua liên kết.`}
+        {t`Select a sales contract to view and create linked purchase contracts.`}
       </Alert>
     );
   }
 
   return (
     <SelectionCard
-      title={t`Hợp đồng bán đang chọn`}
-      description={t`Mỗi hợp đồng bán có thể liên kết với nhiều hợp đồng mua cùng mã dự án.`}
+      title={t`Selected Sales Contract`}
+      description={t`Each sales contract can link to multiple purchase contracts with the same project code.`}
     >
       <Stack gap='xs'>
         <Text fw={600}>{contract.reference}</Text>
         {contract.title && <Text>{contract.title}</Text>}
         <Text size='sm' c='dimmed'>
-          {t`Đơn bán`}: {contract.sales_order_count ?? 0} | {t`Hợp đồng mua`}:{' '}
+          {t`Sales Orders`}: {contract.sales_order_count ?? 0} | {t`Purchase Contract`}:{' '}
           {contract.purchase_contract_count ?? 0}
         </Text>
         {contract.project_code_detail && (
           <Text size='sm'>
-            {t`Mã dự án`}: {contract.project_code_detail.code}
+            {t`Project Code`}: {contract.project_code_detail.code}
           </Text>
         )}
       </Stack>
@@ -108,8 +108,8 @@ function LinkedPurchaseContracts({
 }: Readonly<{ selectedSalesContract?: ContractRecord | null }>) {
   return (
     <SelectionCard
-      title={t`Hợp đồng mua liên kết`}
-      description={t`Xem nhanh các hợp đồng mua được map trực tiếp với hợp đồng bán đang chọn.`}
+      title={t`Linked Purchase Contracts`}
+      description={t`Quickly view purchase contracts mapped directly to the selected sales contract.`}
     >
       <Stack gap='sm'>
         <SelectedSalesContract contract={selectedSalesContract} />
@@ -133,7 +133,7 @@ function LinkedSalesContract({
     () => [
       {
         accessor: 'reference',
-        title: t`Mã tham chiếu`,
+        title: t`Reference`,
         render: (contract: ContractRecord) => {
           const detailUrl = getDetailUrl(ModelType.contract, contract.pk);
 
@@ -149,23 +149,23 @@ function LinkedSalesContract({
       },
       {
         accessor: 'contract_type',
-        title: t`Loại hợp đồng`,
+        title: t`Contract Type`,
         render: (contract: ContractRecord) => (
           <Badge color='blue'>
             {contract.contract_type === 'sales'
-              ? t`Hợp đồng bán`
+              ? t`Sales Contract`
               : contract.contract_type}
           </Badge>
         )
       },
       {
         accessor: 'title',
-        title: t`Tiêu đề`,
+        title: t`Title`,
         render: (contract: ContractRecord) => contract.title ?? '-'
       },
       {
         accessor: 'project_code_detail.code',
-        title: t`Mã dự án`,
+        title: t`Project Code`,
         render: (contract: ContractRecord) => contract.project_code_detail?.code ?? '-'
       }
     ],
@@ -175,7 +175,7 @@ function LinkedSalesContract({
   if (!selectedPurchaseContract) {
     return (
       <Alert color='blue' icon={<IconInfoCircle />}>
-        {t`Chọn một hợp đồng mua để xem hợp đồng bán được liên kết.`}
+        {t`Select a purchase contract to view its linked sales contract.`}
       </Alert>
     );
   }
@@ -185,15 +185,15 @@ function LinkedSalesContract({
   if (!salesContract) {
     return (
       <Alert color='yellow' icon={<IconInfoCircle />}>
-        {t`Hợp đồng mua này chưa được liên kết với hợp đồng bán.`}
+        {t`This purchase contract is not linked to a sales contract.`}
       </Alert>
     );
   }
 
   return (
     <SelectionCard
-      title={t`Hợp đồng bán liên kết`}
-      description={t`Thông tin hợp đồng bán được map trực tiếp với hợp đồng mua đang chọn.`}
+      title={t`Linked Sales Contract`}
+      description={t`Sales contract information mapped directly to the selected purchase contract.`}
     >
       <Table withTableBorder withColumnBorders striped highlightOnHover>
         <Table.Thead>
@@ -230,16 +230,16 @@ export default function ContractsIndex() {
     () => [
       {
         name: 'sales-contracts',
-        label: t`Hợp đồng bán`,
+        label: t`Sales Contract`,
         icon: <IconTruckDelivery />,
         content: (
           <Stack gap='sm'>
             <SelectionCard
-              title={t`Danh sách hợp đồng bán`}
-              description={t`Hợp đồng là đối tượng riêng, có mã dự án và có thể chứa nhiều đơn bán.`}
+              title={t`Sales Contract List`}
+              description={t`A contract is a separate record with a project code and can include multiple sales orders.`}
             >
               <Text size='sm' c='dimmed'>
-                {t`Chọn một hợp đồng bán để xem ngay các hợp đồng mua được map bên dưới danh sách này.`}
+                {t`Select a sales contract to immediately view mapped purchase contracts below this list.`}
               </Text>
             </SelectionCard>
             <ContractTable
@@ -255,7 +255,7 @@ export default function ContractsIndex() {
       },
       {
         name: 'purchase-contracts',
-        label: t`Hợp đồng mua`,
+        label: t`Purchase Contract`,
         icon: <IconShoppingCart />,
         content: (
           <Stack gap='sm'>
@@ -281,8 +281,8 @@ export default function ContractsIndex() {
   return (
     <Stack>
       <PageDetail
-        title={t`Hợp đồng`}
-        subtitle={t`Quản lý hợp đồng bán, hợp đồng mua, mã dự án và đơn hàng liên quan`}
+        title={t`Contracts`}
+        subtitle={t`Manage sales contracts, purchase contracts, project codes, and related orders`}
         icon={<IconClipboardText />}
       />
       <PanelGroup

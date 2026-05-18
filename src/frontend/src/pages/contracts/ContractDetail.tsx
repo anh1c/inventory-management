@@ -56,11 +56,11 @@ type ContractRecord = {
 
 function contractTypeLabel(contract?: ContractRecord) {
   if (contract?.contract_type === 'purchase') {
-    return t`Hợp đồng mua`;
+    return t`Purchase Contract`;
   }
 
   if (contract?.contract_type === 'sales') {
-    return t`Hợp đồng bán`;
+    return t`Sales Contract`;
   }
 
   return contract?.contract_type ?? '-';
@@ -84,7 +84,7 @@ function SalesContractSummary({
   if (!contract) {
     return (
       <Alert color='yellow' icon={<IconInfoCircle />}>
-        {t`Hợp đồng mua này chưa được liên kết với hợp đồng bán.`}
+        {t`This purchase contract is not linked to a sales contract.`}
       </Alert>
     );
   }
@@ -93,7 +93,7 @@ function SalesContractSummary({
     {
       type: 'link',
       name: 'pk',
-      label: t`Số hợp đồng`,
+      label: t`Contract Number`,
       model: ModelType.contract,
       model_formatter: (record: ContractRecord) => record.reference ?? '-',
       copy: true
@@ -101,31 +101,31 @@ function SalesContractSummary({
     {
       type: 'text',
       name: 'contract_type',
-      label: t`Loại hợp đồng`,
+      label: t`Contract Type`,
       value_formatter: () => contractTypeLabel(contract)
     },
     {
       type: 'text',
       name: 'title',
-      label: t`Tên hợp đồng`,
+      label: t`Contract Name`,
       copy: true
     },
     {
       type: 'text',
       name: 'project_code_detail.code',
-      label: t`Mã dự án`,
+      label: t`Project Code`,
       copy: true,
       hidden: !contract.project_code_detail?.code
     },
     {
       type: 'text',
       name: 'grand_total',
-      label: t`Tổng giá trị hợp đồng`,
+      label: t`Total Contract Value`,
       value_formatter: () => currencyValue(contract.grand_total)
     }
   ];
 
-  return <DetailsTable title={t`Hợp đồng bán liên kết`} fields={fields} item={contract} />;
+  return <DetailsTable title={t`Linked Sales Contract`} fields={fields} item={contract} />;
 }
 
 export default function ContractDetail() {
@@ -153,32 +153,32 @@ export default function ContractDetail() {
       {
         type: 'text',
         name: 'reference',
-        label: t`Số hợp đồng`,
+        label: t`Contract Number`,
         copy: true
       },
       {
         type: 'text',
         name: 'contract_type',
-        label: t`Loại hợp đồng`,
+        label: t`Contract Type`,
         value_formatter: () => contractTypeLabel(contract)
       },
       {
         type: 'text',
         name: 'title',
-        label: t`Tên hợp đồng`,
+        label: t`Contract Name`,
         copy: true
       },
       {
         type: 'text',
         name: 'project_code_detail.code',
-        label: t`Mã dự án`,
+        label: t`Project Code`,
         copy: true,
         hidden: !contract?.project_code_detail?.code
       },
       {
         type: 'link',
         name: 'sales_contract',
-        label: t`Hợp đồng bán liên kết`,
+        label: t`Linked Sales Contract`,
         model: ModelType.contract,
         model_formatter: (record: ContractRecord) => record.reference ?? '-',
         hidden: !contract?.sales_contract
@@ -189,37 +189,37 @@ export default function ContractDetail() {
       {
         type: 'text',
         name: 'party_a_name',
-        label: t`Bên A`,
+        label: t`Party A`,
         copy: true
       },
       {
         type: 'text',
         name: 'party_a_representative',
-        label: t`Đại diện Bên A`,
+        label: t`Party A Representative`,
         copy: true
       },
       {
         type: 'text',
         name: 'party_b_name',
-        label: t`Bên B`,
+        label: t`Party B`,
         copy: true
       },
       {
         type: 'text',
         name: 'party_b_representative',
-        label: t`Đại diện Bên B`,
+        label: t`Party B Representative`,
         copy: true
       },
       {
         type: 'date',
         name: 'issue_date',
-        label: t`Ngày ký`,
+        label: t`Issue Date`,
         copy: true
       },
       {
         type: 'date',
         name: 'effective_date',
-        label: t`Ngày hiệu lực`,
+        label: t`Effective Date`,
         copy: true
       }
     ];
@@ -228,31 +228,31 @@ export default function ContractDetail() {
       {
         type: 'text',
         name: 'total_amount',
-        label: t`Giá trị trước VAT`,
+        label: t`Pre-VAT Value`,
         value_formatter: () => currencyValue(contract?.total_amount)
       },
       {
         type: 'text',
         name: 'vat_rate',
-        label: t`Thuế suất VAT`,
+        label: t`VAT Rate`,
         value_formatter: () => vatRateValue(contract?.vat_rate)
       },
       {
         type: 'text',
         name: 'vat_amount',
-        label: t`Tiền VAT`,
+        label: t`VAT Amount`,
         value_formatter: () => currencyValue(contract?.vat_amount)
       },
       {
         type: 'text',
         name: 'grand_total',
-        label: t`Tổng giá trị hợp đồng`,
+        label: t`Total Contract Value`,
         value_formatter: () => currencyValue(contract?.grand_total)
       },
       {
         type: 'text',
         name: 'amount_text',
-        label: t`Tổng giá trị bằng chữ`,
+        label: t`Amount In Words`,
         copy: true
       }
     ];
@@ -261,41 +261,41 @@ export default function ContractDetail() {
       {
         type: 'text',
         name: 'work_scope',
-        label: t`Nội dung công việc`,
+        label: t`Scope of Work`,
         copy: true
       },
       {
         type: 'text',
         name: 'delivery_terms',
-        label: t`Điều kiện giao hàng`,
+        label: t`Delivery Terms`,
         copy: true
       },
       {
         type: 'text',
         name: 'payment_terms',
-        label: t`Điều khoản thanh toán`,
+        label: t`Payment Terms`,
         copy: true
       },
       {
         type: 'text',
         name: 'warranty_terms',
-        label: t`Bảo hành`,
+        label: t`Warranty`,
         copy: true
       },
       {
         type: 'text',
         name: 'notes',
-        label: t`Ghi chú`,
+        label: t`Notes`,
         copy: true
       }
     ];
 
     return (
       <ItemDetailsGrid>
-        <DetailsTable title={t`Thông tin hợp đồng`} fields={generalFields} item={contract} />
-        <DetailsTable title={t`Các bên ký kết`} fields={partyFields} item={contract} />
-        <DetailsTable title={t`Giá trị hợp đồng`} fields={valueFields} item={contract} />
-        <DetailsTable title={t`Điều khoản`} fields={termFields} item={contract} />
+        <DetailsTable title={t`Contract Information`} fields={generalFields} item={contract} />
+        <DetailsTable title={t`Contract Parties`} fields={partyFields} item={contract} />
+        <DetailsTable title={t`Contract Value`} fields={valueFields} item={contract} />
+        <DetailsTable title={t`Terms`} fields={termFields} item={contract} />
       </ItemDetailsGrid>
     );
   }, [contract, instanceQuery]);
@@ -320,7 +320,7 @@ export default function ContractDetail() {
     () => [
       {
         name: 'detail',
-        label: t`Chi tiết hợp đồng`,
+        label: t`Contract Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
@@ -328,8 +328,8 @@ export default function ContractDetail() {
         name: 'linked-contracts',
         label:
           contract?.contract_type === 'sales'
-            ? t`Hợp đồng mua liên kết`
-            : t`Hợp đồng bán liên kết`,
+            ? t`Linked Purchase Contracts`
+            : t`Linked Sales Contract`,
         icon:
           contract?.contract_type === 'sales' ? (
             <IconShoppingCart />
@@ -341,7 +341,7 @@ export default function ContractDetail() {
       AttachmentPanel({
         model_type: ModelType.contract,
         model_id: contract?.pk,
-        label: t`Tài liệu hợp đồng`
+        label: t`Contract Documents`
       })
     ],
     [contract, detailsPanel, relatedContractsPanel]
@@ -369,14 +369,14 @@ export default function ContractDetail() {
     <InstanceDetail query={instanceQuery} requiredPermission={ModelType.contract}>
       <Stack gap='xs'>
         <PageDetail
-          title={`${t`Hợp đồng`}: ${contract?.reference ?? ''}`}
+          title={`${t`Contracts`}: ${contract?.reference ?? ''}`}
           subtitle={subtitle}
           icon={<IconFileDescription size={18} />}
           badges={badges}
-          breadcrumbs={[{ name: t`Hợp đồng`, url: '/contracts/' }]}
+          breadcrumbs={[{ name: t`Contracts`, url: '/contracts/' }]}
           lastCrumb={[
             {
-              name: contract?.reference ?? t`Hợp đồng`,
+              name: contract?.reference ?? t`Contracts`,
               url: contract?.pk ? getDetailUrl(ModelType.contract, contract.pk) : ''
             }
           ]}
@@ -391,7 +391,7 @@ export default function ContractDetail() {
         />
         {contract?.contract_type === 'sales' && (
           <Text size='xs' c='dimmed'>
-            <IconClipboardText size={14} /> {t`Các hợp đồng mua trong bảng được lọc theo hợp đồng bán này.`}
+            <IconClipboardText size={14} /> {t`Purchase contracts in the table are filtered by this sales contract.`}
           </Text>
         )}
       </Stack>
