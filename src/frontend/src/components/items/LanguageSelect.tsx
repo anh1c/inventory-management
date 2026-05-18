@@ -9,7 +9,7 @@ import {
 } from '../../contexts/LanguageContext';
 import { useLocalState } from '../../states/LocalState';
 
-export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
+export function LanguageSelect({ width = 160 }: Readonly<{ width?: number }>) {
   const [value, setValue] = useState<string | null>(null);
   const [locale, setLanguage] = useLocalState(
     useShallow((state) => [state.language, state.setLanguage])
@@ -41,7 +41,7 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
       data={[
         {
           value: '',
-          label: t`Ngôn ngữ mặc định`
+          label: t`Default language`
         },
         ...langOptions
       ]}
@@ -49,7 +49,7 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
       defaultValue={''}
       onChange={setValue}
       searchable
-      aria-label={t`Chọn ngôn ngữ`}
+      aria-label={t`Select language`}
     />
   );
 }

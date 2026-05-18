@@ -1,38 +1,57 @@
-import { ActionIcon, Group, Tooltip } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconLanguage } from '@tabler/icons-react';
+import { ActionIcon, Menu, Tooltip } from '@mantine/core';
+import { IconCheck, IconLanguage } from '@tabler/icons-react';
 
 import { t } from '@lingui/core/macro';
-import { LanguageSelect } from './LanguageSelect';
+import { useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+import {
+  defaultLocale,
+  getSupportedLanguages
+} from '../../contexts/LanguageContext';
+import { useLocalState } from '../../states/LocalState';
 
 export function LanguageToggle() {
-  const [open, toggle] = useDisclosure();
+  const [locale, setLanguage] = useLocalState(
+    useShallow((state) => [state.language, state.setLanguage])
+  );
+
+  const activeLocale = locale || defaultLocale;
+  const languageOptions = useMemo(() => {
+    const languages = getSupportedLanguages(activeLocale);
+
+    return Object.keys(languages).map((key) => ({
+      value: key,
+      label: languages[key]
+    }));
+  }, [activeLocale]);
 
   return (
-    <Group
-      justify='center'
-      style={{
-        border: open === true ? '1px dashed' : '',
-        margin: open === true ? 2 : 12,
-        padding: open === true ? 8 : 0
-      }}
-      aria-label='Open language options'
-    >
-      <Tooltip label={t`Chọn ngôn ngữ`}>
-        <ActionIcon
-          onClick={() => toggle.toggle()}
-          size='lg'
-          variant='transparent'
-          aria-label='Language toggle'
-        >
-          <IconLanguage />
-        </ActionIcon>
-      </Tooltip>
-      {open && (
-        <Group>
-          <LanguageSelect />
-        </Group>
-      )}
-    </Group>
+    <Menu position='bottom-end' width={170} shadow='md' withinPortal>
+      <Menu.Target>
+        <Tooltip label={t`Select language`}>
+          <ActionIcon
+            size='lg'
+            variant='subtle'
+            aria-label={t`Select language`}
+          >
+            <IconLanguage />
+          </ActionIcon>
+        </Tooltip>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Label>{t`Language`}</Menu.Label>
+        {languageOptions.map((option) => (
+          <Menu.Item
+            key={option.value}
+            leftSection={
+              activeLocale === option.value ? <IconCheck size={16} /> : null
+            }
+            onClick={() => setLanguage(option.value)}
+          >
+            {option.label}
+          </Menu.Item>
+        ))}
+      </Menu.Dropdown>
+    </Menu>
   );
 }
