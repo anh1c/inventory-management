@@ -67,6 +67,8 @@ class ContractSerializer(
 ):
     """Serializer for the Contract model class."""
 
+    CONTRACT_ORDER_FIELDS = ('sales_orders', 'purchase_orders')
+
     project_code_label = common.filters.enable_project_label_filter()
     project_code_detail = common.filters.enable_project_code_filter()
 
@@ -142,41 +144,36 @@ class ContractSerializer(
             purchase_contract_count=SubqueryCount('purchase_contracts'),
         )
 
-    def validate(self, data):
-        """Validate contract order relationships and derived values."""
-        data = super().validate(data)
+    def skip_create_fields(self):
+        """Skip many-to-many fields when building the validation model."""
+        return [*super().skip_create_fields(), *self.CONTRACT_ORDER_FIELDS]
 
+    def run_validation(self, data=serializers.empty):
+        """Validate many-to-many order links without assigning them directly."""
+        if self.instance is None or data in [serializers.empty, None]:
+            return super().run_validation(data)
+
+        initial_data = data.copy()
+        order_data = {}
+
+        for field in self.CONTRACT_ORDER_FIELDS:
+            if field in initial_data:
+                order_data[field] = initial_data.pop(field)
+
+        validated_data = super().run_validation(initial_data)
+
+        for field, value in order_data.items():
+            validated_data[field] = self.fields[field].run_validation(value)
+
+        self.validate_order_links(validated_data)
+
+        return validated_data
+
+    def validate_order_links(self, data):
+        """Validate linked order relationships."""
         contract_type = data.get(
             'contract_type', getattr(self.instance, 'contract_type', None)
         )
-        issue_date = data.get('issue_date', getattr(self.instance, 'issue_date', None))
-        effective_date = data.get(
-            'effective_date', getattr(self.instance, 'effective_date', None)
-        )
-
-        if issue_date and effective_date and effective_date <= issue_date:
-            raise ValidationError({
-                'effective_date': _('Ngày hiệu lực phải sau ngày ký hợp đồng')
-            })
-
-        if contract_type == order.models.Contract.ContractType.SALES and data.get(
-            'sales_contract'
-        ):
-            raise ValidationError({
-                'sales_contract': _('Sales contracts cannot link to another sales contract')
-            })
-
-        if contract_type == order.models.Contract.ContractType.PURCHASE:
-            sales_contract = data.get(
-                'sales_contract', getattr(self.instance, 'sales_contract', None)
-            )
-            if sales_contract and sales_contract.contract_type != order.models.Contract.ContractType.SALES:
-                raise ValidationError({
-                    'sales_contract': _('Linked sales contract must be a sales contract')
-                })
-            if sales_contract:
-                data['project_code'] = sales_contract.project_code
-
         sales_orders = data.get('sales_orders')
         purchase_orders = data.get('purchase_orders')
 
@@ -216,6 +213,74 @@ class ContractSerializer(
                             'Linked purchase orders must use the same project code'
                         )
                     })
+
+    def pop_order_links(self, validated_data):
+        """Remove many-to-many order links for explicit post-save handling."""
+        return {
+            field: validated_data.pop(field)
+            for field in self.CONTRACT_ORDER_FIELDS
+            if field in validated_data
+        }
+
+    def set_order_links(self, instance, order_links):
+        """Apply many-to-many order links after the contract has been saved."""
+        for field, values in order_links.items():
+            getattr(instance, field).set(values)
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a contract and then apply linked orders."""
+        order_links = self.pop_order_links(validated_data)
+        instance = super().create(validated_data)
+        self.set_order_links(instance, order_links)
+
+        return instance
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        """Update a contract and then apply linked orders."""
+        order_links = self.pop_order_links(validated_data)
+        instance = super().update(instance, validated_data)
+        self.set_order_links(instance, order_links)
+
+        return instance
+
+    def validate(self, data):
+        """Validate contract order relationships and derived values."""
+        data = super().validate(data)
+
+        contract_type = data.get(
+            'contract_type', getattr(self.instance, 'contract_type', None)
+        )
+        issue_date = data.get('issue_date', getattr(self.instance, 'issue_date', None))
+        effective_date = data.get(
+            'effective_date', getattr(self.instance, 'effective_date', None)
+        )
+
+        if issue_date and effective_date and effective_date <= issue_date:
+            raise ValidationError({
+                'effective_date': _('Ngày hiệu lực phải sau ngày ký hợp đồng')
+            })
+
+        if contract_type == order.models.Contract.ContractType.SALES and data.get(
+            'sales_contract'
+        ):
+            raise ValidationError({
+                'sales_contract': _('Sales contracts cannot link to another sales contract')
+            })
+
+        if contract_type == order.models.Contract.ContractType.PURCHASE:
+            sales_contract = data.get(
+                'sales_contract', getattr(self.instance, 'sales_contract', None)
+            )
+            if sales_contract and sales_contract.contract_type != order.models.Contract.ContractType.SALES:
+                raise ValidationError({
+                    'sales_contract': _('Linked sales contract must be a sales contract')
+                })
+            if sales_contract:
+                data['project_code'] = sales_contract.project_code
+
+        self.validate_order_links(data)
 
         total_amount = data.get(
             'total_amount', getattr(self.instance, 'total_amount', Decimal(0))
