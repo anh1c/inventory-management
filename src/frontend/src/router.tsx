@@ -76,6 +76,10 @@ export const ContractDetail = Loadable(
   lazy(() => import('./pages/contracts/ContractDetail'))
 );
 
+export const ProjectsIndex = Loadable(
+  lazy(() => import('./pages/projects/ProjectsIndex'))
+);
+
 export const PurchaseOrderDetail = Loadable(
   lazy(() => import('./pages/purchasing/PurchaseOrderDetail'))
 );
@@ -199,6 +203,10 @@ export const routes = (
         <Route index element={<Navigate to='index/' replace />} />
         <Route path='index/*' element={<ContractsIndex />} />
         <Route path=':id/*' element={<ContractDetail />} />
+      </Route>
+      <Route path='projects/'>
+        <Route index element={<Navigate to='index/' replace />} />
+        <Route path='index/*' element={<ProjectsIndex />} />
       </Route>
       <Route path='company/:id/*' element={<CompanyDetail />} />
       <Route path='sales/'>

@@ -85,6 +85,7 @@ export function ApiFormField({
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,
+      multiple: undefined,
       allow_null: undefined,
       read_only: undefined,
       children: undefined,
@@ -210,7 +211,7 @@ export function ApiFormField({
             radius='sm'
             value={value}
             error={definition.error ?? error?.message}
-            onChange={(payload: File | null) => onChange(payload)}
+            onChange={(payload: File | File[] | null) => onChange(payload)}
           />
         );
       case 'nested object':

@@ -10,6 +10,7 @@ import {
   IconBuildingFactory2,
   IconClipboardText,
   IconDashboard,
+  IconListDetails,
   IconPackages,
   IconShoppingCart,
   IconTruckDelivery
@@ -68,6 +69,12 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       title: t`Hợp đồng`,
       icon: <IconClipboardText />,
       roles: [UserRoles.sales_order, UserRoles.purchase_order]
+    },
+    {
+      name: 'projects',
+      title: t`Dự án`,
+      icon: <IconListDetails />,
+      role: UserRoles.admin
     }
   ];
 

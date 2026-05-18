@@ -151,7 +151,8 @@ export const ModelInformationDict: ModelDict = {
   projectcode: {
     label: () => t`Project Code`,
     label_multiple: () => t`Project Codes`,
-    url_detail: '/project-code/:pk/',
+    url_overview: '/projects/index/',
+    url_detail: '/projects/index/',
     api_endpoint: ApiEndpoints.project_code_list,
     icon: 'list_details'
   },

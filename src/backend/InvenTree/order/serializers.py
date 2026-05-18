@@ -177,6 +177,46 @@ class ContractSerializer(
             if sales_contract:
                 data['project_code'] = sales_contract.project_code
 
+        sales_orders = data.get('sales_orders')
+        purchase_orders = data.get('purchase_orders')
+
+        if contract_type == order.models.Contract.ContractType.SALES and purchase_orders:
+            raise ValidationError({
+                'purchase_orders': _('Sales contracts can only link to sales orders')
+            })
+
+        if contract_type == order.models.Contract.ContractType.PURCHASE and sales_orders:
+            raise ValidationError({
+                'sales_orders': _('Purchase contracts can only link to purchase orders')
+            })
+
+        project_code = data.get(
+            'project_code', getattr(self.instance, 'project_code', None)
+        )
+
+        if project_code:
+            for sales_order in sales_orders or []:
+                if (
+                    sales_order.project_code_id
+                    and sales_order.project_code_id != project_code.pk
+                ):
+                    raise ValidationError({
+                        'sales_orders': _(
+                            'Linked sales orders must use the same project code'
+                        )
+                    })
+
+            for purchase_order in purchase_orders or []:
+                if (
+                    purchase_order.project_code_id
+                    and purchase_order.project_code_id != project_code.pk
+                ):
+                    raise ValidationError({
+                        'purchase_orders': _(
+                            'Linked purchase orders must use the same project code'
+                        )
+                    })
+
         total_amount = data.get(
             'total_amount', getattr(self.instance, 'total_amount', Decimal(0))
         )

@@ -52,7 +52,7 @@ export function RelatedModelField({
   const form = useFormContext();
 
   // Keep track of the primary key value for this field
-  const [pk, setPk] = useState<number | null>(null);
+  const [pk, setPk] = useState<number | number[] | null>(null);
 
   // Handle condition where the form is rebuilt dynamically
   useEffect(() => {
@@ -64,7 +64,7 @@ export function RelatedModelField({
 
   const [offset, setOffset] = useState<number>(0);
 
-  const [initialData, setInitialData] = useState<{}>({});
+  const [initialData, setInitialData] = useState<any[] | any>({});
   const [data, setData] = useState<any[]>([]);
   const dataRef = useRef<any[]>([]);
 
@@ -92,12 +92,32 @@ export function RelatedModelField({
           definition.onValueChange(instance[pk_field], instance);
         }
 
-        setInitialData(value);
-        dataRef.current = [value];
-        setPk(instance[pk_field]);
+        if (definition.multiple) {
+          setInitialData((current: any) => {
+            const values = Array.isArray(current) ? [...current] : [];
+            const exists = values.some((item: any) => item.value === value.value);
+
+            return exists ? values : [...values, value];
+          });
+          dataRef.current = dataRef.current.some(
+            (item: any) => item.value === value.value
+          )
+            ? dataRef.current
+            : [...dataRef.current, value];
+        } else {
+          setInitialData(value);
+          dataRef.current = [value];
+          setPk(instance[pk_field]);
+        }
       }
     },
-    [definition.pk_field, definition.onValueChange, setInitialData, setPk]
+    [
+      definition.pk_field,
+      definition.onValueChange,
+      definition.multiple,
+      setInitialData,
+      setPk
+    ]
   );
 
   // Fetch a single field by primary key, using the provided API filters
@@ -129,6 +149,18 @@ export function RelatedModelField({
       setValue,
       setPk
     ]
+  );
+
+  const fetchMultipleFields = useCallback(
+    (pks: Array<number | string>) => {
+      setInitialData([]);
+      dataRef.current = [];
+
+      pks.forEach((itemPk) => {
+        fetchSingleField(itemPk);
+      });
+    },
+    [fetchSingleField]
   );
 
   // Memoize the model type information for this field
@@ -255,11 +287,14 @@ export function RelatedModelField({
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
-    if (field.value === pk) return;
+    if (JSON.stringify(field.value ?? null) === JSON.stringify(pk ?? null)) return;
 
     const id = pk || field.value;
 
-    if (id !== null && id !== undefined && id !== '') {
+    if (Array.isArray(id)) {
+      setPk(id);
+      fetchMultipleFields(id);
+    } else if (id !== null && id !== undefined && id !== '') {
       fetchSingleField(id);
     } else {
       setPk(null);
@@ -268,7 +303,8 @@ export function RelatedModelField({
     definition.api_url,
     definition.filters,
     definition.pk_field,
-    field.value
+    field.value,
+    pk
   ]);
 
   const [filters, setFilters] = useState<any>({});
@@ -371,13 +407,18 @@ export function RelatedModelField({
   // Update form values when the selected value changes
   const onChange = useCallback(
     (value: any) => {
-      const _pk = value?.value ?? null;
+      const _pk = definition.multiple
+        ? (value ?? []).map((item: any) => item.value)
+        : (value?.value ?? null);
       field.onChange(_pk);
 
       setPk(_pk);
 
       // Run custom callback for this field (if provided)
-      definition.onValueChange?.(_pk, value?.data ?? {});
+      definition.onValueChange?.(
+        _pk,
+        definition.multiple ? (value ?? []).map((item: any) => item.data) : (value?.data ?? {})
+      );
     },
     [field.onChange, definition]
   );
@@ -390,6 +431,7 @@ export function RelatedModelField({
       ...definition,
       autoFill: undefined,
       modelRenderer: undefined,
+      multiple: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       exclude: undefined,
@@ -399,11 +441,20 @@ export function RelatedModelField({
   }, [definition]);
 
   const currentValue = useMemo(() => {
-    if (!pk) {
+    if (!pk || (Array.isArray(pk) && pk.length === 0)) {
       return null;
     }
 
-    const _data = [...data, initialData];
+    const _data = [
+      ...data,
+      ...(Array.isArray(initialData) ? initialData : [initialData])
+    ].filter((item) => item?.value);
+
+    if (definition.multiple) {
+      const pks = Array.isArray(pk) ? pk : [pk];
+      return _data.filter((item) => pks.includes(item.value));
+    }
+
     return _data.find((item) => item.value === pk);
   }, [pk, data]);
 
@@ -488,6 +539,7 @@ export function RelatedModelField({
               selectQuery.isRefetching
             }
             isClearable={!definition.required}
+            isMulti={definition.multiple}
             isDisabled={definition.disabled}
             isSearchable={true}
             placeholder={definition.placeholder || `${t`Search`}...`}

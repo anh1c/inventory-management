@@ -98,6 +98,7 @@ export type ApiFormFieldType = {
   pk_field?: string;
   model?: ModelType;
   modelRenderer?: (instance: any) => ReactNode;
+  multiple?: boolean;
   filters?: any;
   child?: ApiFormFieldType;
   children?: { [key: string]: ApiFormFieldType };

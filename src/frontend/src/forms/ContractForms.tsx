@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 
@@ -89,14 +90,24 @@ export function useContractFields({
       onValueChange: (_value: any, record?: any) => setSelectedSalesContract(record)
     },
     sales_orders: {
-      field_type: 'string',
-      hidden: true,
-      exclude: true
+      field_type: 'related field',
+      model: ModelType.salesorder,
+      api_url: apiUrl(ApiEndpoints.sales_order_list),
+      multiple: true,
+      label: t`Đơn bán liên kết`,
+      description: t`Chọn một hoặc nhiều đơn bán thuộc hợp đồng bán này`,
+      hidden: isPurchaseContract,
+      filters: selectedProjectCode ? { project_code: selectedProjectCode } : undefined
     },
     purchase_orders: {
-      field_type: 'string',
-      hidden: true,
-      exclude: true
+      field_type: 'related field',
+      model: ModelType.purchaseorder,
+      api_url: apiUrl(ApiEndpoints.purchase_order_list),
+      multiple: true,
+      label: t`Đơn mua liên kết`,
+      description: t`Chọn một hoặc nhiều đơn mua thuộc hợp đồng mua này`,
+      hidden: isSalesContract,
+      filters: selectedProjectCode ? { project_code: selectedProjectCode } : undefined
     },
     party_a_name: {
       field_type: 'string',
