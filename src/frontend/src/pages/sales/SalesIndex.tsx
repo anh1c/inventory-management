@@ -4,9 +4,9 @@ import {
   IconBuildingStore,
   IconCalendar,
   IconCubeSend,
+  IconFileInvoice,
   IconListDetails,
   IconTable,
-  IconTruckDelivery,
   IconTruckReturn
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -51,7 +51,7 @@ export default function SalesIndex() {
       SegmentedControlPanel({
         name: 'salesorders',
         label: t`Sales Orders`,
-        icon: <IconTruckDelivery />,
+        icon: <IconFileInvoice />,
         hidden: !user.hasViewRole(UserRoles.sales_order),
         selection: salesOrderView,
         onChange: setSalesOrderView,

@@ -12,8 +12,8 @@ import {
   IconDashboard,
   IconHierarchy,
   IconPackages,
+  IconReceipt,
   IconShoppingCart,
-  IconTruckDelivery
 } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
@@ -61,7 +61,7 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     {
       name: 'sales',
       title: t`Sales`,
-      icon: <IconTruckDelivery />,
+      icon: <IconReceipt />,
       role: UserRoles.sales_order
     },
     {
