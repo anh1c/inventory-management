@@ -11,10 +11,10 @@ import {
   Title
 } from '@mantine/core';
 import {
-  IconClipboardText,
+  IconContract,
+  IconFileDollar,
+  IconFileInvoice,
   IconInfoCircle,
-  IconShoppingCart,
-  IconTruckDelivery
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -231,7 +231,7 @@ export default function ContractsIndex() {
       {
         name: 'sales-contracts',
         label: t`Sales Contract`,
-        icon: <IconTruckDelivery />,
+        icon: <IconFileInvoice />,
         content: (
           <Stack gap='sm'>
             <SelectionCard
@@ -256,7 +256,7 @@ export default function ContractsIndex() {
       {
         name: 'purchase-contracts',
         label: t`Purchase Contract`,
-        icon: <IconShoppingCart />,
+        icon: <IconFileDollar />,
         content: (
           <Stack gap='sm'>
             <ContractTable
@@ -283,7 +283,7 @@ export default function ContractsIndex() {
       <PageDetail
         title={t`Contracts`}
         subtitle={t`Manage sales contracts, purchase contracts, project codes, and related orders`}
-        icon={<IconClipboardText />}
+        icon={<IconContract />}
       />
       <PanelGroup
         pageKey='contracts-index'

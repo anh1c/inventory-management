@@ -2,10 +2,10 @@ import { t } from '@lingui/core/macro';
 import { Alert, Badge, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconClipboardText,
+  IconFileDollar,
   IconFileDescription,
+  IconFileInvoice,
   IconInfoCircle,
-  IconShoppingCart,
-  IconTruckDelivery
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -332,9 +332,9 @@ export default function ContractDetail() {
             : t`Linked Sales Contract`,
         icon:
           contract?.contract_type === 'sales' ? (
-            <IconShoppingCart />
+            <IconFileDollar />
           ) : (
-            <IconTruckDelivery />
+            <IconFileInvoice />
           ),
         content: relatedContractsPanel
       },
