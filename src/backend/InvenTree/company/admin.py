@@ -24,6 +24,8 @@ class CompanyAdmin(admin.ModelAdmin):
 
     search_fields = ['name', 'description']
 
+    autocomplete_fields = ['parent_company']
+
 
 class SupplierPriceBreakInline(admin.TabularInline):
     """Inline for supplier-part pricing."""

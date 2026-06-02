@@ -55,6 +55,10 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'thumbnail',
             'currency',
             'tax_id',
+            'representative',
+            'representative_position',
+            'is_internal',
+            'parent_company',
         ]
         read_only_fields = ['currency']
 
@@ -148,6 +152,11 @@ class CompanySerializer(
             'remote_image',
             'primary_address',
             'tax_id',
+            'representative',
+            'representative_position',
+            'is_internal',
+            'parent_company',
+            'parent_company_detail',
             'parameters',
         ]
 
@@ -177,6 +186,18 @@ class CompanySerializer(
         ],
     )
 
+    parent_company_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'parent_company',
+            'read_only': True,
+            'many': False,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['parent_company'],
+    )
+
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
     email = serializers.EmailField(
@@ -192,6 +213,44 @@ class CompanySerializer(
     )
 
     parameters = common.filters.enable_parameters_filter()
+
+    def validate(self, data):
+        """Validate internal company hierarchy fields."""
+        data = super().validate(data)
+
+        is_internal = data.get('is_internal', getattr(self.instance, 'is_internal', False))
+        parent_company = data.get(
+            'parent_company', getattr(self.instance, 'parent_company', None)
+        )
+
+        if parent_company and self.instance and parent_company.pk == self.instance.pk:
+            raise serializers.ValidationError({
+                'parent_company': _('A company cannot be its own parent')
+            })
+
+        if parent_company and not parent_company.is_internal:
+            raise serializers.ValidationError({
+                'parent_company': _('Parent company must be an internal company')
+            })
+
+        if parent_company and not is_internal:
+            raise serializers.ValidationError({
+                'parent_company': _('Only internal companies can have a parent company')
+            })
+
+        seen = {self.instance.pk} if self.instance and self.instance.pk else set()
+        parent = parent_company
+
+        while parent:
+            if parent.pk in seen:
+                raise serializers.ValidationError({
+                    'parent_company': _('Company hierarchy cannot contain cycles')
+                })
+
+            seen.add(parent.pk)
+            parent = parent.parent_company
+
+        return data
 
     def save(self):
         """Save the Company instance."""

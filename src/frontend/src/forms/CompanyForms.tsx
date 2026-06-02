@@ -72,8 +72,14 @@ export function useSupplierPartFields({
       packaging: {
         icon: <IconPackage />
       },
-      primary: {},
-      active: {}
+      primary: {
+        label: 'Ưu tiên',
+        description: 'Đánh dấu đây là mã hàng nhà cung cấp ưu tiên cho vật tư liên kết'
+      },
+      active: {
+        label: 'Hoạt động',
+        description: 'Mã hàng nhà cung cấp này còn hiệu lực sử dụng'
+      }
     };
 
     return fields;
@@ -104,24 +110,141 @@ export function useManufacturerPartFields() {
  */
 export function companyFields(): ApiFormFieldSet {
   return {
-    name: {},
-    description: {},
+    name: {
+      label: 'Tên công ty',
+      description: 'Tên doanh nghiệp hoặc đối tác'
+    },
+    description: {
+      label: 'Mô tả',
+      description: 'Thông tin mô tả ngắn về công ty'
+    },
     website: {
+      label: 'Website',
+      description: 'Trang web của công ty',
       icon: <IconGlobe />
     },
     currency: {
+      label: 'Tiền tệ',
+      description: 'Tiền tệ mặc định khi giao dịch với công ty này',
       icon: <IconCurrencyDollar />
     },
     phone: {
+      label: 'Số điện thoại',
+      description: 'Số điện thoại liên hệ',
       icon: <IconPhone />
     },
     email: {
+      label: 'Email',
+      description: 'Địa chỉ email liên hệ',
       icon: <IconAt />
     },
-    tax_id: {},
-    is_supplier: {},
-    is_manufacturer: {},
-    is_customer: {},
-    active: {}
+    tax_id: {
+      label: 'Mã số thuế',
+      description: 'Mã số thuế của công ty'
+    },
+    representative: {
+      label: 'Người đại diện',
+      description: 'Người đại diện pháp lý của công ty'
+    },
+    representative_position: {
+      label: 'Chức vụ người đại diện',
+      description: 'Chức danh hoặc vị trí của người đại diện pháp lý'
+    },
+    is_supplier: {
+      label: 'Là nhà cung cấp',
+      description: 'Công ty này có cung cấp hàng hóa hoặc dịch vụ cho kho?'
+    },
+    is_manufacturer: {
+      label: 'Là nhà sản xuất',
+      description: 'Công ty này có sản xuất hàng hóa hoặc linh kiện?'
+    },
+    is_customer: {
+      label: 'Là khách hàng',
+      description: 'Công ty này có mua hàng từ hệ thống?'
+    },
+    is_internal: {
+      label: 'Là công ty nội bộ',
+      description: 'Công ty này thuộc nhóm công ty sở hữu hệ thống?'
+    },
+    parent_company: {
+      label: 'Công ty mẹ',
+      description: 'Công ty mẹ quản lý các công ty con'
+    },
+    active: {
+      label: 'Hoạt động',
+      description: 'Công ty này còn hiệu lực sử dụng trong hệ thống?'
+    }
+  };
+}
+
+export function internalCompanyFields(): ApiFormFieldSet {
+  return {
+    name: {
+      label: 'Tên công ty',
+      description: 'Tên công ty nội bộ'
+    },
+    description: {
+      label: 'Mô tả',
+      description: 'Thông tin mô tả ngắn về công ty nội bộ'
+    },
+    website: {
+      label: 'Website',
+      description: 'Trang web của công ty',
+      icon: <IconGlobe />
+    },
+    currency: {
+      label: 'Tiền tệ',
+      description: 'Tiền tệ mặc định của công ty nội bộ',
+      icon: <IconCurrencyDollar />
+    },
+    phone: {
+      label: 'Số điện thoại',
+      description: 'Số điện thoại liên hệ',
+      icon: <IconPhone />
+    },
+    email: {
+      label: 'Email',
+      description: 'Địa chỉ email liên hệ',
+      icon: <IconAt />
+    },
+    tax_id: {
+      label: 'Mã số thuế',
+      description: 'Mã số thuế của công ty'
+    },
+    representative: {
+      label: 'Người đại diện',
+      description: 'Người đại diện pháp lý của công ty'
+    },
+    representative_position: {
+      label: 'Chức vụ người đại diện',
+      description: 'Chức danh hoặc vị trí của người đại diện pháp lý'
+    },
+    is_supplier: {
+      label: 'Là nhà cung cấp',
+      description: 'Công ty này có cung cấp hàng hóa hoặc dịch vụ cho kho?',
+      value: false
+    },
+    is_manufacturer: {
+      label: 'Là nhà sản xuất',
+      description: 'Công ty này có sản xuất hàng hóa hoặc linh kiện?'
+    },
+    is_customer: {
+      label: 'Là khách hàng',
+      description: 'Công ty này có mua hàng từ hệ thống?'
+    },
+    is_internal: {
+      label: 'Là công ty nội bộ',
+      description: 'Công ty này thuộc nhóm công ty sở hữu hệ thống?',
+      disabled: true,
+      value: true
+    },
+    parent_company: {
+      label: 'Công ty mẹ',
+      description: 'Công ty mẹ quản lý các công ty con'
+    },
+    active: {
+      label: 'Hoạt động',
+      description: 'Công ty này còn hiệu lực sử dụng trong hệ thống?'
+    }
   };
 }

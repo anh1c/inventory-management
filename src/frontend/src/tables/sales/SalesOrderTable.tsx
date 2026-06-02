@@ -58,24 +58,37 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function SalesOrderTable({
   partId,
   customerId,
+  contractId,
+  contractBuyerId,
+  contractSellerId,
+  defaultOutstanding = true,
   hasProjectCode,
   onSelectSalesOrder,
   selectedSalesOrderId
 }: Readonly<{
   partId?: number;
   customerId?: number;
+  contractId?: number;
+  contractBuyerId?: number;
+  contractSellerId?: number;
+  defaultOutstanding?: boolean;
   hasProjectCode?: boolean;
   onSelectSalesOrder?: (record: any) => void;
   selectedSalesOrderId?: number;
 }>) {
-  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index', {
-    initialFilters: [
-      {
-        name: 'outstanding',
-        value: 'true'
-      }
-    ]
-  });
+  const table = useTable(
+    contractId ? 'salesorder-contract' : !!partId ? 'salesorder-part' : 'salesorder-index',
+    {
+      initialFilters: defaultOutstanding
+        ? [
+            {
+              name: 'outstanding',
+              value: 'true'
+            }
+          ]
+        : []
+    }
+  );
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -121,14 +134,15 @@ export function SalesOrderTable({
     return filters;
   }, [partId]);
 
-  const salesOrderFields = useSalesOrderFields({});
+  const salesOrderFields = useSalesOrderFields({ create: true });
 
   const newSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
     title: t`Add Sales Order`,
     fields: salesOrderFields,
     initialData: {
-      customer: customerId
+      customer: customerId,
+      contract: contractId
     },
     follow: true,
     modelType: ModelType.salesorder,
@@ -224,6 +238,9 @@ export function SalesOrderTable({
             customer_detail: true,
             part: partId,
             customer: customerId,
+            contract: contractId,
+            contract_buyer: contractBuyerId,
+            contract_seller: contractSellerId,
             has_project_code: hasProjectCode
           },
           tableFilters: tableFilters,

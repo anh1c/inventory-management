@@ -228,6 +228,59 @@ class Company(
         help_text=_('Company Tax ID'),
     )
 
+    representative = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Representative'),
+        help_text=_('Primary legal representative for this company'),
+    )
+
+    representative_position = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Representative Position'),
+        help_text=_('Position or title of the primary legal representative'),
+    )
+
+    is_internal = models.BooleanField(
+        default=False,
+        verbose_name=_('Is internal company'),
+        help_text=_('Is this company part of the owning company group?'),
+    )
+
+    parent_company = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        related_name='subsidiaries',
+        blank=True,
+        null=True,
+        verbose_name=_('Parent Company'),
+        help_text=_('Parent company for subsidiary companies'),
+    )
+
+    def clean(self):
+        """Validate company hierarchy fields."""
+        super().clean()
+
+        if self.parent_company_id and self.pk and self.parent_company_id == self.pk:
+            raise ValidationError({'parent_company': _('A company cannot be its own parent')})
+
+        if self.parent_company and not self.parent_company.is_internal:
+            raise ValidationError({'parent_company': _('Parent company must be an internal company')})
+
+        if self.parent_company_id and not self.is_internal:
+            raise ValidationError({'parent_company': _('Only internal companies can have a parent company')})
+
+        seen = {self.pk} if self.pk else set()
+        parent = self.parent_company
+
+        while parent:
+            if parent.pk in seen:
+                raise ValidationError({'parent_company': _('Company hierarchy cannot contain cycles')})
+
+            seen.add(parent.pk)
+            parent = parent.parent_company
+
     @property
     def address(self):
         """Return the string representation for the primary address.

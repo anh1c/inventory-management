@@ -27,7 +27,7 @@ export function RenderAddress({
   const secondary: string = !!instance.title ? text : '';
 
   const suffix: ReactNode = instance.primary ? (
-    <Text size='xs'>Primary Address</Text>
+    <Text size='xs'>Địa chỉ chính</Text>
   ) : null;
 
   return (

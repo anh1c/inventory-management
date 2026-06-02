@@ -287,6 +287,7 @@ export function PurchaseOrderLineItemTable({
   const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: true,
     orderId: orderId,
+    order: order,
     supplierId: supplierId,
     currency: currency
   });
@@ -311,6 +312,7 @@ export function PurchaseOrderLineItemTable({
   const editLineItemFields = usePurchaseOrderLineItemFields({
     create: false,
     orderId: orderId,
+    order: order,
     supplierId: supplierId,
     currency: currency
   });

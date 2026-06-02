@@ -103,14 +103,14 @@ export function SupplierPartTable({
       },
       {
         accessor: 'SKU',
-        title: t`Supplier Part`,
+        title: 'Mã hàng nhà cung cấp',
         sortable: true,
         copyable: true
       },
       DescriptionColumn({}),
       {
         accessor: 'manufacturer',
-        title: t`Manufacturer`,
+        title: 'Nhà sản xuất',
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record?.manufacturer_detail} />
@@ -126,13 +126,14 @@ export function SupplierPartTable({
       },
       BooleanColumn({
         accessor: 'primary',
+        title: 'Ưu tiên',
         sortable: true,
         switchable: true,
         defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'active',
-        title: t`Active`,
+        title: 'Hoạt động',
         sortable: true,
         switchable: true,
         defaultVisible: false
@@ -157,7 +158,7 @@ export function SupplierPartTable({
           if (part.units) {
             extra.push(
               <Text key='base' size='sm'>
-                {t`Base units`} : {part.units}
+                Đơn vị cơ sở : {part.units}
               </Text>
             );
           }
@@ -166,7 +167,7 @@ export function SupplierPartTable({
             <TableHoverCard
               value={record.pack_quantity}
               extra={extra}
-              title={t`Pack Quantity`}
+              title='Số lượng mỗi kiện'
             />
           );
         }
@@ -183,7 +184,7 @@ export function SupplierPartTable({
           if (record.availablility_updated) {
             extra.push(
               <Text>
-                {t`Updated`} : {record.availablility_updated}
+                Cập nhật : {record.availablility_updated}
               </Text>
             );
           }
@@ -200,7 +201,7 @@ export function SupplierPartTable({
 
   const addSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    title: t`Add Supplier Part`,
+    title: 'Thêm mã hàng nhà cung cấp',
     fields: supplierPartFields,
     initialData: {
       part: partId,
@@ -210,7 +211,7 @@ export function SupplierPartTable({
     onFormSuccess: (response: any) => {
       table.refreshTable();
     },
-    successMessage: t`Supplier part created`,
+    successMessage: 'Đã tạo mã hàng nhà cung cấp',
     keepOpenOption: true
   });
 
@@ -223,7 +224,7 @@ export function SupplierPartTable({
     return [
       <AddItemButton
         key='add-supplier-part'
-        tooltip={t`Add supplier part`}
+        tooltip='Thêm mã hàng nhà cung cấp'
         onClick={() => addSupplierPart.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
       />,
@@ -231,7 +232,7 @@ export function SupplierPartTable({
         key='import-part'
         icon={<IconPackageImport />}
         color='green'
-        tooltip={t`Import supplier part`}
+        tooltip='Nhập mã hàng nhà cung cấp'
         onClick={() => importPartWizard.openWizard()}
         hidden={
           supplierPlugins.length === 0 ||
@@ -246,28 +247,28 @@ export function SupplierPartTable({
     return [
       {
         name: 'active',
-        label: t`Active`,
-        description: t`Show active supplier parts`
+        label: 'Hoạt động',
+        description: 'Hiển thị mã hàng nhà cung cấp còn hiệu lực'
       },
       {
         name: 'primary',
-        label: t`Primary`,
-        description: t`Show primary supplier parts`
+        label: 'Ưu tiên',
+        description: 'Hiển thị mã hàng nhà cung cấp ưu tiên'
       },
       {
         name: 'part_active',
-        label: t`Active Part`,
-        description: t`Show active internal parts`
+        label: 'Vật tư hoạt động',
+        description: 'Hiển thị vật tư nội bộ còn hiệu lực'
       },
       {
         name: 'supplier_active',
-        label: t`Active Supplier`,
-        description: t`Show active suppliers`
+        label: 'Nhà cung cấp hoạt động',
+        description: 'Hiển thị nhà cung cấp còn hiệu lực'
       },
       {
         name: 'has_stock',
-        label: t`In Stock`,
-        description: t`Show supplier parts with stock`
+        label: 'Có tồn kho',
+        description: 'Hiển thị mã hàng nhà cung cấp có tồn kho'
       }
     ];
   }, []);
@@ -280,7 +281,7 @@ export function SupplierPartTable({
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: selectedSupplierPart?.pk,
-    title: t`Edit Supplier Part`,
+    title: 'Sửa mã hàng nhà cung cấp',
     fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     onFormSuccess: (response: any) => {
       table.refreshTable();
@@ -289,7 +290,7 @@ export function SupplierPartTable({
 
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    title: t`Add Supplier Part`,
+    title: 'Thêm mã hàng nhà cung cấp',
     fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     initialData: {
       ...selectedSupplierPart,
@@ -299,13 +300,13 @@ export function SupplierPartTable({
     onFormSuccess: (response: any) => {
       table.refreshTable();
     },
-    successMessage: t`Supplier part created`
+    successMessage: 'Đã tạo mã hàng nhà cung cấp'
   });
 
   const deleteSupplierPart = useDeleteApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: selectedSupplierPart?.pk,
-    title: t`Delete Supplier Part`,
+    title: 'Xóa mã hàng nhà cung cấp',
     table: table
   });
 

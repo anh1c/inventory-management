@@ -25,6 +25,7 @@ type NavTab = {
   icon: ReactNode;
   role?: UserRoles;
   roles?: UserRoles[];
+  staff?: boolean;
 };
 
 export function getNavTabs(user: UserStateProps): NavTab[] {
@@ -74,11 +75,19 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       name: 'projects',
       title: t`Projects`,
       icon: <IconHierarchy />,
-      role: UserRoles.admin
+      roles: [UserRoles.build, UserRoles.purchase_order, UserRoles.sales_order]
+    },
+    {
+      name: 'companies',
+      title: 'Công ty nội bộ',
+      icon: <IconHierarchy />,
+      roles: [UserRoles.purchase_order, UserRoles.sales_order],
+      staff: true
     }
   ];
 
   return navTabs.filter((tab) => {
+    if (tab.staff && user.isStaff()) return true;
     if (tab.roles) return tab.roles.some((role) => user.hasViewRole(role));
     if (!tab.role) return true;
     return user.hasViewRole(tab.role);

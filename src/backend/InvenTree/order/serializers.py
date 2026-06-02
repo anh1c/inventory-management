@@ -12,8 +12,10 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import build.models as build_models
 import build.serializers
 import common.filters
+import common.serializers
 import company.models as company_models
 import order.models
 import part.filters as part_filters
@@ -42,6 +44,7 @@ from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
+    SalesOrderStatus,
     SalesOrderStatusGroups,
 )
 from part.serializers import PartBriefSerializer
@@ -52,11 +55,33 @@ from users.serializers import OwnerSerializer, UserSerializer
 class ContractBriefSerializer(InvenTreeModelSerializer):
     """Brief serializer for linked Contract objects."""
 
+    project_code_detail = common.serializers.ProjectCodeSerializer(
+        source='project_code', read_only=True, allow_null=True
+    )
+
     class Meta:
         """Metaclass options."""
 
         model = order.models.Contract
-        fields = ['pk', 'reference', 'contract_type', 'title']
+        fields = [
+            'pk',
+            'reference',
+            'contract_type',
+            'title',
+            'project_code',
+            'project_code_detail',
+            'buyer',
+            'seller',
+            'party_a_contact',
+            'party_b_contact',
+            'party_a_name',
+            'party_a_representative',
+            'party_b_name',
+            'party_b_representative',
+            'issue_date',
+            'effective_date',
+            'grand_total',
+        ]
 
 
 @register_importer()
@@ -88,6 +113,44 @@ class ContractSerializer(
     purchase_order_count = serializers.IntegerField(read_only=True)
     purchase_contract_count = serializers.IntegerField(read_only=True)
 
+    buyer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={'source': 'buyer', 'many': False, 'read_only': True, 'allow_null': True},
+        default_include=True,
+        prefetch_fields=['buyer'],
+    )
+
+    seller_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={'source': 'seller', 'many': False, 'read_only': True, 'allow_null': True},
+        default_include=True,
+        prefetch_fields=['seller'],
+    )
+
+    party_a_contact_detail = OptionalField(
+        serializer_class=ContactSerializer,
+        serializer_kwargs={
+            'source': 'party_a_contact',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['party_a_contact'],
+    )
+
+    party_b_contact_detail = OptionalField(
+        serializer_class=ContactSerializer,
+        serializer_kwargs={
+            'source': 'party_b_contact',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['party_b_contact'],
+    )
+
     class Meta:
         """Metaclass options."""
 
@@ -100,6 +163,14 @@ class ContractSerializer(
             'project_code',
             'project_code_detail',
             'project_code_label',
+            'buyer',
+            'buyer_detail',
+            'seller',
+            'seller_detail',
+            'party_a_contact',
+            'party_a_contact_detail',
+            'party_b_contact',
+            'party_b_contact_detail',
             'sales_contract',
             'sales_contract_detail',
             'sales_orders',
@@ -279,6 +350,57 @@ class ContractSerializer(
                 })
             if sales_contract:
                 data['project_code'] = sales_contract.project_code
+
+        buyer = data.get('buyer', getattr(self.instance, 'buyer', None))
+        seller = data.get('seller', getattr(self.instance, 'seller', None))
+
+        if contract_type == order.models.Contract.ContractType.SALES:
+            if buyer and not buyer.is_customer:
+                raise ValidationError({'buyer': _('Sales contract buyer must be a customer')})
+            if seller and not seller.is_internal:
+                raise ValidationError({'seller': _('Sales contract seller must be an internal company')})
+
+        if contract_type == order.models.Contract.ContractType.PURCHASE:
+            if buyer and not buyer.is_internal:
+                raise ValidationError({'buyer': _('Purchase contract buyer must be an internal company')})
+            if seller and not seller.is_supplier:
+                raise ValidationError({'seller': _('Purchase contract seller must be a supplier')})
+
+        if buyer:
+            data['party_b_name'] = buyer.name
+            data['party_b_representative'] = buyer.representative
+
+        if seller:
+            data['party_a_name'] = seller.name
+            data['party_a_representative'] = seller.representative
+
+        party_a_contact = data.get(
+            'party_a_contact', getattr(self.instance, 'party_a_contact', None)
+        )
+        party_b_contact = data.get(
+            'party_b_contact', getattr(self.instance, 'party_b_contact', None)
+        )
+
+        if party_a_contact:
+            if seller and party_a_contact.company_id != seller.pk:
+                raise ValidationError({
+                    'party_a_contact': _('Party A contact must belong to the seller')
+                })
+            data['party_a_representative'] = party_a_contact.name
+
+        if party_b_contact:
+            if buyer and party_b_contact.company_id != buyer.pk:
+                raise ValidationError({
+                    'party_b_contact': _('Party B contact must belong to the buyer')
+                })
+            data['party_b_representative'] = party_b_contact.name
+
+        project_code = data.get(
+            'project_code', getattr(self.instance, 'project_code', None)
+        )
+
+        if not project_code:
+            raise ValidationError({'project_code': _('Project code is required')})
 
         self.validate_order_links(data)
 
@@ -488,6 +610,245 @@ class AbstractOrderSerializer(
         line.pk = None
         line.order = self
 
+    def validate_contract(self, contract):
+        """Validate that the selected contract matches this order type."""
+        if contract is None:
+            return contract
+
+        model = self.Meta.model
+
+        if (
+            model == order.models.SalesOrder
+            and contract.contract_type != order.models.Contract.ContractType.SALES
+        ):
+            raise ValidationError(_('Sales orders can only link to sales contracts'))
+
+        if (
+            model == order.models.PurchaseOrder
+            and contract.contract_type != order.models.Contract.ContractType.PURCHASE
+        ):
+            raise ValidationError(_('Purchase orders can only link to purchase contracts'))
+
+        return contract
+
+    def validate(self, data):
+        """Validate order-level contract relationships."""
+        data = super().validate(data)
+        contract = data.get('contract')
+
+        if 'contract' not in data and self.instance is not None:
+            contract = self.instance.contracts.first()
+
+        if contract and contract.project_code_id and not data.get('project_code'):
+            data['project_code'] = contract.project_code
+
+        project_code = data.get(
+            'project_code', getattr(self.instance, 'project_code', None)
+        )
+
+        if not project_code:
+            raise ValidationError({'project_code': _('Project code is required')})
+
+        if self.Meta.model == order.models.PurchaseOrder:
+            output_type = data.get(
+                'output_type', getattr(self.instance, 'output_type', None)
+            )
+
+            if output_type == order.models.PurchaseOrder.OutputType.COMMERCIAL:
+                data['destination'] = None
+                data['build_order'] = None
+            elif not output_type:
+                data['sales_order'] = None
+                data['build_order'] = None
+            elif output_type:
+                data['sales_order'] = None
+
+            sales_order = data.get('sales_order', getattr(self.instance, 'sales_order', None))
+            build_order = data.get('build_order', getattr(self.instance, 'build_order', None))
+            destination = data.get('destination', getattr(self.instance, 'destination', None))
+
+            if output_type == order.models.PurchaseOrder.OutputType.COMMERCIAL:
+                if not sales_order:
+                    raise ValidationError({
+                        'sales_order': _(
+                            'Sales order is required when purchase order output is commercial'
+                        )
+                    })
+
+                if sales_order.status not in [
+                    SalesOrderStatus.PENDING.value,
+                    SalesOrderStatus.IN_PROGRESS.value,
+                ]:
+                    raise ValidationError({
+                        'sales_order': _(
+                            'Commercial purchase orders can only link to pending or in-progress sales orders'
+                        )
+                    })
+
+                if contract:
+                    if not contract.sales_contract_id:
+                        raise ValidationError({
+                            'contract': _(
+                                'Purchase contract must be linked to a sales contract before linking a sales order'
+                            )
+                        })
+
+                    if not sales_order.contracts.filter(
+                        pk=contract.sales_contract_id
+                    ).exists():
+                        raise ValidationError({
+                            'sales_order': _(
+                                'Sales order must be linked to the sales contract associated with the selected purchase contract'
+                            )
+                        })
+
+            if output_type in (
+                order.models.PurchaseOrder.OutputType.WORKSHOP,
+                order.models.PurchaseOrder.OutputType.CONSTRUCTION_SITE,
+            ):
+                if output_type == order.models.PurchaseOrder.OutputType.WORKSHOP:
+                    if destination and build_order:
+                        raise ValidationError({
+                            'destination': _(
+                                'Destination is not allowed when purchase order is linked to a build order'
+                            )
+                        })
+
+                    if build_order and not build_order.active:
+                        raise ValidationError({
+                            'build_order': _(
+                                'Build order must be pending, on hold, or in production'
+                            )
+                        })
+
+                    if build_order and build_order.project_code_id != project_code.pk:
+                        raise ValidationError({
+                            'build_order': _(
+                                'Build order project code must match the purchase order project code'
+                            )
+                        })
+                elif build_order:
+                    raise ValidationError({
+                        'build_order': _(
+                            'Build order is only allowed when purchase order output is workshop'
+                        )
+                    })
+
+                if not destination and not build_order:
+                    raise ValidationError({
+                        'destination': _(
+                            'Destination or build order is required when purchase order output is workshop or construction site'
+                        )
+                    })
+
+        if contract and contract.project_code_id:
+            if project_code and project_code.pk != contract.project_code_id:
+                raise ValidationError({
+                    'project_code': _('Project code must match the linked contract')
+                })
+
+            sales_order = data.get(
+                'sales_order', getattr(self.instance, 'sales_order', None)
+            )
+
+            if (
+                sales_order
+                and sales_order.project_code_id
+                and sales_order.project_code_id != contract.project_code_id
+            ):
+                raise ValidationError({
+                    'sales_order': _(
+                        'Sales order project code must match the linked contract'
+                    )
+                })
+
+        if contract:
+            model = self.Meta.model
+
+            if model == order.models.SalesOrder:
+                customer = data.get('customer', getattr(self.instance, 'customer', None))
+
+                if contract.buyer_id:
+                    if customer and customer.pk != contract.buyer_id:
+                        raise ValidationError({
+                            'customer': _('Customer must match the linked contract buyer')
+                        })
+                    data['customer'] = contract.buyer
+                elif not customer:
+                    raise ValidationError({
+                        'customer': _('Customer is required when the linked contract has no buyer')
+                    })
+
+            if model == order.models.PurchaseOrder:
+                supplier = data.get('supplier', getattr(self.instance, 'supplier', None))
+
+                if contract.seller_id:
+                    if supplier and supplier.pk != contract.seller_id:
+                        raise ValidationError({
+                            'supplier': _('Supplier must match the linked contract seller')
+                        })
+                    data['supplier'] = contract.seller
+                elif not supplier:
+                    raise ValidationError({
+                        'supplier': _('Supplier is required when the linked contract has no seller')
+                    })
+
+        if contract:
+            start_date = data.get(
+                'start_date', getattr(self.instance, 'start_date', None)
+            )
+            target_date = data.get(
+                'target_date', getattr(self.instance, 'target_date', None)
+            )
+            contract_start = contract.issue_date
+            contract_end = contract.effective_date
+
+            if start_date and contract_start and start_date < contract_start:
+                raise ValidationError({
+                    'start_date': _('Start date must be within the contract period')
+                })
+
+            if start_date and contract_end and start_date > contract_end:
+                raise ValidationError({
+                    'start_date': _('Start date must be within the contract period')
+                })
+
+            if target_date and contract_start and target_date < contract_start:
+                raise ValidationError({
+                    'target_date': _('Target date must be within the contract period')
+                })
+
+            if target_date and contract_end and target_date > contract_end:
+                raise ValidationError({
+                    'target_date': _('Target date must be within the contract period')
+                })
+
+        if not contract:
+            model = self.Meta.model
+
+            if model == order.models.SalesOrder and not data.get(
+                'customer', getattr(self.instance, 'customer', None)
+            ):
+                raise ValidationError({'customer': _('Customer is required')})
+
+            if model == order.models.PurchaseOrder and not data.get(
+                'supplier', getattr(self.instance, 'supplier', None)
+            ):
+                raise ValidationError({'supplier': _('Supplier is required')})
+
+        return data
+
+    def apply_contract_link(self, instance, contract):
+        """Apply a selected contract to the order after it has been saved."""
+        if contract is serializers.empty:
+            return
+
+        if contract is None:
+            instance.contracts.clear()
+            return
+
+        instance.contracts.set([contract])
+
     @transaction.atomic
     def create(self, validated_data):
         """Create a new order object.
@@ -495,6 +856,20 @@ class AbstractOrderSerializer(
         Optionally, copy line items from an existing order.
         """
         duplicate = validated_data.pop('duplicate', None)
+        contract = validated_data.pop('contract', serializers.empty)
+
+        if (
+            contract is not serializers.empty
+            and contract is not None
+            and contract.project_code_id
+        ):
+            validated_data['project_code'] = contract.project_code
+
+        if contract is not serializers.empty and contract is not None:
+            if isinstance(self, SalesOrderSerializer) and contract.buyer_id:
+                validated_data['customer'] = contract.buyer
+            if isinstance(self, PurchaseOrderSerializer) and contract.seller_id:
+                validated_data['supplier'] = contract.seller
 
         instance = super().create(validated_data)
 
@@ -523,6 +898,31 @@ class AbstractOrderSerializer(
 
             if copy_parameters:
                 instance.copy_parameters_from(copy_from)
+
+        self.apply_contract_link(instance, contract)
+
+        return instance
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        """Update an order and apply any selected contract link."""
+        contract = validated_data.pop('contract', serializers.empty)
+
+        if (
+            contract is not serializers.empty
+            and contract is not None
+            and contract.project_code_id
+        ):
+            validated_data['project_code'] = contract.project_code
+
+        if contract is not serializers.empty and contract is not None:
+            if isinstance(self, SalesOrderSerializer) and contract.buyer_id:
+                validated_data['customer'] = contract.buyer
+            if isinstance(self, PurchaseOrderSerializer) and contract.seller_id:
+                validated_data['supplier'] = contract.seller
+
+        instance = super().update(instance, validated_data)
+        self.apply_contract_link(instance, contract)
 
         return instance
 
@@ -626,6 +1026,17 @@ class PurchaseOrderSerializer(
 ):
     """Serializer for a PurchaseOrder object."""
 
+    contract = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.Contract.objects.filter(
+            contract_type=order.models.Contract.ContractType.PURCHASE
+        ),
+        required=False,
+        allow_null=True,
+        write_only=True,
+        label=_('Purchase Contract'),
+        help_text=_('Purchase contract linked to this purchase order'),
+    )
+
     class Meta:
         """Metaclass options."""
 
@@ -635,7 +1046,9 @@ class PurchaseOrderSerializer(
             'supplier',
             'supplier_detail',
             'supplier_reference',
+            'output_type',
             'sales_order',
+            'contract',
             'supplier_name',
             'total_price',
             'order_currency',
@@ -649,7 +1062,7 @@ class PurchaseOrderSerializer(
             'updated_at',
         ]
         extra_kwargs = {
-            'supplier': {'required': True},
+            'supplier': {'required': False},
             'order_currency': {'required': False},
         }
 
@@ -657,7 +1070,7 @@ class PurchaseOrderSerializer(
         """Skip these fields when instantiating a new object."""
         fields = super().skip_create_fields()
 
-        return [*fields, 'duplicate']
+        return [*fields, 'duplicate', 'contract']
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -800,6 +1213,8 @@ class PurchaseOrderLineItemSerializer(
         model = order.models.PurchaseOrderLineItem
         fields = AbstractLineItemSerializer.line_fields([
             'part',
+            'sales_order_line',
+            'build_line',
             'build_order',
             'overdue',
             'received',
@@ -869,6 +1284,22 @@ class PurchaseOrderLineItemSerializer(
         required=True,
         allow_null=True,
         label=_('Supplier Part'),
+    )
+
+    sales_order_line = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.SalesOrderLineItem.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Sales Order Line Item'),
+    )
+
+    build_line = serializers.PrimaryKeyRelatedField(
+        queryset=build_models.BuildLine.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Build Order Line Item'),
     )
 
     quantity = serializers.FloatField(min_value=0, required=True)
@@ -1016,6 +1447,8 @@ class PurchaseOrderLineItemSerializer(
 
         supplier_part = data.get('part', None)
         purchase_order = data.get('order', None)
+        sales_order_line = data.get('sales_order_line', None)
+        build_line = data.get('build_line', None)
 
         if not supplier_part:
             raise ValidationError({'part': _('Supplier part must be specified')})
@@ -1031,6 +1464,84 @@ class PurchaseOrderLineItemSerializer(
             raise ValidationError({
                 'part': _('Supplier must match purchase order'),
                 'order': _('Purchase order must match supplier'),
+            })
+
+        destination = data.get('destination', getattr(self.instance, 'destination', None))
+
+        if destination:
+            purchase_order.validate_output_destination(destination)
+
+        if purchase_order.output_type == order.models.PurchaseOrder.OutputType.COMMERCIAL:
+            if sales_order_line is None:
+                raise ValidationError({
+                    'sales_order_line': _(
+                        'Sales order line is required when purchase order output is commercial'
+                    )
+                })
+
+            if sales_order_line.order_id != purchase_order.sales_order_id:
+                raise ValidationError({
+                    'sales_order_line': _(
+                        'Sales order line must belong to the linked sales order'
+                    )
+                })
+
+            if supplier_part.part_id != sales_order_line.part_id:
+                raise ValidationError({
+                    'part': _('Supplier part must match the linked sales order line part')
+                })
+        elif sales_order_line is not None:
+            raise ValidationError({
+                'sales_order_line': _(
+                    'Sales order line is only allowed when purchase order output is commercial'
+                )
+            })
+
+        if purchase_order.output_type == order.models.PurchaseOrder.OutputType.WORKSHOP:
+            if purchase_order.build_order:
+                if build_line is None:
+                    raise ValidationError({
+                        'build_line': _(
+                            'Build order line is required when workshop purchase order is linked to a build order'
+                        )
+                    })
+
+                if build_line.build_id != purchase_order.build_order_id:
+                    raise ValidationError({
+                        'build_line': _(
+                            'Build order line must belong to the linked build order'
+                        )
+                    })
+
+                if supplier_part.part_id != build_line.part.pk:
+                    raise ValidationError({
+                        'part': _('Supplier part must match the linked build order line part')
+                    })
+
+                instance = self.instance or order.models.PurchaseOrderLineItem(
+                    order=purchase_order,
+                    part=supplier_part,
+                    build_line=build_line,
+                )
+                instance.quantity = data.get('quantity', instance.quantity)
+
+                if instance.quantity > instance.build_line_available_quantity():
+                    raise ValidationError({
+                        'quantity': _(
+                            'Quantity exceeds the unallocated build order line quantity'
+                        )
+                    })
+            elif build_line is not None:
+                raise ValidationError({
+                    'build_line': _(
+                        'Build order line is only allowed when purchase order is linked to a build order'
+                    )
+                })
+        elif build_line is not None:
+            raise ValidationError({
+                'build_line': _(
+                    'Build order line is only allowed when purchase order output is workshop'
+                )
             })
 
         return data
@@ -1270,6 +1781,8 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     'location': _('Destination location must be specified')
                 })
 
+            order.validate_output_destination(item['location'])
+
             barcode = item.get('barcode', '')
 
             if barcode:
@@ -1314,6 +1827,17 @@ class SalesOrderSerializer(
 ):
     """Serializer for the SalesOrder model class."""
 
+    contract = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.Contract.objects.filter(
+            contract_type=order.models.Contract.ContractType.SALES
+        ),
+        required=False,
+        allow_null=True,
+        write_only=True,
+        label=_('Sales Contract'),
+        help_text=_('Sales contract linked to this sales order'),
+    )
+
     class Meta:
         """Metaclass options."""
 
@@ -1322,6 +1846,7 @@ class SalesOrderSerializer(
             'customer',
             'customer_detail',
             'customer_reference',
+            'contract',
             'shipment_date',
             'total_price',
             'order_currency',
@@ -1331,13 +1856,16 @@ class SalesOrderSerializer(
             'updated_at',
         ])
         read_only_fields = ['status', 'creation_date', 'shipment_date', 'updated_at']
-        extra_kwargs = {'order_currency': {'required': False}}
+        extra_kwargs = {
+            'customer': {'required': False},
+            'order_currency': {'required': False},
+        }
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
         fields = super().skip_create_fields()
 
-        return [*fields, 'duplicate']
+        return [*fields, 'duplicate', 'contract']
 
     @staticmethod
     def annotate_queryset(queryset):

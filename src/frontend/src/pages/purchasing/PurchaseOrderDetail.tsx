@@ -48,6 +48,22 @@ import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
+function purchaseOrderOutputTypeLabel(outputType?: string) {
+  if (outputType === 'workshop') {
+    return 'Xưởng';
+  }
+
+  if (outputType === 'construction_site') {
+    return 'Công trường';
+  }
+
+  if (outputType === 'commercial') {
+    return 'Thương mại';
+  }
+
+  return '-';
+}
+
 /**
  * Detail page for a single PurchaseOrder
  */
@@ -78,10 +94,13 @@ export default function PurchaseOrderDetail() {
     );
   }, [order, globalSettings]);
 
-  const purchaseOrderFields = usePurchaseOrderFields({});
+  const purchaseOrderFields = usePurchaseOrderFields({
+    initialOutputType: order.output_type
+  });
 
   const duplicatePurchaseOrderFields = usePurchaseOrderFields({
-    duplicateOrderId: order.pk
+    duplicateOrderId: order.pk,
+    initialOutputType: order.output_type
   });
 
   const editPurchaseOrder = useEditApiFormModal({
@@ -188,6 +207,22 @@ export default function PurchaseOrderDetail() {
         label: t`Completed Line Items`,
         total: order.line_items,
         progress: order.completed_lines
+      },
+      {
+        type: 'text',
+        name: 'output_type',
+        icon: 'details',
+        label: t`Output Type`,
+        hidden: !order.output_type,
+        value_formatter: () => purchaseOrderOutputTypeLabel(order.output_type)
+      },
+      {
+        type: 'link',
+        model: ModelType.salesorder,
+        link: true,
+        name: 'sales_order',
+        label: t`Sales Order`,
+        hidden: !order.sales_order
       },
       {
         type: 'link',

@@ -5077,14 +5077,18 @@ msgstr "Chọn một hoặc nhiều đơn mua thuộc hợp đồng mua này"
 #~ msgid "Bên B"
 #~ msgstr "Bên B"
 
-#: src/forms/ContractForms.tsx:114
-#: src/pages/contracts/ContractDetail.tsx:192
-msgid "Party A"
-msgstr "Bên A"
+ #: src/forms/ContractForms.tsx:114
+ #: src/pages/contracts/ContractDetail.tsx:192
+ msgid "Party A"
+ msgstr "Bên A"
 
-#: src/forms/ContractForms.tsx:114
-#~ msgid "Tên pháp nhân hoặc tổ chức của Bên B"
-#~ msgstr "Tên pháp nhân hoặc tổ chức của Bên B"
+ #: src/pages/contracts/ContractDetail.tsx:197
+ msgid "Party A Name"
+ msgstr "Tên Bên A"
+
+ #: src/forms/ContractForms.tsx:114
+ #~ msgid "Tên pháp nhân hoặc tổ chức của Bên B"
+ #~ msgstr "Tên pháp nhân hoặc tổ chức của Bên B"
 
 #: src/forms/ContractForms.tsx:115
 msgid "Legal entity or organization name for Party A"
@@ -5112,14 +5116,18 @@ msgstr "Người đại diện ký hợp đồng của Bên A"
 #~ msgid "Ngày ký hợp đồng"
 #~ msgstr "Ngày ký hợp đồng"
 
-#: src/forms/ContractForms.tsx:124
-#: src/pages/contracts/ContractDetail.tsx:204
-msgid "Party B"
-msgstr "Bên B"
+ #: src/forms/ContractForms.tsx:124
+ #: src/pages/contracts/ContractDetail.tsx:204
+ msgid "Party B"
+ msgstr "Bên B"
 
-#: src/forms/ContractForms.tsx:124
-#~ msgid "Ngày hai bên ký kết hợp đồng"
-#~ msgstr "Ngày hai bên ký kết hợp đồng"
+ #: src/pages/contracts/ContractDetail.tsx:216
+ msgid "Party B Name"
+ msgstr "Tên Bên B"
+
+ #: src/forms/ContractForms.tsx:124
+ #~ msgid "Ngày hai bên ký kết hợp đồng"
+ #~ msgstr "Ngày hai bên ký kết hợp đồng"
 
 #: src/forms/ContractForms.tsx:125
 msgid "Legal entity or organization name for Party B"

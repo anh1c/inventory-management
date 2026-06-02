@@ -15,8 +15,8 @@ export function KeepFormOpenSwitch({
       checked={keepOpen}
       radius='lg'
       size='sm'
-      label='Keep form open'
-      description='Keep form open after submitting'
+      label='Giữ form mở'
+      description='Giữ form mở sau khi gửi dữ liệu'
       onChange={(e) => setKeepOpen(e.currentTarget.checked)}
     />
   );

@@ -32,12 +32,16 @@ export function ContractTable({
   contractType,
   salesContract,
   salesContractId,
+  buyerId,
+  sellerId,
   onSelectContract,
   selectedContractId
 }: Readonly<{
   contractType?: ContractType;
   salesContract?: any;
   salesContractId?: number;
+  buyerId?: number;
+  sellerId?: number;
   onSelectContract?: (record: any) => void;
   selectedContractId?: number;
 }>) {
@@ -128,11 +132,13 @@ export function ContractTable({
 
   const newContract = useCreateApiFormModal({
     url: ApiEndpoints.contract_list,
-    title: contractType === 'purchase' ? t`Add Purchase Contract` : t`Add Sales Contract`,
+    title: contractType === 'purchase' ? 'Thêm hợp đồng mua' : 'Thêm hợp đồng bán',
     fields: contractFields,
     initialData: {
       contract_type: contractType,
-      sales_contract: salesContractId
+      sales_contract: salesContractId,
+      buyer: buyerId,
+      seller: sellerId
     },
     modelType: ModelType.contract,
     keepOpenOption: true,
@@ -169,7 +175,7 @@ export function ContractTable({
     return [
       <AddItemButton
         key='add-contract'
-        tooltip={contractType === 'purchase' ? t`Add Purchase Contract` : t`Add Sales Contract`}
+        tooltip={contractType === 'purchase' ? 'Thêm hợp đồng mua' : 'Thêm hợp đồng bán'}
         onClick={() => newContract.open()}
         hidden={
           !user.hasAddRole(UserRoles.purchase_order) &&
@@ -201,40 +207,52 @@ export function ContractTable({
       }),
       {
         accessor: 'contract_type',
-        title: t`Contract Type`,
+        title: 'Loại hợp đồng',
         sortable: true,
         render: (record: any) => (
           <Badge color={record.contract_type === 'purchase' ? 'orange' : 'blue'}>
-            {record.contract_type === 'purchase' ? t`Purchase Contract` : t`Sales Contract`}
+            {record.contract_type === 'purchase' ? 'Hợp đồng mua' : 'Hợp đồng bán'}
           </Badge>
         )
       },
-      DescriptionColumn({ accessor: 'title', title: t`Title` }),
+      DescriptionColumn({ accessor: 'title', title: 'Tên hợp đồng' }),
       ProjectCodeColumn({}),
       {
+        accessor: 'buyer_detail.name',
+        title: 'Bên mua',
+        sortable: false,
+        render: (record: any) => record.buyer_detail?.name ?? record.party_b_name ?? '-'
+      },
+      {
+        accessor: 'seller_detail.name',
+        title: 'Bên bán',
+        sortable: false,
+        render: (record: any) => record.seller_detail?.name ?? record.party_a_name ?? '-'
+      },
+      {
         accessor: 'sales_order_count',
-        title: t`Sales Orders`,
+        title: 'Đơn bán',
         sortable: true
       },
       {
         accessor: 'purchase_order_count',
-        title: t`Purchase Orders`,
+        title: 'Đơn mua',
         sortable: true
       },
       {
         accessor: 'purchase_contract_count',
-        title: t`Linked Purchase Contracts`,
+        title: 'Hợp đồng mua liên kết',
         sortable: true,
         defaultVisible: contractType !== 'purchase'
       },
       {
         accessor: 'issue_date',
-        title: t`Issue Date`,
+        title: 'Ngày ký',
         sortable: true
       },
       {
         accessor: 'grand_total',
-        title: t`Total Value`,
+        title: 'Tổng giá trị',
         sortable: true,
         render: (record: any) => formatCurrency(record.grand_total, { currency: 'VND' })
       },
@@ -255,8 +273,14 @@ export function ContractTable({
           params: {
             contract_type: contractType,
             sales_contract: salesContractId,
+            buyer: buyerId,
+            seller: sellerId,
             project_code_detail: true,
-            sales_contract_detail: true
+            sales_contract_detail: true,
+            buyer_detail: true,
+            seller_detail: true,
+            party_a_contact_detail: true,
+            party_b_contact_detail: true
           },
           tableActions,
           defaultSortColumn: 'reference',

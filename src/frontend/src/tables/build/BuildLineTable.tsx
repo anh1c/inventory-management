@@ -787,7 +787,7 @@ export default function BuildLineTable({
         },
         {
           icon: <IconShoppingCart />,
-          title: t`Order Stock`,
+          title: 'Đơn mua',
           hidden: !canOrder,
           color: 'blue',
           onClick: () => {

@@ -56,8 +56,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'test'
   },
   supplierpart: {
-    label: () => t`Supplier Part`,
-    label_multiple: () => t`Supplier Parts`,
+    label: () => 'Mã hàng nhà cung cấp',
+    label_multiple: () => 'Mã hàng nhà cung cấp',
     url_overview: '/purchasing/index/supplier-parts',
     url_detail: '/purchasing/supplier-part/:pk/',
     api_endpoint: ApiEndpoints.supplier_part_list,
@@ -66,8 +66,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'supplier_part'
   },
   manufacturerpart: {
-    label: () => t`Manufacturer Part`,
-    label_multiple: () => t`Manufacturer Parts`,
+    label: () => 'Mã hàng nhà sản xuất',
+    label_multiple: () => 'Mã hàng nhà sản xuất',
     url_overview: '/purchasing/index/manufacturer-parts',
     url_detail: '/purchasing/manufacturer-part/:pk/',
     api_endpoint: ApiEndpoints.manufacturer_part_list,

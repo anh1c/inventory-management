@@ -1,3 +1,4 @@
+import { Text } from '@mantine/core';
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { companyFields } from '../../forms/CompanyForms';
+import { companyFields, internalCompanyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -31,11 +32,15 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function CompanyTable({
   companyType,
   params,
-  path
+  path,
+  initialData,
+  showInternalColumns = false
 }: Readonly<{
   companyType?: string;
   params?: any;
   path?: string;
+  initialData?: any;
+  showInternalColumns?: boolean;
 }>) {
   const table = useTable(`company-${companyType ?? 'index'}`, {
     initialFilters: [
@@ -50,10 +55,10 @@ export function CompanyTable({
   const user = useUserState();
 
   const columns = useMemo(() => {
-    return [
+    const companyColumns: any[] = [
       {
         accessor: 'name',
-        title: t`Company`,
+        title: showInternalColumns ? 'Công ty nội bộ' : t`Company`,
         sortable: true,
         switchable: false,
         render: (record: any) => {
@@ -72,13 +77,59 @@ export function CompanyTable({
         sortable: false
       }
     ];
-  }, []);
+
+    if (showInternalColumns) {
+      companyColumns.push(
+        {
+          accessor: 'representative',
+          title: 'Người đại diện',
+          sortable: true,
+          switchable: true,
+          copyable: true,
+          render: (record: any) => record.representative || '-'
+        },
+        {
+          accessor: 'representative_position',
+          title: 'Chức vụ',
+          sortable: true,
+          switchable: true,
+          copyable: true,
+          render: (record: any) => record.representative_position || '-'
+        },
+        BooleanColumn({
+          accessor: 'is_internal',
+          title: 'Nội bộ',
+          sortable: true,
+          switchable: true
+        }),
+        {
+          accessor: 'parent_company',
+          title: 'Công ty mẹ',
+          sortable: true,
+          switchable: true,
+          render: (record: any) => {
+            if (record.parent_company_detail?.name) {
+              return <CompanyColumn company={record.parent_company_detail} />;
+            }
+
+            if (record.parent_company) {
+              return <Text size='sm'>#{record.parent_company}</Text>;
+            }
+
+            return '-';
+          }
+        }
+      );
+    }
+
+    return companyColumns;
+  }, [showInternalColumns]);
 
   const newCompany = useCreateApiFormModal({
     url: ApiEndpoints.company_list,
-    title: t`Add Company`,
-    fields: companyFields(),
-    initialData: params,
+    title: showInternalColumns ? 'Thêm công ty nội bộ' : 'Thêm công ty',
+    fields: showInternalColumns ? internalCompanyFields() : companyFields(),
+    initialData: initialData ?? params,
     follow: true,
     modelType: ModelType.company,
     keepOpenOption: true
@@ -89,7 +140,7 @@ export function CompanyTable({
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
     pk: selectedCompany,
-    title: t`Edit Company`,
+    title: 'Sửa công ty',
     fields: companyFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
@@ -127,7 +178,7 @@ export function CompanyTable({
     return [
       <AddItemButton
         key='add-company'
-        tooltip={t`Add Company`}
+        tooltip='Thêm công ty'
         onClick={() => newCompany.open()}
         hidden={!can_add}
       />

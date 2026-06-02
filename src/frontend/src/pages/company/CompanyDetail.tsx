@@ -2,6 +2,8 @@ import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
+  IconFileDollar,
+  IconFileInvoice,
   IconInfoCircle,
   IconMap2,
   IconPackageExport,
@@ -47,6 +49,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
+import { ContractTable } from '../../tables/contract/ContractTable';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
@@ -122,6 +125,20 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Tax ID`,
         copy: true,
         hidden: !company.tax_id
+      },
+      {
+        type: 'text',
+        name: 'representative',
+        label: t`Representative`,
+        copy: true,
+        hidden: !company.representative
+      },
+      {
+        type: 'text',
+        name: 'representative_position',
+        label: t`Representative Position`,
+        copy: true,
+        hidden: !company.representative_position
       }
     ];
 
@@ -148,6 +165,18 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'is_customer',
         label: t`Customer`,
         icon: 'customers'
+      },
+      {
+        type: 'boolean',
+        name: 'is_internal',
+        label: t`Internal Company`
+      },
+      {
+        type: 'link',
+        name: 'parent_company',
+        label: t`Parent Company`,
+        model: ModelType.company,
+        hidden: !company.parent_company
       }
     ];
 
@@ -179,7 +208,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       {
         name: 'details',
-        label: t`Company Details`,
+        label: 'Chi tiết công ty',
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
@@ -189,6 +218,24 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconPackageExport />,
         hidden: !company?.is_supplier,
         content: company?.pk && <SupplierPartTable supplierId={company.pk} />
+      },
+      {
+        name: 'sales-contracts',
+        label: 'Hợp đồng bán',
+        icon: <IconFileDollar />,
+        hidden: !company?.is_internal,
+        content: company?.pk && (
+          <ContractTable contractType='sales' sellerId={company.pk} />
+        )
+      },
+      {
+        name: 'purchase-contracts',
+        label: 'Hợp đồng mua',
+        icon: <IconFileInvoice />,
+        hidden: !company?.is_internal,
+        content: company?.pk && (
+          <ContractTable contractType='purchase' buyerId={company.pk} />
+        )
       },
       {
         name: 'manufactured-parts',
@@ -203,8 +250,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'purchase-orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !company?.is_supplier,
-        content: company?.pk && <PurchaseOrderTable supplierId={company.pk} />
+        hidden: !company?.is_supplier && !company?.is_internal,
+        content: company?.pk && (
+          <PurchaseOrderTable
+            supplierId={company.is_supplier ? company.pk : undefined}
+            contractBuyerId={company.is_internal ? company.pk : undefined}
+          />
+        )
       },
       {
         name: 'stock-items',
@@ -223,8 +275,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'sales-orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !company?.is_customer,
-        content: company?.pk && <SalesOrderTable customerId={company.pk} />
+        hidden: !company?.is_customer && !company?.is_internal,
+        content: company?.pk && (
+          <SalesOrderTable
+            customerId={company.is_customer ? company.pk : undefined}
+            contractSellerId={company.is_internal ? company.pk : undefined}
+          />
+        )
       },
       {
         name: 'return-orders',
@@ -344,7 +401,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={`${t`Company`}: ${company.name}`}
+            title={company.is_internal ? company.name : `${t`Company`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}
             imageUrl={company.image}

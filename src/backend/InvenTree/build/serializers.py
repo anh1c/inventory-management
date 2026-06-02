@@ -131,6 +131,17 @@ class BuildSerializer(
 
     quantity = InvenTreeDecimalField()
 
+    def validate(self, data):
+        """Validate required project mapping for build orders."""
+        data = super().validate(data)
+
+        project_code = data.get('project_code', getattr(self.instance, 'project_code', None))
+
+        if not project_code:
+            raise ValidationError({'project_code': _('Project code is required')})
+
+        return data
+
     overdue = serializers.BooleanField(read_only=True, default=False)
 
     issued_by_detail = OptionalField(

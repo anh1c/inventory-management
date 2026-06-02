@@ -6,6 +6,7 @@ import {
   IconCircleCheck,
   IconCircleX,
   IconCoins,
+  IconLink,
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
@@ -33,34 +34,122 @@ import { useUserState } from '../states/UserState';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
-  duplicateOrderId
+  duplicateOrderId,
+  create,
+  linkedPurchaseContractId,
+  linkedSalesContractId
 }: {
   duplicateOrderId?: number;
+  create?: boolean;
+  linkedPurchaseContractId?: number;
+  linkedSalesContractId?: number;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
+  const [selectedContract, setSelectedContract] = useState<any>(undefined);
+  const [customerId, setCustomerId] = useState<number | undefined>(undefined);
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [targetDate, setTargetDate] = useState<string | null>(null);
+
+  const contractDateError = useMemo(() => {
+    if (!selectedContract) return undefined;
+
+    const issueDate = selectedContract.issue_date;
+    const effectiveDate = selectedContract.effective_date;
+
+    if (startDate && issueDate && startDate < issueDate) {
+      return 'Ngày bắt đầu phải nằm trong thời hạn hợp đồng đã chọn';
+    }
+
+    if (startDate && effectiveDate && startDate > effectiveDate) {
+      return 'Ngày bắt đầu phải nằm trong thời hạn hợp đồng đã chọn';
+    }
+
+    if (targetDate && issueDate && targetDate < issueDate) {
+      return 'Ngày mục tiêu phải nằm trong thời hạn hợp đồng đã chọn';
+    }
+
+    if (targetDate && effectiveDate && targetDate > effectiveDate) {
+      return 'Ngày mục tiêu phải nằm trong thời hạn hợp đồng đã chọn';
+    }
+
+    return undefined;
+  }, [selectedContract, startDate, targetDate]);
+
+  const setContract = (record?: any) => {
+    setSelectedContract(record);
+    setCustomerId(undefined);
+
+    if (record?.buyer) {
+      setCustomerId(record.buyer);
+    }
+  };
 
   return useMemo(() => {
+    const contractField: ApiFormFieldType | undefined = create
+      ? {
+          field_type: 'related field',
+          api_url: apiUrl(ApiEndpoints.contract_list),
+          icon: <IconLink />,
+          label: 'Hợp đồng bán',
+          description: 'Chọn hợp đồng bán liên kết với đơn bán hàng này',
+          value: linkedSalesContractId,
+          disabled: !!linkedSalesContractId,
+          filters: {
+            contract_type: 'sales',
+            ...(linkedPurchaseContractId
+              ? { purchase_contract: linkedPurchaseContractId }
+              : {})
+          },
+          onValueChange: (_value: any, record?: any) => setContract(record)
+        }
+      : undefined;
+
     const fields: ApiFormFieldSet = {
-      reference: {},
-      description: {},
+      reference: {
+        label: 'Mã đơn bán hàng'
+      },
+      ...(contractField ? { contract: contractField } : {}),
+      project_code: {
+        label: 'Mã dự án',
+        required: true,
+        value: selectedContract?.project_code,
+        disabled: !!selectedContract?.project_code
+      },
+      description: {
+        label: 'Mô tả'
+      },
       customer: {
+        label: 'Khách hàng',
+        value: customerId,
         disabled: duplicateOrderId != undefined,
         filters: {
           is_customer: true,
           active: true
         }
       },
-      customer_reference: {},
-      project_code: {},
-      order_currency: {},
+      customer_reference: {
+        label: 'Mã tham chiếu khách hàng'
+      },
+      order_currency: {
+        label: 'Tiền tệ'
+      },
       start_date: {
-        icon: <IconCalendar />
+        label: 'Ngày bắt đầu',
+        icon: <IconCalendar />,
+        error: contractDateError,
+        onValueChange: (value: any) => setStartDate(value)
       },
       target_date: {
-        icon: <IconCalendar />
+        label: 'Ngày mục tiêu',
+        icon: <IconCalendar />,
+        error: contractDateError,
+        onValueChange: (value: any) => setTargetDate(value)
       },
-      link: {},
+      link: {
+        label: 'Liên kết'
+      },
       contact: {
+        label: 'Liên hệ',
         icon: <IconUser />,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
@@ -70,6 +159,7 @@ export function useSalesOrderFields({
         }
       },
       address: {
+        label: 'Địa chỉ',
         icon: <IconAddressBook />,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
@@ -79,6 +169,7 @@ export function useSalesOrderFields({
         }
       },
       responsible: {
+        label: 'Người phụ trách',
         icon: <IconUsers />
       }
     };
@@ -103,7 +194,16 @@ export function useSalesOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId, globalSettings]);
+  }, [
+    create,
+    duplicateOrderId,
+    globalSettings,
+    selectedContract,
+    customerId,
+    contractDateError,
+    linkedPurchaseContractId,
+    linkedSalesContractId
+  ]);
 }
 
 export function useSalesOrderLineItemFields({
