@@ -94,6 +94,7 @@ function SalesContractSummary({
       type: 'link',
       name: 'pk',
       label: t`Contract Number`,
+      icon: 'reference',
       model: ModelType.contract,
       model_formatter: (record: ContractRecord) => record.reference ?? '-',
       copy: true
@@ -102,18 +103,21 @@ function SalesContractSummary({
       type: 'text',
       name: 'contract_type',
       label: t`Contract Type`,
+      icon: 'license',
       value_formatter: () => contractTypeLabel(contract)
     },
     {
       type: 'text',
       name: 'title',
       label: t`Contract Name`,
+      icon: 'description',
       copy: true
     },
     {
       type: 'text',
       name: 'project_code_detail.code',
       label: t`Project Code`,
+      icon: 'sitemap',
       copy: true,
       hidden: !contract.project_code_detail?.code
     },
@@ -121,6 +125,7 @@ function SalesContractSummary({
       type: 'text',
       name: 'grand_total',
       label: t`Total Contract Value`,
+      icon: 'pricing',
       value_formatter: () => currencyValue(contract.grand_total)
     }
   ];
@@ -154,24 +159,28 @@ export default function ContractDetail() {
         type: 'text',
         name: 'reference',
         label: t`Contract Number`,
+        icon: 'reference',
         copy: true
       },
       {
         type: 'text',
         name: 'contract_type',
         label: t`Contract Type`,
+        icon: 'license',
         value_formatter: () => contractTypeLabel(contract)
       },
       {
         type: 'text',
         name: 'title',
         label: t`Contract Name`,
+        icon: 'description',
         copy: true
       },
       {
         type: 'text',
         name: 'project_code_detail.code',
         label: t`Project Code`,
+        icon: 'sitemap',
         copy: true,
         hidden: !contract?.project_code_detail?.code
       },
@@ -179,6 +188,7 @@ export default function ContractDetail() {
         type: 'link',
         name: 'sales_contract',
         label: t`Linked Sales Contract`,
+        icon: 'link',
         model: ModelType.contract,
         model_formatter: (record: ContractRecord) => record.reference ?? '-',
         hidden: !contract?.sales_contract
@@ -190,36 +200,42 @@ export default function ContractDetail() {
         type: 'text',
         name: 'party_a_name',
         label: t`Party A`,
+        icon: 'customers',
         copy: true
       },
       {
         type: 'text',
         name: 'party_a_representative',
         label: t`Party A Representative`,
+        icon: 'responsible',
         copy: true
       },
       {
         type: 'text',
         name: 'party_b_name',
         label: t`Party B`,
+        icon: 'suppliers',
         copy: true
       },
       {
         type: 'text',
         name: 'party_b_representative',
         label: t`Party B Representative`,
+        icon: 'user',
         copy: true
       },
       {
         type: 'date',
         name: 'issue_date',
         label: t`Issue Date`,
+        icon: 'calendar_check',
         copy: true
       },
       {
         type: 'date',
         name: 'effective_date',
         label: t`Effective Date`,
+        icon: 'calendar_target',
         copy: true
       }
     ];
@@ -229,30 +245,35 @@ export default function ContractDetail() {
         type: 'text',
         name: 'total_amount',
         label: t`Pre-VAT Value`,
+        icon: 'pricing',
         value_formatter: () => currencyValue(contract?.total_amount)
       },
       {
         type: 'text',
         name: 'vat_rate',
         label: t`VAT Rate`,
+        icon: 'tax_id',
         value_formatter: () => vatRateValue(contract?.vat_rate)
       },
       {
         type: 'text',
         name: 'vat_amount',
         label: t`VAT Amount`,
+        icon: 'currency',
         value_formatter: () => currencyValue(contract?.vat_amount)
       },
       {
         type: 'text',
         name: 'grand_total',
         label: t`Total Contract Value`,
+        icon: 'total_cost',
         value_formatter: () => currencyValue(contract?.grand_total)
       },
       {
         type: 'text',
         name: 'amount_text',
         label: t`Amount In Words`,
+        icon: 'notes',
         copy: true
       }
     ];
@@ -262,30 +283,35 @@ export default function ContractDetail() {
         type: 'text',
         name: 'work_scope',
         label: t`Scope of Work`,
+        icon: 'stocktake',
         copy: true
       },
       {
         type: 'text',
         name: 'delivery_terms',
         label: t`Delivery Terms`,
+        icon: 'deliver',
         copy: true
       },
       {
         type: 'text',
         name: 'payment_terms',
         label: t`Payment Terms`,
+        icon: 'pricing',
         copy: true
       },
       {
         type: 'text',
         name: 'warranty_terms',
         label: t`Warranty`,
+        icon: 'complete',
         copy: true
       },
       {
         type: 'text',
         name: 'notes',
         label: t`Notes`,
+        icon: 'notes',
         copy: true
       }
     ];

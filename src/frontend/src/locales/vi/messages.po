@@ -341,8 +341,8 @@ msgstr "Đối tác"
 #: lib/enums/ModelInformation.tsx:152
 #: src/forms/ContractForms.tsx:74
 #: src/pages/build/BuildDetail.tsx:335
-#: src/pages/contracts/ContractDetail.tsx:116
-#: src/pages/contracts/ContractDetail.tsx:174
+#: src/pages/contracts/ContractDetail.tsx:119
+#: src/pages/contracts/ContractDetail.tsx:182
 #: src/pages/contracts/ContractsIndex.tsx:98
 #: src/pages/contracts/ContractsIndex.tsx:168
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:254
@@ -361,13 +361,13 @@ msgstr "Mã dự án"
 
 #: lib/enums/ModelInformation.tsx:160
 msgid "Contract"
-msgstr "Contract"
+msgstr "Hợp đồng"
 
 #: lib/enums/ModelInformation.tsx:161
 #: src/defaults/links.tsx:69
-#: src/pages/contracts/ContractDetail.tsx:372
-#: src/pages/contracts/ContractDetail.tsx:376
-#: src/pages/contracts/ContractDetail.tsx:379
+#: src/pages/contracts/ContractDetail.tsx:398
+#: src/pages/contracts/ContractDetail.tsx:402
+#: src/pages/contracts/ContractDetail.tsx:405
 #: src/pages/contracts/ContractsIndex.tsx:284
 msgid "Contracts"
 msgstr "Hợp đồng"
@@ -1695,48 +1695,48 @@ msgstr "Cập nhật"
 #~ msgid "Mail delivery successfull"
 #~ msgstr "Mail delivery successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:73
+#: src/components/forms/AuthenticationForm.tsx:72
 msgid "Login successful"
 msgstr "Đăng nhập thành công"
 
-#: src/components/forms/AuthenticationForm.tsx:74
+#: src/components/forms/AuthenticationForm.tsx:73
 msgid "Logged in successfully"
 msgstr "Đăng nhập thành công"
 
-#: src/components/forms/AuthenticationForm.tsx:81
-#: src/components/forms/AuthenticationForm.tsx:89
+#: src/components/forms/AuthenticationForm.tsx:80
+#: src/components/forms/AuthenticationForm.tsx:88
 #: src/functions/auth.tsx:133
 #: src/functions/auth.tsx:142
 msgid "Login failed"
 msgstr "Đăng nhập thất bại"
 
-#: src/components/forms/AuthenticationForm.tsx:82
-#: src/components/forms/AuthenticationForm.tsx:90
-#: src/components/forms/AuthenticationForm.tsx:106
+#: src/components/forms/AuthenticationForm.tsx:81
+#: src/components/forms/AuthenticationForm.tsx:89
+#: src/components/forms/AuthenticationForm.tsx:105
 #: src/functions/auth.tsx:134
 #: src/functions/auth.tsx:350
 msgid "Check your input and try again."
 msgstr "Kiểm tra dữ liệu nhập và thử lại."
 
-#: src/components/forms/AuthenticationForm.tsx:100
+#: src/components/forms/AuthenticationForm.tsx:99
 #: src/functions/auth.tsx:341
 msgid "Mail delivery successful"
 msgstr "Thư đã được gửi đi thành công"
 
-#: src/components/forms/AuthenticationForm.tsx:101
+#: src/components/forms/AuthenticationForm.tsx:100
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr "Kiểm tra hộp thư để nhận liên kết đăng nhập. Nếu bạn đã có tài khoản, bạn sẽ nhận một liên kết đăng nhập. Kiểm tra đồng thời thư mục spam."
 
-#: src/components/forms/AuthenticationForm.tsx:105
+#: src/components/forms/AuthenticationForm.tsx:104
 msgid "Mail delivery failed"
 msgstr "Gửi mail thất bại"
 
-#: src/components/forms/AuthenticationForm.tsx:125
+#: src/components/forms/AuthenticationForm.tsx:124
 msgid "Or continue with other methods"
 msgstr "Hoặc tiếp tục với phương thức khác"
 
-#: src/components/forms/AuthenticationForm.tsx:136
-#: src/components/forms/AuthenticationForm.tsx:296
+#: src/components/forms/AuthenticationForm.tsx:135
+#: src/components/forms/AuthenticationForm.tsx:297
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:64
 #: src/pages/core/UserDetail.tsx:48
 msgid "Username"
@@ -1747,102 +1747,102 @@ msgstr "Tên người dùng"
 #~ msgstr "I will use username and password"
 
 #: src/components/forms/AuthenticationForm.tsx:138
-#: src/components/forms/AuthenticationForm.tsx:298
+#: src/components/forms/AuthenticationForm.tsx:299
 msgid "Your username"
 msgstr "Tên người dùng của bạn"
 
 #: src/components/forms/AuthenticationForm.tsx:143
-#: src/components/forms/AuthenticationForm.tsx:311
+#: src/components/forms/AuthenticationForm.tsx:312
 #: src/pages/Auth/ResetPassword.tsx:34
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Password"
 msgstr "Mật khẩu"
 
-#: src/components/forms/AuthenticationForm.tsx:145
-#: src/components/forms/AuthenticationForm.tsx:313
+#: src/components/forms/AuthenticationForm.tsx:146
+#: src/components/forms/AuthenticationForm.tsx:314
 msgid "Your password"
 msgstr "Mật khẩu của bạn"
 
-#: src/components/forms/AuthenticationForm.tsx:164
+#: src/components/forms/AuthenticationForm.tsx:165
 msgid "Reset password"
 msgstr "Đặt lại mật khẩu"
 
-#: src/components/forms/AuthenticationForm.tsx:173
-#: src/components/forms/AuthenticationForm.tsx:303
+#: src/components/forms/AuthenticationForm.tsx:174
+#: src/components/forms/AuthenticationForm.tsx:304
 #: src/pages/Auth/Reset.tsx:17
 #: src/pages/core/UserDetail.tsx:71
 msgid "Email"
 msgstr "Địa chỉ email"
 
-#: src/components/forms/AuthenticationForm.tsx:174
+#: src/components/forms/AuthenticationForm.tsx:175
 #: src/pages/Auth/Reset.tsx:18
 msgid "We will send you a link to login - if you are registered"
 msgstr "Chúng tôi sẽ gửi bạn 1 liên kết để đăng nhập - nếu bạn đã đăng ký"
 
-#: src/components/forms/AuthenticationForm.tsx:190
+#: src/components/forms/AuthenticationForm.tsx:191
 msgid "Send me an email"
 msgstr "Gửi email cho chúng tôi"
 
-#: src/components/forms/AuthenticationForm.tsx:192
+#: src/components/forms/AuthenticationForm.tsx:193
 msgid "Use username and password"
 msgstr "Dùng tên đăng nhập và mật khẩu"
 
-#: src/components/forms/AuthenticationForm.tsx:201
+#: src/components/forms/AuthenticationForm.tsx:202
 msgid "Log In"
 msgstr "Đăng nhập"
 
-#: src/components/forms/AuthenticationForm.tsx:203
+#: src/components/forms/AuthenticationForm.tsx:204
 #: src/pages/Auth/Reset.tsx:26
 msgid "Send Email"
 msgstr "Gửi email"
 
-#: src/components/forms/AuthenticationForm.tsx:239
+#: src/components/forms/AuthenticationForm.tsx:240
 msgid "Passwords do not match"
 msgstr "Mật khẩu không khớp"
 
-#: src/components/forms/AuthenticationForm.tsx:256
+#: src/components/forms/AuthenticationForm.tsx:257
 msgid "Registration successful"
 msgstr "Đăng kí thành công"
 
-#: src/components/forms/AuthenticationForm.tsx:257
+#: src/components/forms/AuthenticationForm.tsx:258
 msgid "Please confirm your email address to complete the registration"
 msgstr "Vui xác nhận địa chỉ email của bạn để hoàn thành việc đăng ký"
 
-#: src/components/forms/AuthenticationForm.tsx:280
+#: src/components/forms/AuthenticationForm.tsx:281
 msgid "Input error"
 msgstr "Lỗi đầu vào"
 
-#: src/components/forms/AuthenticationForm.tsx:281
+#: src/components/forms/AuthenticationForm.tsx:282
 msgid "Check your input and try again. "
 msgstr "Check your dữ liệu nhập và thử lại."
 
-#: src/components/forms/AuthenticationForm.tsx:305
+#: src/components/forms/AuthenticationForm.tsx:306
 msgid "This will be used for a confirmation"
 msgstr "Sử dụng cho xác thực"
 
-#: src/components/forms/AuthenticationForm.tsx:318
+#: src/components/forms/AuthenticationForm.tsx:319
 msgid "Password repeat"
 msgstr "Lặp lại mật khẩu"
 
-#: src/components/forms/AuthenticationForm.tsx:320
+#: src/components/forms/AuthenticationForm.tsx:321
 msgid "Repeat password"
 msgstr "Lặp lại mật khẩu"
 
-#: src/components/forms/AuthenticationForm.tsx:332
+#: src/components/forms/AuthenticationForm.tsx:333
 #: src/pages/Auth/Login.tsx:137
 #: src/pages/Auth/Register.tsx:13
 msgid "Register"
 msgstr "Đăng ký"
 
-#: src/components/forms/AuthenticationForm.tsx:338
+#: src/components/forms/AuthenticationForm.tsx:339
 msgid "Or use SSO"
 msgstr "hoặc sử dụng SSO"
 
-#: src/components/forms/AuthenticationForm.tsx:348
+#: src/components/forms/AuthenticationForm.tsx:349
 msgid "Registration not active"
 msgstr "Đăng ký chưa hoạt động"
 
-#: src/components/forms/AuthenticationForm.tsx:349
+#: src/components/forms/AuthenticationForm.tsx:350
 msgid "This might be related to missing mail settings or could be a deliberate decision."
 msgstr "Có thể do thiếu cấu hình email hoặc đây là thiết lập có chủ đích."
 
@@ -1980,6 +1980,14 @@ msgstr "Đã dừng"
 #: src/components/forms/InstanceOptions.tsx:151
 msgid "Running"
 msgstr "Đang chạy"
+
+#: src/components/forms/KeepFormOpenSwitch.tsx:19
+msgid "Keep form open"
+msgstr "Giữ biểu mẫu mở"
+
+#: src/components/forms/KeepFormOpenSwitch.tsx:20
+msgid "Keep form open after submitting"
+msgstr "Giữ biểu mẫu mở sau khi gửi"
 
 #: src/components/forms/fields/ApiFormField.tsx:207
 msgid "Select file to upload"
@@ -2468,7 +2476,7 @@ msgstr "Nhánh commit"
 #: src/defaults/links.tsx:143
 #: src/defaults/links.tsx:184
 msgid "System Details"
-msgstr "System Details"
+msgstr "Thông tin hệ thống"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:160
 #~ msgid "Version Information"
@@ -2480,7 +2488,7 @@ msgstr "System Details"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "Resources"
-msgstr "Resources"
+msgstr "Tài nguyên"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 #~ msgid "InvenTree Documentation"
@@ -2501,11 +2509,11 @@ msgstr "Tài liệu"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:175
 msgid "Technical Reference"
-msgstr "Technical Reference"
+msgstr "Tài liệu kỹ thuật"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:176
 msgid "Application Access"
-msgstr "Application Access"
+msgstr "Truy cập ứng dụng"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:176
 #~ msgid "Source Code"
@@ -2513,7 +2521,7 @@ msgstr "Application Access"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:177
 msgid "Support Request"
-msgstr "Support Request"
+msgstr "Yêu cầu hỗ trợ"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:177
 #~ msgid "Mobile App"
@@ -2521,7 +2529,7 @@ msgstr "Support Request"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:189
 msgid "Copy system details"
-msgstr "Copy system details"
+msgstr "Sao chép thông tin hệ thống"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:189
 #: src/components/modals/ServerInfoModal.tsx:147
@@ -2958,7 +2966,7 @@ msgstr "Đính kèm"
 
 #: src/components/panels/NotesPanel.tsx:25
 #: src/forms/ContractForms.tsx:198
-#: src/pages/contracts/ContractDetail.tsx:288
+#: src/pages/contracts/ContractDetail.tsx:313
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Notes"
@@ -3139,6 +3147,10 @@ msgstr "Lỗi khi tải nội dung"
 #: src/components/plugins/RemoteComponent.tsx:147
 msgid "Error occurred while loading plugin content"
 msgstr "Đã xảy ra lỗi khi tải nội dung plugin"
+
+#: src/components/render/Company.tsx:31
+msgid "Primary Address"
+msgstr "Địa chỉ chính"
 
 #: src/components/render/Instance.tsx:238
 #~ msgid "Unknown model: {model}"
@@ -3357,7 +3369,7 @@ msgstr "Thêm trạng thái"
 #: src/components/settings/QuickAction.tsx:85
 #: src/components/settings/QuickAction.tsx:88
 msgid "Open Support"
-msgstr "Open Support"
+msgstr "Mở hỗ trợ"
 
 #: src/components/settings/QuickAction.tsx:85
 #~ msgid "Open an Issue"
@@ -4278,11 +4290,11 @@ msgstr "Xem tổng quan vận hành"
 
 #: src/defaults/actions.tsx:49
 msgid "Help Center"
-msgstr "Help Center"
+msgstr "Trung tâm trợ giúp"
 
 #: src/defaults/actions.tsx:50
 msgid "Open DTWare support resources"
-msgstr "Open DTWare support resources"
+msgstr "Mở tài nguyên hỗ trợ DTWare"
 
 #: src/defaults/actions.tsx:50
 #~ msgid "Visit the documentation to learn more about InvenTree"
@@ -4292,11 +4304,11 @@ msgstr "Open DTWare support resources"
 #: src/defaults/links.tsx:156
 #: src/defaults/links.tsx:202
 msgid "About DTWare"
-msgstr "About DTWare"
+msgstr "Giới thiệu DTWare"
 
 #: src/defaults/actions.tsx:59
 msgid "View DTWare product information"
-msgstr "View DTWare product information"
+msgstr "Xem thông tin sản phẩm DTWare"
 
 #: src/defaults/actions.tsx:59
 #~ msgid "About the InvenTree org"
@@ -4308,7 +4320,7 @@ msgstr "View DTWare product information"
 
 #: src/defaults/actions.tsx:66
 msgid "View deployment and version details"
-msgstr "View deployment and version details"
+msgstr "Xem thông tin triển khai và phiên bản"
 
 #: src/defaults/actions.tsx:66
 #: src/defaults/links.tsx:169
@@ -4323,7 +4335,7 @@ msgstr "Thông tin giấy phép"
 
 #: src/defaults/actions.tsx:73
 msgid "View third-party dependency licenses"
-msgstr "View third-party dependency licenses"
+msgstr "Xem giấy phép thư viện bên thứ ba"
 
 #: src/defaults/actions.tsx:73
 #~ msgid "Licenses for dependencies of the service"
@@ -4379,7 +4391,7 @@ msgstr "Đi đến Trung tâm quản trị"
 
 #: src/defaults/actions.tsx:174
 msgid "Manage DTWare extensions"
-msgstr "Manage DTWare extensions"
+msgstr "Quản lý tiện ích mở rộng DTWare"
 
 #: src/defaults/actions.tsx:174
 #~ msgid "Manage InvenTree plugins"
@@ -4516,7 +4528,7 @@ msgstr "Bắt đầu"
 
 #: src/defaults/links.tsx:105
 msgid "Open the DTWare workspace"
-msgstr "Open the DTWare workspace"
+msgstr "Mở không gian làm việc DTWare"
 
 #: src/defaults/links.tsx:107
 #~ msgid "FAQ"
@@ -4532,7 +4544,7 @@ msgstr "API Reference"
 
 #: src/defaults/links.tsx:112
 msgid "Review API capabilities"
-msgstr "Review API capabilities"
+msgstr "Xem khả năng API"
 
 #: src/defaults/links.tsx:114
 #~ msgid "GitHub Repository"
@@ -4548,15 +4560,15 @@ msgstr "Review API capabilities"
 
 #: src/defaults/links.tsx:119
 msgid "Configure the DTWare instance"
-msgstr "Configure the DTWare instance"
+msgstr "Cấu hình hệ thống DTWare"
 
 #: src/defaults/links.tsx:123
 msgid "Support"
-msgstr "Support"
+msgstr "Hỗ trợ"
 
 #: src/defaults/links.tsx:126
 msgid "Open support and administration tools"
-msgstr "Open support and administration tools"
+msgstr "Mở công cụ hỗ trợ và quản trị"
 
 #: src/defaults/links.tsx:127
 #: src/defaults/links.tsx:168
@@ -4565,11 +4577,11 @@ msgstr "Open support and administration tools"
 
 #: src/defaults/links.tsx:130
 msgid "Application"
-msgstr "Application"
+msgstr "Ứng dụng"
 
 #: src/defaults/links.tsx:133
 msgid "Return to DTWare"
-msgstr "Return to DTWare"
+msgstr "Quay lại DTWare"
 
 #: src/defaults/links.tsx:134
 #~ msgid "Licenses"
@@ -4581,7 +4593,7 @@ msgstr "Return to DTWare"
 
 #: src/defaults/links.tsx:185
 msgid "Deployment, version and runtime information"
-msgstr "Deployment, version and runtime information"
+msgstr "Thông tin triển khai, phiên bản và môi trường chạy"
 
 #: src/defaults/links.tsx:187
 #~ msgid "About the InvenTree Project"
@@ -4589,11 +4601,11 @@ msgstr "Deployment, version and runtime information"
 
 #: src/defaults/links.tsx:192
 msgid "Third-party dependency license information"
-msgstr "Third-party dependency license information"
+msgstr "Thông tin giấy phép thư viện bên thứ ba"
 
 #: src/defaults/links.tsx:203
 msgid "Product information for DTWare"
-msgstr "Product information for DTWare"
+msgstr "Thông tin sản phẩm DTWare"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -4958,7 +4970,7 @@ msgstr "Hợp đồng mua"
 
 #: src/forms/ContractForms.tsx:63
 #: src/pages/contracts/ContractDetail.tsx:96
-#: src/pages/contracts/ContractDetail.tsx:156
+#: src/pages/contracts/ContractDetail.tsx:161
 msgid "Contract Number"
 msgstr "Số hợp đồng"
 
@@ -4977,8 +4989,8 @@ msgstr "Số hoặc mã tham chiếu hợp đồng"
 #~ msgstr "Tên hợp đồng"
 
 #: src/forms/ContractForms.tsx:68
-#: src/pages/contracts/ContractDetail.tsx:110
-#: src/pages/contracts/ContractDetail.tsx:168
+#: src/pages/contracts/ContractDetail.tsx:112
+#: src/pages/contracts/ContractDetail.tsx:175
 msgid "Contract Name"
 msgstr "Tên hợp đồng"
 
@@ -5023,9 +5035,9 @@ msgstr "Mã dự án liên kết với hợp đồng"
 #~ msgstr "Hợp đồng bán liên kết"
 
 #: src/forms/ContractForms.tsx:83
-#: src/pages/contracts/ContractDetail.tsx:128
-#: src/pages/contracts/ContractDetail.tsx:181
-#: src/pages/contracts/ContractDetail.tsx:332
+#: src/pages/contracts/ContractDetail.tsx:133
+#: src/pages/contracts/ContractDetail.tsx:190
+#: src/pages/contracts/ContractDetail.tsx:358
 #: src/pages/contracts/ContractsIndex.tsx:195
 msgid "Linked Sales Contract"
 msgstr "Hợp đồng bán liên kết"
@@ -5078,7 +5090,7 @@ msgstr "Chọn một hoặc nhiều đơn mua thuộc hợp đồng mua này"
 #~ msgstr "Bên B"
 
 #: src/forms/ContractForms.tsx:114
-#: src/pages/contracts/ContractDetail.tsx:192
+#: src/pages/contracts/ContractDetail.tsx:202
 msgid "Party A"
 msgstr "Bên A"
 
@@ -5096,7 +5108,7 @@ msgstr "Tên pháp nhân hoặc tổ chức của Bên A"
 #~ msgstr "Đại diện Bên B"
 
 #: src/forms/ContractForms.tsx:119
-#: src/pages/contracts/ContractDetail.tsx:198
+#: src/pages/contracts/ContractDetail.tsx:209
 msgid "Party A Representative"
 msgstr "Đại diện Bên A"
 
@@ -5113,7 +5125,7 @@ msgstr "Người đại diện ký hợp đồng của Bên A"
 #~ msgstr "Ngày ký hợp đồng"
 
 #: src/forms/ContractForms.tsx:124
-#: src/pages/contracts/ContractDetail.tsx:204
+#: src/pages/contracts/ContractDetail.tsx:216
 msgid "Party B"
 msgstr "Bên B"
 
@@ -5126,7 +5138,7 @@ msgid "Legal entity or organization name for Party B"
 msgstr "Tên pháp nhân hoặc tổ chức của Bên B"
 
 #: src/forms/ContractForms.tsx:129
-#: src/pages/contracts/ContractDetail.tsx:210
+#: src/pages/contracts/ContractDetail.tsx:223
 msgid "Party B Representative"
 msgstr "Đại diện Bên B"
 
@@ -5161,7 +5173,7 @@ msgstr "Ngày hai bên ký kết hợp đồng"
 #~ msgstr "Phạm vi cung cấp hàng hóa, vật tư, thiết bị hoặc dịch vụ"
 
 #: src/forms/ContractForms.tsx:140
-#: src/pages/contracts/ContractDetail.tsx:222
+#: src/pages/contracts/ContractDetail.tsx:237
 msgid "Effective Date"
 msgstr "Ngày hiệu lực"
 
@@ -5184,7 +5196,7 @@ msgstr "Ngày hợp đồng bắt đầu có hiệu lực"
 #~ msgstr "Điều khoản thanh toán"
 
 #: src/forms/ContractForms.tsx:147
-#: src/pages/contracts/ContractDetail.tsx:264
+#: src/pages/contracts/ContractDetail.tsx:285
 msgid "Scope of Work"
 msgstr "Nội dung công việc"
 
@@ -5201,7 +5213,7 @@ msgstr "Phạm vi cung cấp hàng hóa, vật tư, thiết bị hoặc dịch v
 #~ msgstr "Điều khoản bảo hành"
 
 #: src/forms/ContractForms.tsx:152
-#: src/pages/contracts/ContractDetail.tsx:270
+#: src/pages/contracts/ContractDetail.tsx:292
 msgid "Delivery Terms"
 msgstr "Điều kiện giao hàng"
 
@@ -5219,7 +5231,7 @@ msgstr "Tiến độ, địa điểm và điều kiện thực hiện/giao hàng
 #~ msgstr "Giá trị trước VAT"
 
 #: src/forms/ContractForms.tsx:157
-#: src/pages/contracts/ContractDetail.tsx:276
+#: src/pages/contracts/ContractDetail.tsx:299
 msgid "Payment Terms"
 msgstr "Điều khoản thanh toán"
 
@@ -5248,7 +5260,7 @@ msgstr "Thời hạn và điều kiện bảo hành"
 #~ msgstr "Tỷ lệ thuế giá trị gia tăng áp dụng cho hợp đồng"
 
 #: src/forms/ContractForms.tsx:167
-#: src/pages/contracts/ContractDetail.tsx:231
+#: src/pages/contracts/ContractDetail.tsx:247
 msgid "Pre-VAT Value"
 msgstr "Giá trị trước VAT"
 
@@ -5284,7 +5296,7 @@ msgstr "Tỷ lệ thuế giá trị gia tăng áp dụng cho hợp đồng"
 #~ msgstr "Giá trị hợp đồng đã bao gồm VAT"
 
 #: src/forms/ContractForms.tsx:179
-#: src/pages/contracts/ContractDetail.tsx:243
+#: src/pages/contracts/ContractDetail.tsx:261
 msgid "VAT Amount"
 msgstr "Tiền VAT"
 
@@ -5302,8 +5314,8 @@ msgstr "Số tiền thuế giá trị gia tăng"
 #~ msgstr "Diễn giải tổng giá trị hợp đồng bằng chữ"
 
 #: src/forms/ContractForms.tsx:186
-#: src/pages/contracts/ContractDetail.tsx:123
-#: src/pages/contracts/ContractDetail.tsx:249
+#: src/pages/contracts/ContractDetail.tsx:127
+#: src/pages/contracts/ContractDetail.tsx:268
 msgid "Total Contract Value"
 msgstr "Tổng giá trị hợp đồng"
 
@@ -5321,7 +5333,7 @@ msgstr "Giá trị hợp đồng đã bao gồm VAT"
 #~ msgstr "Thông tin bổ sung liên quan đến hợp đồng"
 
 #: src/forms/ContractForms.tsx:193
-#: src/pages/contracts/ContractDetail.tsx:255
+#: src/pages/contracts/ContractDetail.tsx:275
 msgid "Amount In Words"
 msgstr "Tổng giá trị bằng chữ"
 
@@ -6954,7 +6966,7 @@ msgstr "Nhập mã TOTP để đảm bảo đã đăng ký chính xác"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
 msgid "Email Addresses"
-msgstr "email Addresses"
+msgstr "Địa chỉ email"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:68
 msgid "Single Sign On"
@@ -7430,7 +7442,7 @@ msgstr "Thông tin"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:37
 msgid "External plugins are not enabled for this DTWare installation."
-msgstr "External plugins are not enabled for this DTWare installation."
+msgstr "Plugin bên ngoài chưa được bật cho bản cài đặt DTWare này."
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:37
 #~ msgid "External plugins are not enabled for this InvenTree installation."
@@ -7774,7 +7786,7 @@ msgstr "Cấp bởi"
 #: src/tables/ColumnRenderers.tsx:668
 #: src/tables/Filter.tsx:379
 msgid "Responsible"
-msgstr "Chịu trách nhiệm"
+msgstr "Người phụ trách"
 
 #: src/pages/build/BuildDetail.tsx:346
 msgid "Any location"
@@ -8266,17 +8278,22 @@ msgstr "Hợp đồng mua này chưa được liên kết với hợp đồng b�
 #: src/pages/contracts/ContractDetail.tsx:162
 #: src/pages/contracts/ContractsIndex.tsx:152
 #: src/tables/contract/ContractTable.tsx:204
-msgid "Contract Type"
-msgstr "Loại hợp đồng"
-
-#: src/pages/contracts/ContractDetail.tsx:104
-#: src/pages/contracts/ContractDetail.tsx:162
-#: src/pages/contracts/ContractsIndex.tsx:152
-#: src/tables/contract/ContractTable.tsx:204
 #~ msgid "Loại hợp đồng"
 #~ msgstr "Loại hợp đồng"
 
+#: src/pages/contracts/ContractDetail.tsx:105
+#: src/pages/contracts/ContractDetail.tsx:168
+#: src/pages/contracts/ContractsIndex.tsx:152
+#: src/tables/contract/ContractTable.tsx:204
+msgid "Contract Type"
+msgstr "Loại hợp đồng"
+
 #: src/pages/contracts/ContractDetail.tsx:216
+#: src/tables/contract/ContractTable.tsx:232
+#~ msgid "Ngày ký"
+#~ msgstr "Ngày ký"
+
+#: src/pages/contracts/ContractDetail.tsx:230
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:279
 #: src/pages/sales/ReturnOrderDetail.tsx:258
 #: src/pages/sales/SalesOrderDetail.tsx:250
@@ -8284,72 +8301,57 @@ msgstr "Loại hợp đồng"
 msgid "Issue Date"
 msgstr "Ngày ký"
 
-#: src/pages/contracts/ContractDetail.tsx:216
-#: src/tables/contract/ContractTable.tsx:232
-#~ msgid "Ngày ký"
-#~ msgstr "Ngày ký"
-
-#: src/pages/contracts/ContractDetail.tsx:237
-msgid "VAT Rate"
-msgstr "Thuế suất VAT"
-
 #: src/pages/contracts/ContractDetail.tsx:237
 #~ msgid "Thuế suất VAT"
 #~ msgstr "Thuế suất VAT"
 
-#: src/pages/contracts/ContractDetail.tsx:282
-msgid "Warranty"
-msgstr "Bảo hành"
+#: src/pages/contracts/ContractDetail.tsx:254
+msgid "VAT Rate"
+msgstr "Thuế suất VAT"
 
 #: src/pages/contracts/ContractDetail.tsx:282
 #~ msgid "Bảo hành"
 #~ msgstr "Bảo hành"
 
 #: src/pages/contracts/ContractDetail.tsx:295
-msgid "Contract Information"
-msgstr "Thông tin hợp đồng"
-
-#: src/pages/contracts/ContractDetail.tsx:295
 #~ msgid "Thông tin hợp đồng"
 #~ msgstr "Thông tin hợp đồng"
-
-#: src/pages/contracts/ContractDetail.tsx:296
-msgid "Contract Parties"
-msgstr "Các bên ký kết"
 
 #: src/pages/contracts/ContractDetail.tsx:296
 #~ msgid "Các bên ký kết"
 #~ msgstr "Các bên ký kết"
 
 #: src/pages/contracts/ContractDetail.tsx:297
-msgid "Contract Value"
-msgstr "Giá trị hợp đồng"
-
-#: src/pages/contracts/ContractDetail.tsx:297
 #~ msgid "Giá trị hợp đồng"
 #~ msgstr "Giá trị hợp đồng"
-
-#: src/pages/contracts/ContractDetail.tsx:298
-msgid "Terms"
-msgstr "Điều khoản"
 
 #: src/pages/contracts/ContractDetail.tsx:298
 #~ msgid "Điều khoản"
 #~ msgstr "Điều khoản"
 
+#: src/pages/contracts/ContractDetail.tsx:306
+msgid "Warranty"
+msgstr "Bảo hành"
+
+#: src/pages/contracts/ContractDetail.tsx:321
+msgid "Contract Information"
+msgstr "Thông tin hợp đồng"
+
+#: src/pages/contracts/ContractDetail.tsx:322
+msgid "Contract Parties"
+msgstr "Các bên ký kết"
+
 #: src/pages/contracts/ContractDetail.tsx:323
-msgid "Contract Details"
-msgstr "Chi tiết hợp đồng"
+msgid "Contract Value"
+msgstr "Giá trị hợp đồng"
 
 #: src/pages/contracts/ContractDetail.tsx:323
 #~ msgid "Chi tiết hợp đồng"
 #~ msgstr "Chi tiết hợp đồng"
 
-#: src/pages/contracts/ContractDetail.tsx:331
-#: src/pages/contracts/ContractsIndex.tsx:111
-#: src/tables/contract/ContractTable.tsx:226
-msgid "Linked Purchase Contracts"
-msgstr "Hợp đồng mua liên kết"
+#: src/pages/contracts/ContractDetail.tsx:324
+msgid "Terms"
+msgstr "Điều khoản"
 
 #: src/pages/contracts/ContractDetail.tsx:331
 #: src/pages/contracts/ContractsIndex.tsx:111
@@ -8359,21 +8361,31 @@ msgstr "Hợp đồng mua liên kết"
 
 #: src/pages/contracts/ContractDetail.tsx:344
 #: src/tables/contract/ContractTable.tsx:79
-msgid "Contract Documents"
-msgstr "Tài liệu hợp đồng"
-
-#: src/pages/contracts/ContractDetail.tsx:344
-#: src/tables/contract/ContractTable.tsx:79
 #~ msgid "Tài liệu hợp đồng"
 #~ msgstr "Tài liệu hợp đồng"
 
-#: src/pages/contracts/ContractDetail.tsx:394
-msgid "Purchase contracts in the table are filtered by this sales contract."
-msgstr "Các hợp đồng mua trong bảng được lọc theo hợp đồng bán này."
+#: src/pages/contracts/ContractDetail.tsx:349
+msgid "Contract Details"
+msgstr "Chi tiết hợp đồng"
+
+#: src/pages/contracts/ContractDetail.tsx:357
+#: src/pages/contracts/ContractsIndex.tsx:111
+#: src/tables/contract/ContractTable.tsx:226
+msgid "Linked Purchase Contracts"
+msgstr "Hợp đồng mua liên kết"
+
+#: src/pages/contracts/ContractDetail.tsx:370
+#: src/tables/contract/ContractTable.tsx:79
+msgid "Contract Documents"
+msgstr "Tài liệu hợp đồng"
 
 #: src/pages/contracts/ContractDetail.tsx:394
 #~ msgid "Các hợp đồng mua trong bảng được lọc theo hợp đồng bán này."
 #~ msgstr "Các hợp đồng mua trong bảng được lọc theo hợp đồng bán này."
+
+#: src/pages/contracts/ContractDetail.tsx:420
+msgid "Purchase contracts in the table are filtered by this sales contract."
+msgstr "Các hợp đồng mua trong bảng được lọc theo hợp đồng bán này."
 
 #: src/pages/contracts/ContractsIndex.tsx:79
 msgid "Select a sales contract to view and create linked purchase contracts."
@@ -9434,7 +9446,7 @@ msgstr "Tham chiếu khách hàng"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:196
 msgid "Return Address"
-msgstr "Return địa chỉ"
+msgstr "Địa chỉ trả hàng"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:202
 #: src/pages/sales/SalesOrderDetail.tsx:195
@@ -9479,7 +9491,7 @@ msgstr "Vận đơn đã hoàn thành"
 #: src/pages/sales/SalesOrderDetail.tsx:189
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:167
 msgid "Shipping Address"
-msgstr "Shipping địa chỉ"
+msgstr "Địa chỉ giao hàng"
 
 #: src/pages/sales/SalesOrderDetail.tsx:326
 msgid "Edit Sales Order"
@@ -10396,6 +10408,30 @@ msgstr "xem chi tiết"
 msgid "View {model}"
 msgstr "xem {model}"
 
+#: src/tables/InvenTreeTable.tsx:798
+msgid "Records per page"
+msgstr "Số dòng mỗi trang"
+
+#: src/tables/InvenTreeTable.tsx:807
+msgid "{from} - {to} / {totalRecords}"
+msgstr "{from} - {to} / {totalRecords}"
+
+#: src/tables/InvenTreeTable.tsx:811
+msgid "Previous page"
+msgstr "Trang trước"
+
+#: src/tables/InvenTreeTable.tsx:813
+msgid "Next page"
+msgstr "Trang sau"
+
+#: src/tables/InvenTreeTable.tsx:815
+msgid "First page"
+msgstr "Trang đầu"
+
+#: src/tables/InvenTreeTable.tsx:817
+msgid "Last page"
+msgstr "Trang cuối"
+
 #: src/tables/InvenTreeTableHeader.tsx:107
 msgid "Delete Selected Items"
 msgstr "Xóa mục đã chọn"
@@ -11119,19 +11155,19 @@ msgstr "Lệnh sản xuất này được đáp ứng bằng đơn mua hàng bê
 #: src/tables/company/AddressTable.tsx:122
 #: src/tables/company/AddressTable.tsx:187
 msgid "Add Address"
-msgstr "thêm địa chỉ"
+msgstr "Thêm địa chỉ"
 
 #: src/tables/company/AddressTable.tsx:127
 msgid "Address created"
-msgstr "địa chỉ đã tạo"
+msgstr "Đã tạo địa chỉ"
 
 #: src/tables/company/AddressTable.tsx:136
 msgid "Edit Address"
-msgstr "sửa địa chỉ"
+msgstr "Sửa địa chỉ"
 
 #: src/tables/company/AddressTable.tsx:144
 msgid "Delete Address"
-msgstr "xóa địa chỉ"
+msgstr "Xóa địa chỉ"
 
 #: src/tables/company/AddressTable.tsx:145
 msgid "Are you sure you want to delete this address?"
@@ -11180,7 +11216,7 @@ msgstr "thêm contact"
 
 #: src/tables/contract/ContractTable.tsx:81
 msgid "Choose documents to upload after the contract is created successfully."
-msgstr "Chọn tài liệu để upload sau khi hợp đồng được tạo thành công."
+msgstr "Chọn tài liệu để tải lên sau khi hợp đồng được tạo thành công."
 
 #: src/tables/contract/ContractTable.tsx:81
 #~ msgid "Chọn tài liệu để upload sau khi hợp đồng được tạo thành công."
@@ -11188,7 +11224,7 @@ msgstr "Chọn tài liệu để upload sau khi hợp đồng được tạo th�
 
 #: src/tables/contract/ContractTable.tsx:99
 msgid "Drag and drop or select contract files to upload"
-msgstr "Kéo thả hoặc chọn file hợp đồng để upload"
+msgstr "Kéo thả hoặc chọn tệp hợp đồng để tải lên"
 
 #: src/tables/contract/ContractTable.tsx:99
 #~ msgid "Kéo thả hoặc chọn file hợp đồng để upload"
@@ -11196,7 +11232,7 @@ msgstr "Kéo thả hoặc chọn file hợp đồng để upload"
 
 #: src/tables/contract/ContractTable.tsx:107
 msgid "Remove from upload list"
-msgstr "Xóa khỏi danh sách upload"
+msgstr "Xóa khỏi danh sách tải lên"
 
 #: src/tables/contract/ContractTable.tsx:107
 #~ msgid "Xóa khỏi danh sách upload"
@@ -11233,7 +11269,7 @@ msgstr "Tài liệu hợp đồng đã được upload"
 #. placeholder {0}: documents.length
 #: src/tables/contract/ContractTable.tsx:150
 msgid "Uploaded {0} documents for this contract"
-msgstr "Uploaded {0} documents for this contract"
+msgstr "Đã tải lên {0} tài liệu cho hợp đồng này"
 
 #: src/tables/contract/ContractTable.tsx:150
 #~ msgid "Đã upload {0} tài liệu cho hợp đồng"
@@ -11269,7 +11305,7 @@ msgstr "Tổng giá trị"
 
 #: src/tables/general/AttachmentTable.tsx:105
 msgid "External link"
-msgstr "External link"
+msgstr "Liên kết ngoài"
 
 #: src/tables/general/AttachmentTable.tsx:139
 #~ msgid "File uploaded"
@@ -11347,19 +11383,19 @@ msgstr "Thêm liên kết ngoại"
 
 #: src/tables/general/AttachmentTable.tsx:511
 msgid "Detailed list"
-msgstr "Detailed list"
+msgstr "Danh sách chi tiết"
 
 #: src/tables/general/AttachmentTable.tsx:516
 msgid "Tile grid"
-msgstr "Tile grid"
+msgstr "Lưới ô"
 
 #: src/tables/general/AttachmentTable.tsx:521
 msgid "Compact icons"
-msgstr "Compact icons"
+msgstr "Biểu tượng thu gọn"
 
 #: src/tables/general/AttachmentTable.tsx:534
 msgid "Download"
-msgstr "Download"
+msgstr "Tải xuống"
 
 #: src/tables/general/AttachmentTable.tsx:633
 msgid "Drag attachment file here to upload"
@@ -11787,7 +11823,7 @@ msgstr "hiển thị assembly vật tư"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:64
 msgid "Assembly IPN"
-msgstr "Assembly IPN"
+msgstr "IPN cụm lắp ráp"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:73
 msgid "Part IPN"

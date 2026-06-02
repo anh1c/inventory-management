@@ -795,6 +795,30 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         page: Math.max(1, tableState.page),
         onPageChange: tableState.setPage,
         recordsPerPageOptions: PAGE_SIZES,
+        recordsPerPageLabel: t`Records per page`,
+        paginationText: ({
+          from,
+          to,
+          totalRecords
+        }: {
+          from: number;
+          to: number;
+          totalRecords: number;
+        }) => t`${from} - ${to} / ${totalRecords}`,
+        getPaginationControlProps: (control: string) => {
+          switch (control) {
+            case 'previous':
+              return { 'aria-label': t`Previous page` };
+            case 'next':
+              return { 'aria-label': t`Next page` };
+            case 'first':
+              return { 'aria-label': t`First page` };
+            case 'last':
+              return { 'aria-label': t`Last page` };
+            default:
+              return {};
+          }
+        },
         onRecordsPerPageChange: updatePageSize
       };
     }

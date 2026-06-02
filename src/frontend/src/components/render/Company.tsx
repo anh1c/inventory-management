@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 
 import { ModelType } from '@lib/enums/ModelType';
@@ -27,7 +28,7 @@ export function RenderAddress({
   const secondary: string = !!instance.title ? text : '';
 
   const suffix: ReactNode = instance.primary ? (
-    <Text size='xs'>Primary Address</Text>
+    <Text size='xs'>{t`Primary Address`}</Text>
   ) : null;
 
   return (

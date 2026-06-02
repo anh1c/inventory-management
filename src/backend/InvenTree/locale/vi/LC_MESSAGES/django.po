@@ -769,7 +769,7 @@ msgstr "lệnh sản xuất có thể chỉ được externally fulfilled cho pu
 
 #: build/models.py:220 order/models.py:373
 msgid "Responsible user or group must be specified"
-msgstr "Phải chọn người dùng hoặc nhóm"
+msgstr "Phải chọn người phụ trách hoặc nhóm phụ trách"
 
 #: build/models.py:225
 msgid "Build order part cannot be changed"
@@ -911,11 +911,11 @@ msgstr "Người dùng người đã được phân công cho lệnh sản xuấ
 #: order/models.py:516 part/models.py:1345
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
-msgstr "Chịu trách nhiệm"
+msgstr "Người phụ trách"
 
 #: build/models.py:412
 msgid "User or group responsible for this build order"
-msgstr "Người dùng hoặc nhóm có trách nhiệm với lệnh sản xuất này"
+msgstr "Người dùng hoặc nhóm phụ trách lệnh sản xuất này"
 
 #: build/models.py:417 stock/models.py:1100
 msgid "External Link"
@@ -1580,7 +1580,7 @@ msgstr "Mô tả dự án"
 
 #: common/models.py:188
 msgid "User or group responsible for this project"
-msgstr "Người dùng hoặc nhóm có trách nhiệm với dự án này"
+msgstr "Người dùng hoặc nhóm phụ trách dự án này"
 
 #: common/models.py:784 common/models.py:1300 common/models.py:1338
 msgid "Settings key"
@@ -4945,15 +4945,15 @@ msgstr "đã cập nhật At"
 
 #: order/models.py:515
 msgid "User or group responsible for this order"
-msgstr "Người dùng hoặc nhóm có trách nhiệm với đơn hàng này"
+msgstr "Người dùng hoặc nhóm phụ trách đơn hàng này"
 
 #: order/models.py:526
 msgid "Point of contact for this order"
-msgstr "Đầu mối liên hệ của đơn hàng này"
+msgstr "Đầu mối liên hệ cho đơn hàng này"
 
 #: order/models.py:536
 msgid "Company address for this order"
-msgstr "Địa chỉ công ty cho đơn hàng này"
+msgstr "Địa chỉ của công ty cho đơn hàng này"
 
 #: order/models.py:642 order/models.py:1351
 msgid "Order reference"
@@ -6036,7 +6036,7 @@ msgstr "Vật tư này có đang theo dõi cho mặt hàng duy nhất?"
 
 #: part/models.py:1266
 msgid "Can this part have test results recorded against it?"
-msgstr "có thể này vật tư đã test results recorded against it?"
+msgstr "Vật tư này có thể ghi nhận kết quả kiểm tra không?"
 
 #: part/models.py:1272
 msgid "Can this part be purchased from external suppliers?"
