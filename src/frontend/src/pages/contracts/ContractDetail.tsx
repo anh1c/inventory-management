@@ -6,6 +6,8 @@ import {
   IconFileDescription,
   IconFileInvoice,
   IconInfoCircle,
+  IconShoppingCart,
+  IconTruckDelivery,
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -21,11 +23,14 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { formatCurrency } from '../../defaults/formatters';
 import { useInstance } from '../../hooks/UseInstance';
 import { ContractTable } from '../../tables/contract/ContractTable';
+import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
+import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 
 type ContractRecord = {
   pk?: number;
@@ -36,6 +41,14 @@ type ContractRecord = {
   project_code_detail?: { code?: string; description?: string } | null;
   sales_contract?: number | null;
   sales_contract_detail?: ContractRecord | null;
+  buyer?: number | null;
+  buyer_detail?: { name?: string; representative?: string; representative_position?: string } | null;
+  seller?: number | null;
+  seller_detail?: { name?: string; representative?: string; representative_position?: string } | null;
+  party_a_contact?: number | null;
+  party_a_contact_detail?: { name?: string; role?: string } | null;
+  party_b_contact?: number | null;
+  party_b_contact_detail?: { name?: string; role?: string } | null;
   party_a_name?: string;
   party_a_representative?: string;
   party_b_name?: string;
@@ -145,7 +158,9 @@ export default function ContractDetail() {
     pk: id,
     params: {
       project_code_detail: true,
-      sales_contract_detail: true
+      sales_contract_detail: true,
+      party_a_contact_detail: true,
+      party_b_contact_detail: true
     }
   });
 
@@ -197,31 +212,67 @@ export default function ContractDetail() {
 
     const partyFields: DetailsField[] = [
       {
-        type: 'text',
-        name: 'party_a_name',
+        type: 'link',
+        name: 'seller',
         label: t`Party A`,
-        icon: 'customers',
+        icon: 'suppliers',
+        model: ModelType.company,
+        model_formatter: () => contract?.seller_detail?.name ?? contract?.party_a_name ?? '-',
         copy: true
       },
       {
         type: 'text',
-        name: 'party_a_representative',
+        name: 'seller_detail.representative',
         label: t`Party A Representative`,
-        icon: 'responsible',
+        icon: 'user',
+        value_formatter: () =>
+          contract?.party_a_contact_detail?.name ??
+          contract?.seller_detail?.representative ??
+          contract?.party_a_representative ??
+          '-',
         copy: true
       },
       {
         type: 'text',
-        name: 'party_b_name',
+        name: 'seller_detail.representative_position',
+        label: t`Party A Representative Position`,
+        icon: 'responsible',
+        value_formatter: () =>
+          contract?.party_a_contact_detail?.role ??
+          contract?.seller_detail?.representative_position ??
+          '-',
+        copy: true
+      },
+      {
+        type: 'link',
+        name: 'buyer',
         label: t`Party B`,
         icon: 'suppliers',
+        model: ModelType.company,
+        model_formatter: () => contract?.buyer_detail?.name ?? contract?.party_b_name ?? '-',
         copy: true
       },
       {
         type: 'text',
-        name: 'party_b_representative',
+        name: 'buyer_detail.representative',
         label: t`Party B Representative`,
         icon: 'user',
+        value_formatter: () =>
+          contract?.party_b_contact_detail?.name ??
+          contract?.buyer_detail?.representative ??
+          contract?.party_b_representative ??
+          '-',
+        copy: true
+      },
+      {
+        type: 'text',
+        name: 'buyer_detail.representative_position',
+        label: t`Party B Representative Position`,
+        icon: 'responsible',
+        value_formatter: () =>
+          contract?.party_b_contact_detail?.role ??
+          contract?.buyer_detail?.representative_position ??
+          '-',
         copy: true
       },
       {
@@ -235,7 +286,7 @@ export default function ContractDetail() {
         type: 'date',
         name: 'effective_date',
         label: t`Effective Date`,
-        icon: 'calendar_target',
+        icon: 'calendar_check',
         copy: true
       }
     ];
@@ -342,6 +393,18 @@ export default function ContractDetail() {
     return <SalesContractSummary contract={contract?.sales_contract_detail} />;
   }, [contract]);
 
+  const relatedOrdersPanel = useMemo(() => {
+    if (!contract?.pk) {
+      return <Skeleton />;
+    }
+
+    if (contract.contract_type === 'sales') {
+      return <SalesOrderTable contractId={contract.pk} defaultOutstanding={false} />;
+    }
+
+    return <PurchaseOrderTable contractId={contract.pk} defaultOutstanding={false} />;
+  }, [contract]);
+
   const panels: PanelType[] = useMemo(
     () => [
       {
@@ -361,16 +424,35 @@ export default function ContractDetail() {
             <IconFileDollar />
           ) : (
             <IconFileInvoice />
-          ),
+        ),
         content: relatedContractsPanel
+      },
+      {
+        name: 'orders',
+        label:
+          contract?.contract_type === 'sales'
+            ? t`Sales Orders`
+            : t`Purchase Orders`,
+        icon:
+          contract?.contract_type === 'sales' ? (
+            <IconTruckDelivery />
+          ) : (
+            <IconShoppingCart />
+          ),
+        content: relatedOrdersPanel
       },
       AttachmentPanel({
         model_type: ModelType.contract,
         model_id: contract?.pk,
         label: t`Contract Documents`
+      }),
+      NotesPanel({
+        model_type: ModelType.contract,
+        model_id: contract?.pk,
+        has_note: !!contract?.notes
       })
     ],
-    [contract, detailsPanel, relatedContractsPanel]
+    [contract, detailsPanel, relatedContractsPanel, relatedOrdersPanel]
   );
 
   const badges: ReactNode[] = useMemo(

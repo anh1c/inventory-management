@@ -2002,6 +2002,35 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         if total_allocation > available:
             error = {'quantity': _('Stock item is over-allocated')}
 
+        if self.build_line:
+            from order.status_codes import PurchaseOrderStatusGroups
+
+            reserved = self.build_line.purchase_order_line_items.filter(
+                order__status__in=PurchaseOrderStatusGroups.OPEN
+            ).aggregate(
+                quantity=Coalesce(
+                    Sum('quantity'), decimal.Decimal(0), output_field=models.DecimalField()
+                )
+            )['quantity']
+
+            allocated = self.build_line.allocations.exclude(pk=self.pk).aggregate(
+                quantity=Coalesce(
+                    Sum('quantity'), decimal.Decimal(0), output_field=models.DecimalField()
+                )
+            )['quantity']
+
+            available_for_build_line = max(
+                self.build_line.quantity - self.build_line.consumed + reserved,
+                decimal.Decimal(0),
+            )
+
+            if allocated + self.quantity > available_for_build_line:
+                error = {
+                    'quantity': _(
+                        'Allocated quantity exceeds the unallocated build order line quantity plus purchase order reservations'
+                    )
+                }
+
         if error and raise_error:
             raise ValidationError(error)
 

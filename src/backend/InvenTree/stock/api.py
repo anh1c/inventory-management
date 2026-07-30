@@ -273,6 +273,11 @@ class StockLocationFilter(FilterSet):
         queryset=StockLocationType.objects.all(), field_name='location_type'
     )
 
+    location_type_name = rest_filters.CharFilter(
+        field_name='location_type__name',
+        lookup_expr='iexact',
+    )
+
     has_location_type = rest_filters.BooleanFilter(
         label='has_location_type', method='filter_has_location_type'
     )

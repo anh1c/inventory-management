@@ -71,14 +71,14 @@ export default function ProjectCodeTable() {
     (record: any): RowAction[] => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.admin),
+          hidden: !user.isStaff(),
           onClick: () => {
             setSelectedProjectCode(record.pk);
             editProjectCode.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.admin),
+          hidden: !user.isStaff(),
           onClick: () => {
             setSelectedProjectCode(record.pk);
             deleteProjectCode.open();
@@ -93,6 +93,7 @@ export default function ProjectCodeTable() {
     return [
       <AddItemButton
         key='add'
+        hidden={!user.isStaff()}
         onClick={() => newProjectCode.open()}
         tooltip={t`Add project code`}
       />

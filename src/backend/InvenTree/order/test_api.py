@@ -30,6 +30,7 @@ from order.status_codes import (
 )
 from part.models import Part
 from stock.models import StockItem, StockLocation
+from stock.models import StockLocationType
 from stock.status_codes import StockStatus
 from users.models import Owner
 
@@ -393,6 +394,87 @@ class PurchaseOrderTest(OrderTest):
         self.assignRole('purchase_order.delete')
 
         response = self.delete(url, expected_code=204)
+
+    def test_po_output_mapping(self):
+        """Test purchase order to sales order mapping."""
+        self.assignRole('purchase_order.add')
+
+        list_url = reverse('api-po-list')
+
+        response = self.post(
+            list_url,
+            {
+                'supplier': 1,
+                'reference': 'PO-OUTPUT-COMMERCIAL',
+                'description': 'Commercial output purchase order',
+                'sales_order': 1,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(response.data['sales_order'], 1)
+
+    def test_po_output_type_rules(self):
+        """Test purchase order output type validation rules."""
+        self.assignRole('purchase_order.add')
+
+        list_url = reverse('api-po-list')
+
+        workshop_type, _ = StockLocationType.objects.get_or_create(name='Xưởng')
+        construction_type, _ = StockLocationType.objects.get_or_create(name='Công trường')
+
+        workshop_location = StockLocation.objects.filter(structural=False).first()
+        workshop_location.location_type = workshop_type
+        workshop_location.save()
+
+        construction_location = StockLocation.objects.filter(structural=False).exclude(
+            pk=workshop_location.pk
+        ).first()
+        construction_location.location_type = construction_type
+        construction_location.save()
+
+        response = self.post(
+            list_url,
+            {
+                'supplier': 1,
+                'reference': 'PO-OUT-0001',
+                'description': 'Workshop purchase order',
+                'output_type': 'workshop',
+                'destination': workshop_location.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(response.data['output_type'], 'workshop')
+        self.assertEqual(response.data['destination'], workshop_location.pk)
+
+        self.post(
+            list_url,
+            {
+                'supplier': 1,
+                'reference': 'PO-OUT-0002',
+                'description': 'Invalid workshop purchase order',
+                'output_type': 'workshop',
+                'destination': construction_location.pk,
+            },
+            expected_code=400,
+        )
+
+        response = self.post(
+            list_url,
+            {
+                'supplier': 1,
+                'reference': 'PO-OUT-0003',
+                'description': 'Commercial purchase order',
+                'output_type': 'commercial',
+                'sales_order': 1,
+                'destination': workshop_location.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(response.data['output_type'], 'commercial')
+        self.assertIsNone(response.data['destination'])
 
         # Number of PurchaseOrder objects should have decreased
         self.assertEqual(models.PurchaseOrder.objects.count(), n)

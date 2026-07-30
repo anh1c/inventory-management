@@ -2,9 +2,8 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { ApiFormAdjustFilterType, ApiFormFieldSet } from '@lib/types/Forms';
 
 export type ContractType = 'sales' | 'purchase';
 
@@ -17,6 +16,7 @@ export function useContractFields({
 }): ApiFormFieldSet {
   const isSalesContract = contractType === 'sales';
   const isPurchaseContract = contractType === 'purchase';
+  const [selectedContractType, setSelectedContractType] = useState<ContractType | undefined>(contractType);
   const [selectedSalesContract, setSelectedSalesContract] = useState<any>(salesContract);
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
   const [vatRate, setVatRate] = useState<number | null>(null);
@@ -26,6 +26,10 @@ export function useContractFields({
   useEffect(() => {
     setSelectedSalesContract(salesContract);
   }, [salesContract]);
+
+  useEffect(() => {
+    setSelectedContractType(contractType);
+  }, [contractType]);
 
   const selectedProjectCode = selectedSalesContract?.project_code ?? undefined;
   const calculatedVatAmount = useMemo(() => {
@@ -56,7 +60,8 @@ export function useContractFields({
         { value: 'sales', display_name: t`Sales Contract` },
         { value: 'purchase', display_name: t`Purchase Contract` }
       ],
-      hidden: !!contractType
+      hidden: !!contractType,
+      onValueChange: (value: any) => setSelectedContractType(value)
     },
     reference: {
       field_type: 'string',
@@ -72,6 +77,7 @@ export function useContractFields({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.project_code_list),
       label: t`Project Code`,
+      required: true,
       description: selectedProjectCode
         ? t`Project code is automatically taken from the linked sales contract`
         : t`Project code linked to this contract`,
@@ -89,45 +95,53 @@ export function useContractFields({
       },
       onValueChange: (_value: any, record?: any) => setSelectedSalesContract(record)
     },
-    sales_orders: {
+    buyer: {
       field_type: 'related field',
-      model: ModelType.salesorder,
-      api_url: apiUrl(ApiEndpoints.sales_order_list),
-      multiple: true,
-      label: t`Linked Sales Orders`,
-      description: t`Select one or more sales orders included in this sales contract`,
-      hidden: isPurchaseContract,
-      filters: selectedProjectCode ? { project_code: selectedProjectCode } : undefined
+      api_url: apiUrl(ApiEndpoints.company_list),
+      label: t`Buyer`,
+      description: t`Company or customer buying under this contract`,
+      filters:
+        selectedContractType === 'purchase'
+          ? { is_internal: true, active: true }
+          : selectedContractType === 'sales'
+            ? { is_customer: true, active: true }
+            : { active: true }
     },
-    purchase_orders: {
+    seller: {
       field_type: 'related field',
-      model: ModelType.purchaseorder,
-      api_url: apiUrl(ApiEndpoints.purchase_order_list),
-      multiple: true,
-      label: t`Linked Purchase Orders`,
-      description: t`Select one or more purchase orders included in this purchase contract`,
-      hidden: isSalesContract,
-      filters: selectedProjectCode ? { project_code: selectedProjectCode } : undefined
+      api_url: apiUrl(ApiEndpoints.company_list),
+      label: t`Seller`,
+      description: t`Company or supplier selling under this contract`,
+      filters:
+        selectedContractType === 'sales'
+          ? { is_internal: true, active: true }
+          : selectedContractType === 'purchase'
+            ? { is_supplier: true, active: true }
+            : { active: true }
     },
-    party_a_name: {
-      field_type: 'string',
-      label: t`Party A`,
-      description: t`Legal entity or organization name for Party A`
-    },
-    party_a_representative: {
-      field_type: 'string',
+    party_a_contact: {
+      field_type: 'related field',
+      api_url: apiUrl(ApiEndpoints.contact_list),
       label: t`Party A Representative`,
-      description: t`Authorized signatory for Party A`
+      description: t`Select Party A representative from the seller contacts`,
+      adjustFilters: (value: ApiFormAdjustFilterType) => {
+        return {
+          ...value.filters,
+          company: value.data.seller
+        };
+      }
     },
-    party_b_name: {
-      field_type: 'string',
-      label: t`Party B`,
-      description: t`Legal entity or organization name for Party B`
-    },
-    party_b_representative: {
-      field_type: 'string',
+    party_b_contact: {
+      field_type: 'related field',
+      api_url: apiUrl(ApiEndpoints.contact_list),
       label: t`Party B Representative`,
-      description: t`Authorized signatory for Party B`
+      description: t`Select Party B representative from the buyer contacts`,
+      adjustFilters: (value: ApiFormAdjustFilterType) => {
+        return {
+          ...value.filters,
+          company: value.data.buyer
+        };
+      }
     },
     issue_date: {
       field_type: 'date',

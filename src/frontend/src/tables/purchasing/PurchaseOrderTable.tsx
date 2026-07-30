@@ -60,6 +60,10 @@ export function PurchaseOrderTable({
   supplierPartId,
   externalBuildId,
   salesOrderId,
+  contractId,
+  contractBuyerId,
+  contractSellerId,
+  defaultOutstanding = true,
   onSelectPurchaseOrder,
   selectedPurchaseOrderId
 }: Readonly<{
@@ -67,16 +71,22 @@ export function PurchaseOrderTable({
   supplierPartId?: number;
   externalBuildId?: number;
   salesOrderId?: number;
+  contractId?: number;
+  contractBuyerId?: number;
+  contractSellerId?: number;
+  defaultOutstanding?: boolean;
   onSelectPurchaseOrder?: (record: any) => void;
   selectedPurchaseOrderId?: number;
 }>) {
-  const table = useTable('purchase-order', {
-    initialFilters: [
-      {
-        name: 'outstanding',
-        value: 'true'
-      }
-    ]
+  const table = useTable(contractId ? 'purchase-order-contract' : 'purchase-order', {
+    initialFilters: defaultOutstanding
+      ? [
+          {
+            name: 'outstanding',
+            value: 'true'
+          }
+        ]
+      : []
   });
   const user = useUserState();
 
@@ -171,7 +181,7 @@ export function PurchaseOrderTable({
     ];
   }, []);
 
-  const purchaseOrderFields = usePurchaseOrderFields({});
+  const purchaseOrderFields = usePurchaseOrderFields({ create: true });
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
@@ -179,7 +189,8 @@ export function PurchaseOrderTable({
     fields: purchaseOrderFields,
     initialData: {
       supplier: supplierId,
-      sales_order: salesOrderId
+      sales_order: salesOrderId,
+      contract: contractId
     },
     follow: true,
     modelType: ModelType.purchaseorder,
@@ -210,7 +221,10 @@ export function PurchaseOrderTable({
             supplier: supplierId,
             supplier_part: supplierPartId,
             external_build: externalBuildId,
-            sales_order: salesOrderId
+            sales_order: salesOrderId,
+            contract: contractId,
+            contract_buyer: contractBuyerId,
+            contract_seller: contractSellerId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,

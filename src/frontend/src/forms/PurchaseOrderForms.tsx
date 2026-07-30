@@ -22,6 +22,8 @@ import {
   IconLink,
   IconList,
   IconNotes,
+  IconPackages,
+  IconPlus,
   IconSitemap,
   IconUser,
   IconUsers
@@ -41,7 +43,8 @@ import { apiUrl } from '@lib/functions/Api';
 import { toNumber } from '@lib/functions/Conversion';
 import type {
   ApiFormAdjustFilterType,
-  ApiFormFieldSet
+  ApiFormFieldSet,
+  ApiFormFieldType
 } from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
@@ -57,17 +60,21 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { useBuildOrderFields } from './BuildForms';
+import { useSalesOrderFields } from './SalesOrderForms';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
 export function usePurchaseOrderLineItemFields({
   supplierId,
   orderId,
+  order,
   currency,
   create
 }: {
   supplierId?: number;
   orderId?: number;
+  order?: any;
   currency?: string;
   create?: boolean;
 }) {
@@ -81,6 +88,8 @@ export function usePurchaseOrderLineItemFields({
   const [autoPricing, setAutoPricing] = useState(false);
 
   const [quantity, setQuantity] = useState<string>('1');
+  const [selectedSalesOrderLine, setSelectedSalesOrderLine] = useState<any>(undefined);
+  const [selectedBuildLine, setSelectedBuildLine] = useState<any>(undefined);
 
   // Internal part information
   const [part, setPart] = useState<any>({});
@@ -125,6 +134,53 @@ export function usePurchaseOrderLineItemFields({
         },
         disabled: true
       },
+      sales_order_line: {
+        field_type: 'related field',
+        api_url: apiUrl(ApiEndpoints.sales_order_line_list),
+        label: t`Sales Order Line`,
+        description: t`Select a line from the linked sales order to purchase`,
+        hidden: order?.output_type !== 'commercial',
+        filters: {
+          order: order?.sales_order,
+          completed: false,
+          part_detail: true
+        },
+        onValueChange: (_value: any, record?: any) => {
+          setSelectedSalesOrderLine(record);
+
+          const remaining =
+            (toNumber(record?.quantity, 0) ?? 0) -
+            (toNumber(record?.shipped, 0) ?? 0);
+
+          if (remaining > 0) {
+            setQuantity(String(remaining));
+          }
+        }
+      },
+      build_line: {
+        field_type: 'related field',
+        api_url: apiUrl(ApiEndpoints.build_line_list),
+        label: t`Build Order Line`,
+        description: t`Select a line from the linked build order to purchase`,
+        hidden: order?.output_type !== 'workshop' || !order?.build_order,
+        filters: {
+          build: order?.build_order,
+          allocated: false,
+          part_detail: true
+        },
+        onValueChange: (_value: any, record?: any) => {
+          setSelectedBuildLine(record);
+
+          const remaining =
+            (toNumber(record?.quantity, 0) ?? 0) -
+            (toNumber(record?.consumed, 0) ?? 0) -
+            (toNumber(record?.allocated, 0) ?? 0);
+
+          if (remaining > 0) {
+            setQuantity(String(remaining));
+          }
+        }
+      },
       part: {
         filters: {
           part_detail: true,
@@ -140,13 +196,18 @@ export function usePurchaseOrderLineItemFields({
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
           return {
             ...adjust.filters,
-            supplier: supplierId
+            supplier: supplierId,
+            part:
+              selectedSalesOrderLine?.part ??
+              selectedBuildLine?.part ??
+              adjust.filters.part
           };
         }
       },
       line: {},
       reference: {},
       quantity: {
+        value: quantity,
         onValueChange: (value) => {
           setQuantity(value);
         }
@@ -180,6 +241,7 @@ export function usePurchaseOrderLineItemFields({
       },
       build_order: {
         disabled: !part?.assembly,
+        hidden: order?.output_type === 'workshop' || order?.output_type === 'commercial',
         filters: {
           external: true,
           outstanding: true,
@@ -207,8 +269,11 @@ export function usePurchaseOrderLineItemFields({
     create,
     orderId,
     part,
+    order,
     globalSettings,
     supplierId,
+    selectedSalesOrderLine,
+    selectedBuildLine,
     autoPricing,
     purchasePrice,
     suggestedPurchasePrice
@@ -222,54 +287,311 @@ export function usePurchaseOrderLineItemFields({
  */
 export function usePurchaseOrderFields({
   supplierId,
-  duplicateOrderId
+  duplicateOrderId,
+  create,
+  initialOutputType
 }: {
   supplierId?: number;
   duplicateOrderId?: number;
+  create?: boolean;
+  initialOutputType?: string;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
+  const [selectedContract, setSelectedContract] = useState<any>(undefined);
+  const [selectedSupplierId, setSelectedSupplierId] = useState<number | undefined>(
+    supplierId
+  );
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [targetDate, setTargetDate] = useState<string | null>(null);
+  const [selectedOutputType, setSelectedOutputType] = useState<string | undefined>(
+    initialOutputType
+  );
+  const [selectedProjectCodeId, setSelectedProjectCodeId] = useState<number | undefined>();
+  const [selectedSalesOrderId, setSelectedSalesOrderId] = useState<number | undefined>();
+  const [selectedDestination, setSelectedDestination] = useState<number | undefined>();
+  const [selectedBuildOrder, setSelectedBuildOrder] = useState<number | undefined>();
+  const linkedSalesContractId = selectedContract?.sales_contract ?? undefined;
+  const salesOrderFields = useSalesOrderFields({
+    create: true,
+    linkedPurchaseContractId: selectedContract?.pk,
+    linkedSalesContractId
+  });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'create-build-order-from-purchase-order'
+  });
+  const newSalesOrder = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_list,
+    title: t`Add Sales Order`,
+    fields: salesOrderFields,
+    initialData: {
+      project_code: selectedProjectCodeId
+    },
+    onFormSuccess: (data: any) => {
+      setSelectedSalesOrderId(data?.pk);
+    }
+  });
+  const newBuildOrder = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Add Build Order`,
+    fields: buildOrderFields,
+    initialData: {
+      project_code: selectedProjectCodeId
+    },
+    onFormSuccess: (data: any) => {
+      setSelectedBuildOrder(data?.pk);
+    }
+  });
+
+  useEffect(() => {
+    setSelectedOutputType(initialOutputType);
+  }, [initialOutputType]);
+
+  const onOutputTypeChange = (value: any) => {
+    const outputType = value || undefined;
+
+    setSelectedOutputType(outputType);
+
+    if (outputType === 'commercial') {
+      setSelectedDestination(undefined);
+      setSelectedBuildOrder(undefined);
+    }
+
+    if (outputType !== 'commercial') {
+      setSelectedSalesOrderId(undefined);
+    }
+
+    if (outputType !== 'workshop') {
+      setSelectedBuildOrder(undefined);
+    }
+  };
+
+  const onDestinationChange = (value: any) => {
+    setSelectedDestination(value ?? undefined);
+  };
+
+  const onBuildOrderChange = (value: any) => {
+    setSelectedBuildOrder(value ?? undefined);
+  };
+
+  const contractDateError = useMemo(() => {
+    if (!selectedContract) return undefined;
+
+    const issueDate = selectedContract.issue_date;
+    const effectiveDate = selectedContract.effective_date;
+
+    if (startDate && issueDate && startDate < issueDate) {
+      return t`Start date must be within the selected contract period`;
+    }
+
+    if (startDate && effectiveDate && startDate > effectiveDate) {
+      return t`Start date must be within the selected contract period`;
+    }
+
+    if (targetDate && issueDate && targetDate < issueDate) {
+      return t`Target date must be within the selected contract period`;
+    }
+
+    if (targetDate && effectiveDate && targetDate > effectiveDate) {
+      return t`Target date must be within the selected contract period`;
+    }
+
+    return undefined;
+  }, [selectedContract, startDate, targetDate]);
+
+  const setContract = (record?: any) => {
+    setSelectedContract(record);
+    setSelectedProjectCodeId(record?.project_code ?? undefined);
+    setSelectedSalesOrderId(undefined);
+
+    if (!supplierId) {
+      setSelectedSupplierId(undefined);
+    }
+
+    if (record?.seller && !supplierId) {
+      setSelectedSupplierId(record.seller);
+    }
+  };
+
+  const destinationLabel = useMemo(() => {
+    if (selectedOutputType === 'workshop') {
+      return t`Workshop Location`;
+    }
+
+    if (selectedOutputType === 'construction_site') {
+      return t`Construction Site Location`;
+    }
+
+    return t`Destination`;
+  }, [selectedOutputType]);
+
+  const destinationFilters = useMemo(() => {
+    const filters: Record<string, any> = {
+      structural: false
+    };
+
+    if (selectedOutputType === 'workshop') {
+      filters.location_type_name = 'Xưởng';
+    } else if (selectedOutputType === 'construction_site') {
+      filters.location_type_name = 'Công trường';
+    }
+
+    return filters;
+  }, [selectedOutputType]);
 
   return useMemo(() => {
+    const contractField: ApiFormFieldType | undefined = create
+      ? {
+          field_type: 'related field',
+          api_url: apiUrl(ApiEndpoints.contract_list),
+          icon: <IconLink />,
+          label: t`Purchase Contract`,
+          description: t`Select the purchase contract linked to this purchase order`,
+          filters: {
+            contract_type: 'purchase'
+          },
+          onValueChange: (_value: any, record?: any) => setContract(record)
+        }
+      : undefined;
+
     const fields: ApiFormFieldSet = {
       reference: {
+        label: t`Purchase Order Number`,
         icon: <IconHash />
       },
-      description: {},
+      ...(contractField ? { contract: contractField } : {}),
+      project_code: {
+        label: t`Project Code`,
+        icon: <IconList />,
+        required: true,
+        value: selectedProjectCodeId,
+        disabled: !!selectedContract?.project_code,
+        onValueChange: (value: any) => setSelectedProjectCodeId(value)
+      },
+      description: {
+        label: t`Description`
+      },
       supplier: {
-        value: supplierId,
+        label: t`Supplier`,
+        value: selectedSupplierId,
         disabled: !!duplicateOrderId || !!supplierId,
         filters: {
           is_supplier: true,
           active: true
         }
       },
-      supplier_reference: {},
+      supplier_reference: {
+        label: t`Supplier Reference`
+      },
+      output_type: {
+        field_type: 'choice',
+        icon: <IconSitemap />,
+        label: t`Output Use`,
+        description: t`Choose the purchase order output: Default, Workshop, Construction Site, or Commercial`,
+        choices: [
+          { value: '', display_name: t`Default` },
+          { value: 'workshop', display_name: t`Workshop` },
+          { value: 'construction_site', display_name: t`Construction Site` },
+          { value: 'commercial', display_name: t`Commercial` }
+        ],
+        onValueChange: onOutputTypeChange
+      },
+      destination: {
+        label: destinationLabel,
+        hidden: selectedOutputType === 'commercial',
+        disabled: !!selectedBuildOrder,
+        filters: destinationFilters,
+        onValueChange: onDestinationChange
+      },
+      build_order: {
+        field_type: 'related field',
+        model: ModelType.build,
+        api_url: apiUrl(ApiEndpoints.build_order_list),
+        icon: <IconPackages />,
+        label: t`Linked Build Order`,
+        description: t`Link this purchase order to an outstanding build order`,
+        value: selectedBuildOrder,
+        hidden: selectedOutputType !== 'workshop',
+        disabled: !!selectedDestination || !selectedProjectCodeId,
+        filters: {
+          outstanding: true,
+          external: false,
+          project_code: selectedProjectCodeId
+        },
+        onValueChange: onBuildOrderChange,
+        leftSection: (
+          <ActionButton
+            color='green'
+            disabled={!!selectedDestination || !!selectedBuildOrder || !selectedProjectCodeId}
+            icon={<IconPlus />}
+            size='lg'
+            tooltip={t`Add Build Order`}
+            onClick={(event: any) => {
+              event?.preventDefault?.();
+              event?.stopPropagation?.();
+              if (selectedDestination || selectedBuildOrder || !selectedProjectCodeId) {
+                return;
+              }
+              newBuildOrder.open();
+            }}
+          />
+        ),
+        postFieldContent: newBuildOrder.modal
+      },
       sales_order: {
         field_type: 'related field',
         model: ModelType.salesorder,
         api_url: apiUrl(ApiEndpoints.sales_order_list),
         icon: <IconLink />,
-        description: t`Liên kết đơn mua hàng này với hợp đồng hoặc đơn bán hàng nguồn. Mã dự án mặc định được xử lý bởi hệ thống backend.`
-      },
-      project_code: {
-        icon: <IconList />
+        label: t`Linked Sales Order`,
+        description: t`Link this purchase order to the source sales order. Default project code is handled by the backend.`,
+        value: selectedSalesOrderId,
+        hidden: selectedOutputType !== 'commercial',
+        filters: {
+          commercial_linkable: true,
+          ...(linkedSalesContractId ? { contract: linkedSalesContractId } : {})
+        },
+        onValueChange: (value: any) => setSelectedSalesOrderId(value),
+        leftSection: (
+          <ActionButton
+            color='green'
+            disabled={!!selectedSalesOrderId}
+            icon={<IconPlus />}
+            size='lg'
+            tooltip={t`Add Sales Order`}
+            onClick={(event: any) => {
+              event?.preventDefault?.();
+              event?.stopPropagation?.();
+              if (selectedSalesOrderId) {
+                return;
+              }
+              newSalesOrder.open();
+            }}
+          />
+        ),
+        postFieldContent: newSalesOrder.modal
       },
       order_currency: {
+        label: t`Currency`,
         icon: <IconCoins />
       },
       start_date: {
-        icon: <IconCalendar />
+        label: t`Start Date`,
+        icon: <IconCalendar />,
+        error: contractDateError,
+        onValueChange: (value: any) => setStartDate(value)
       },
       target_date: {
-        icon: <IconCalendar />
+        label: t`Target Date`,
+        icon: <IconCalendar />,
+        error: contractDateError,
+        onValueChange: (value: any) => setTargetDate(value)
       },
-      destination: {
-        filters: {
-          structural: false
-        }
+      link: {
+        label: t`Link`
       },
-      link: {},
       contact: {
+        label: t`Contact`,
         icon: <IconUser />,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
@@ -279,6 +601,7 @@ export function usePurchaseOrderFields({
         }
       },
       address: {
+        label: t`Address`,
         icon: <IconAddressBook />,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
@@ -288,6 +611,7 @@ export function usePurchaseOrderFields({
         }
       },
       responsible: {
+        label: t`Responsible`,
         filters: {
           is_active: true
         },
@@ -315,7 +639,25 @@ export function usePurchaseOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId, supplierId, globalSettings]);
+  }, [
+    create,
+    destinationFilters,
+    destinationLabel,
+    duplicateOrderId,
+    supplierId,
+    selectedSupplierId,
+    selectedContract,
+    selectedProjectCodeId,
+    linkedSalesContractId,
+    selectedOutputType,
+    selectedSalesOrderId,
+    selectedDestination,
+    selectedBuildOrder,
+    globalSettings,
+    contractDateError,
+    newSalesOrder,
+    newBuildOrder
+  ]);
 }
 
 /**

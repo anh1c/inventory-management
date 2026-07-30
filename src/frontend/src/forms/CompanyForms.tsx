@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -72,8 +73,14 @@ export function useSupplierPartFields({
       packaging: {
         icon: <IconPackage />
       },
-      primary: {},
-      active: {}
+      primary: {
+        label: t`Preferred`,
+        description: t`Mark this supplier part as preferred for the linked part`
+      },
+      active: {
+        label: t`Active`,
+        description: t`This supplier part is active for use`
+      }
     };
 
     return fields;
@@ -104,24 +111,141 @@ export function useManufacturerPartFields() {
  */
 export function companyFields(): ApiFormFieldSet {
   return {
-    name: {},
-    description: {},
+    name: {
+      label: t`Company Name`,
+      description: t`Business or partner name`
+    },
+    description: {
+      label: t`Description`,
+      description: t`Short company description`
+    },
     website: {
+      label: 'Website',
+      description: t`Company website`,
       icon: <IconGlobe />
     },
     currency: {
+      label: t`Currency`,
+      description: t`Default currency for transactions with this company`,
       icon: <IconCurrencyDollar />
     },
     phone: {
+      label: t`Phone Number`,
+      description: t`Contact phone number`,
       icon: <IconPhone />
     },
     email: {
+      label: 'Email',
+      description: t`Contact email address`,
       icon: <IconAt />
     },
-    tax_id: {},
-    is_supplier: {},
-    is_manufacturer: {},
-    is_customer: {},
-    active: {}
+    tax_id: {
+      label: t`Tax Code`,
+      description: t`Company tax code`
+    },
+    representative: {
+      label: t`Representative`,
+      description: t`Legal representative of the company`
+    },
+    representative_position: {
+      label: t`Representative Position`,
+      description: t`Title or position of the legal representative`
+    },
+    is_supplier: {
+      label: t`Is Supplier`,
+      description: t`Does this company provide goods or services to inventory?`
+    },
+    is_manufacturer: {
+      label: t`Is Manufacturer`,
+      description: t`Does this company manufacture goods or components?`
+    },
+    is_customer: {
+      label: t`Is Customer`,
+      description: t`Does this company buy from the system?`
+    },
+    is_internal: {
+      label: t`Is Internal Company`,
+      description: t`Does this company belong to the group that owns the system?`
+    },
+    parent_company: {
+      label: t`Parent Company`,
+      description: t`Parent company managing subsidiaries`
+    },
+    active: {
+      label: t`Active`,
+      description: t`This company is active in the system`
+    }
+  };
+}
+
+export function internalCompanyFields(): ApiFormFieldSet {
+  return {
+    name: {
+      label: t`Company Name`,
+      description: t`Internal company name`
+    },
+    description: {
+      label: t`Description`,
+      description: t`Short internal company description`
+    },
+    website: {
+      label: 'Website',
+      description: t`Company website`,
+      icon: <IconGlobe />
+    },
+    currency: {
+      label: t`Currency`,
+      description: t`Default currency of the internal company`,
+      icon: <IconCurrencyDollar />
+    },
+    phone: {
+      label: t`Phone Number`,
+      description: t`Contact phone number`,
+      icon: <IconPhone />
+    },
+    email: {
+      label: 'Email',
+      description: t`Contact email address`,
+      icon: <IconAt />
+    },
+    tax_id: {
+      label: t`Tax Code`,
+      description: t`Company tax code`
+    },
+    representative: {
+      label: t`Representative`,
+      description: t`Legal representative of the company`
+    },
+    representative_position: {
+      label: t`Representative Position`,
+      description: t`Title or position of the legal representative`
+    },
+    is_supplier: {
+      label: t`Is Supplier`,
+      description: t`Does this company provide goods or services to inventory?`,
+      value: false
+    },
+    is_manufacturer: {
+      label: t`Is Manufacturer`,
+      description: t`Does this company manufacture goods or components?`
+    },
+    is_customer: {
+      label: t`Is Customer`,
+      description: t`Does this company buy from the system?`
+    },
+    is_internal: {
+      label: t`Is Internal Company`,
+      description: t`Does this company belong to the group that owns the system?`,
+      disabled: true,
+      value: true
+    },
+    parent_company: {
+      label: t`Parent Company`,
+      description: t`Parent company managing subsidiaries`
+    },
+    active: {
+      label: t`Active`,
+      description: t`This company is active in the system`
+    }
   };
 }

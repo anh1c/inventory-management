@@ -6,6 +6,7 @@ import {
   IconCircleCheck,
   IconCircleX,
   IconCoins,
+  IconLink,
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
@@ -33,34 +34,122 @@ import { useUserState } from '../states/UserState';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
-  duplicateOrderId
+  duplicateOrderId,
+  create,
+  linkedPurchaseContractId,
+  linkedSalesContractId
 }: {
   duplicateOrderId?: number;
+  create?: boolean;
+  linkedPurchaseContractId?: number;
+  linkedSalesContractId?: number;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
+  const [selectedContract, setSelectedContract] = useState<any>(undefined);
+  const [customerId, setCustomerId] = useState<number | undefined>(undefined);
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [targetDate, setTargetDate] = useState<string | null>(null);
+
+  const contractDateError = useMemo(() => {
+    if (!selectedContract) return undefined;
+
+    const issueDate = selectedContract.issue_date;
+    const effectiveDate = selectedContract.effective_date;
+
+    if (startDate && issueDate && startDate < issueDate) {
+      return t`Start date must be within the selected contract period`;
+    }
+
+    if (startDate && effectiveDate && startDate > effectiveDate) {
+      return t`Start date must be within the selected contract period`;
+    }
+
+    if (targetDate && issueDate && targetDate < issueDate) {
+      return t`Target date must be within the selected contract period`;
+    }
+
+    if (targetDate && effectiveDate && targetDate > effectiveDate) {
+      return t`Target date must be within the selected contract period`;
+    }
+
+    return undefined;
+  }, [selectedContract, startDate, targetDate]);
+
+  const setContract = (record?: any) => {
+    setSelectedContract(record);
+    setCustomerId(undefined);
+
+    if (record?.buyer) {
+      setCustomerId(record.buyer);
+    }
+  };
 
   return useMemo(() => {
+    const contractField: ApiFormFieldType | undefined = create
+      ? {
+          field_type: 'related field',
+          api_url: apiUrl(ApiEndpoints.contract_list),
+          icon: <IconLink />,
+          label: t`Sales Contract`,
+          description: t`Select the sales contract linked to this sales order`,
+          value: linkedSalesContractId,
+          disabled: !!linkedSalesContractId,
+          filters: {
+            contract_type: 'sales',
+            ...(linkedPurchaseContractId
+              ? { purchase_contract: linkedPurchaseContractId }
+              : {})
+          },
+          onValueChange: (_value: any, record?: any) => setContract(record)
+        }
+      : undefined;
+
     const fields: ApiFormFieldSet = {
-      reference: {},
-      description: {},
+      reference: {
+        label: t`Sales Order Number`
+      },
+      ...(contractField ? { contract: contractField } : {}),
+      project_code: {
+        label: t`Project Code`,
+        required: true,
+        value: selectedContract?.project_code,
+        disabled: !!selectedContract?.project_code
+      },
+      description: {
+        label: t`Description`
+      },
       customer: {
+        label: t`Customer`,
+        value: customerId,
         disabled: duplicateOrderId != undefined,
         filters: {
           is_customer: true,
           active: true
         }
       },
-      customer_reference: {},
-      project_code: {},
-      order_currency: {},
+      customer_reference: {
+        label: t`Customer Reference`
+      },
+      order_currency: {
+        label: t`Currency`
+      },
       start_date: {
-        icon: <IconCalendar />
+        label: t`Start Date`,
+        icon: <IconCalendar />,
+        error: contractDateError,
+        onValueChange: (value: any) => setStartDate(value)
       },
       target_date: {
-        icon: <IconCalendar />
+        label: t`Target Date`,
+        icon: <IconCalendar />,
+        error: contractDateError,
+        onValueChange: (value: any) => setTargetDate(value)
       },
-      link: {},
+      link: {
+        label: t`Link`
+      },
       contact: {
+        label: t`Contact`,
         icon: <IconUser />,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
@@ -70,6 +159,7 @@ export function useSalesOrderFields({
         }
       },
       address: {
+        label: t`Address`,
         icon: <IconAddressBook />,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
@@ -79,6 +169,7 @@ export function useSalesOrderFields({
         }
       },
       responsible: {
+        label: t`Responsible`,
         icon: <IconUsers />
       }
     };
@@ -103,7 +194,16 @@ export function useSalesOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId, globalSettings]);
+  }, [
+    create,
+    duplicateOrderId,
+    globalSettings,
+    selectedContract,
+    customerId,
+    contractDateError,
+    linkedPurchaseContractId,
+    linkedSalesContractId
+  ]);
 }
 
 export function useSalesOrderLineItemFields({

@@ -32,12 +32,16 @@ export function ContractTable({
   contractType,
   salesContract,
   salesContractId,
+  buyerId,
+  sellerId,
   onSelectContract,
   selectedContractId
 }: Readonly<{
   contractType?: ContractType;
   salesContract?: any;
   salesContractId?: number;
+  buyerId?: number;
+  sellerId?: number;
   onSelectContract?: (record: any) => void;
   selectedContractId?: number;
 }>) {
@@ -132,7 +136,9 @@ export function ContractTable({
     fields: contractFields,
     initialData: {
       contract_type: contractType,
-      sales_contract: salesContractId
+      sales_contract: salesContractId,
+      buyer: buyerId,
+      seller: sellerId
     },
     modelType: ModelType.contract,
     keepOpenOption: true,
@@ -209,8 +215,20 @@ export function ContractTable({
           </Badge>
         )
       },
-      DescriptionColumn({ accessor: 'title', title: t`Title` }),
+      DescriptionColumn({ accessor: 'title', title: t`Contract Name` }),
       ProjectCodeColumn({}),
+      {
+        accessor: 'buyer_detail.name',
+        title: t`Buyer`,
+        sortable: false,
+        render: (record: any) => record.buyer_detail?.name ?? record.party_b_name ?? '-'
+      },
+      {
+        accessor: 'seller_detail.name',
+        title: t`Seller`,
+        sortable: false,
+        render: (record: any) => record.seller_detail?.name ?? record.party_a_name ?? '-'
+      },
       {
         accessor: 'sales_order_count',
         title: t`Sales Orders`,
@@ -255,8 +273,14 @@ export function ContractTable({
           params: {
             contract_type: contractType,
             sales_contract: salesContractId,
+            buyer: buyerId,
+            seller: sellerId,
             project_code_detail: true,
-            sales_contract_detail: true
+            sales_contract_detail: true,
+            buyer_detail: true,
+            seller_detail: true,
+            party_a_contact_detail: true,
+            party_b_contact_detail: true
           },
           tableActions,
           defaultSortColumn: 'reference',

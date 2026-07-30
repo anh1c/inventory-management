@@ -56,11 +56,11 @@ export function RelatedModelField({
 
   // Handle condition where the form is rebuilt dynamically
   useEffect(() => {
-    const value = field.value || pk;
+    const value = field.value ?? definition.value ?? pk;
     if (value && value != form.getValues()[fieldName]) {
       form.setValue(fieldName, value);
     }
-  }, [pk, field.value]);
+  }, [pk, field.value, definition.value]);
 
   const [offset, setOffset] = useState<number>(0);
 
@@ -287,9 +287,10 @@ export function RelatedModelField({
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
-    if (JSON.stringify(field.value ?? null) === JSON.stringify(pk ?? null)) return;
+    const id = field.value ?? definition.value ?? pk;
 
-    const id = pk || field.value;
+    if (JSON.stringify(id ?? null) === JSON.stringify(pk ?? null)) return;
+
 
     if (Array.isArray(id)) {
       setPk(id);
@@ -303,6 +304,7 @@ export function RelatedModelField({
     definition.api_url,
     definition.filters,
     definition.pk_field,
+    definition.value,
     field.value,
     pk
   ]);
@@ -432,6 +434,8 @@ export function RelatedModelField({
       autoFill: undefined,
       modelRenderer: undefined,
       multiple: undefined,
+      leftSection: undefined,
+      rightSection: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       exclude: undefined,
@@ -512,6 +516,7 @@ export function RelatedModelField({
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Group justify='space-between' wrap='nowrap' gap={3}>
+        {definition.leftSection}
         <Expand>
           <Select
             id={fieldId}
@@ -573,6 +578,7 @@ export function RelatedModelField({
             onScanSuccess={onBarcodeScan}
           />
         )}
+        {definition.rightSection}
       </Group>
     </Input.Wrapper>
   );

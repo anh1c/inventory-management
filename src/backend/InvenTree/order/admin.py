@@ -31,6 +31,8 @@ class ContractAdmin(admin.ModelAdmin):
         'reference',
         'contract_type',
         'project_code',
+        'buyer',
+        'seller',
         'title',
         'issue_date',
         'grand_total',
@@ -41,6 +43,8 @@ class ContractAdmin(admin.ModelAdmin):
         'reference',
         'title',
         'project_code__code',
+        'buyer__name',
+        'seller__name',
         'party_a_name',
         'party_b_name',
         'work_scope',
@@ -50,6 +54,8 @@ class ContractAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'project_code',
+        'buyer',
+        'seller',
         'sales_contract',
         'sales_orders',
         'purchase_orders',

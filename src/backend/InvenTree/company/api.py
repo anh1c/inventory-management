@@ -68,6 +68,8 @@ class CompanyList(CompanyMixin, ParameterListMixin, DataExportViewMixin, ListCre
         'is_supplier',
         'name',
         'active',
+        'is_internal',
+        'parent_company',
     ]
 
     search_fields = ['name', 'description', 'website', 'tax_id']

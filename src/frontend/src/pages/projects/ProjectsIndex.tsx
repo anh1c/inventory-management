@@ -11,8 +11,13 @@ import ProjectCodeTable from '../../tables/settings/ProjectCodeTable';
 
 export default function ProjectsIndex() {
   const user = useUserState();
+  const canViewProjects =
+    user.isStaff() ||
+    user.hasViewRole(UserRoles.build) ||
+    user.hasViewRole(UserRoles.purchase_order) ||
+    user.hasViewRole(UserRoles.sales_order);
 
-  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.admin)) {
+  if (!user.isLoggedIn() || !canViewProjects) {
     return <PermissionDenied />;
   }
 
@@ -28,7 +33,7 @@ export default function ProjectsIndex() {
           {t`Project codes group sales and purchase contracts and orders under the same project.`}
         </Text>
       </Alert>
-      <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
+      {user.isStaff() && <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />}
       <ProjectCodeTable />
     </Stack>
   );

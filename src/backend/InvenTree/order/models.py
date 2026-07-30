@@ -604,6 +604,10 @@ class Contract(
         self.grand_total = (self.total_amount + self.vat_amount).quantize(
             Decimal('0.0001')
         )
+        if self.party_a_contact_id:
+            self.party_a_representative = self.party_a_contact.name
+        if self.party_b_contact_id:
+            self.party_b_representative = self.party_b_contact.name
         self.updated_at = InvenTree.helpers.current_time()
         super().save(*args, **kwargs)
 
@@ -624,6 +628,24 @@ class Contract(
         if self.issue_date and self.effective_date and self.effective_date <= self.issue_date:
             raise ValidationError({
                 'effective_date': _('Ngày hiệu lực phải sau ngày ký hợp đồng')
+            })
+
+        if (
+            self.party_a_contact_id
+            and self.seller_id
+            and self.party_a_contact.company_id != self.seller_id
+        ):
+            raise ValidationError({
+                'party_a_contact': _('Party A contact must belong to the seller')
+            })
+
+        if (
+            self.party_b_contact_id
+            and self.buyer_id
+            and self.party_b_contact.company_id != self.buyer_id
+        ):
+            raise ValidationError({
+                'party_b_contact': _('Party B contact must belong to the buyer')
             })
 
         if (
@@ -663,6 +685,46 @@ class Contract(
         on_delete=models.PROTECT,
         verbose_name=_('Project Code'),
         help_text=_('Project code for this contract'),
+    )
+
+    buyer = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        related_name='contracts_as_buyer',
+        blank=True,
+        null=True,
+        verbose_name=_('Buyer'),
+        help_text=_('Company buying under this contract'),
+    )
+
+    seller = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        related_name='contracts_as_seller',
+        blank=True,
+        null=True,
+        verbose_name=_('Seller'),
+        help_text=_('Company selling under this contract'),
+    )
+
+    party_a_contact = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        related_name='contracts_as_party_a',
+        blank=True,
+        null=True,
+        verbose_name=_('Party A Contact'),
+        help_text=_('Representative contact for Party A'),
+    )
+
+    party_b_contact = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        related_name='contracts_as_party_b',
+        blank=True,
+        null=True,
+        verbose_name=_('Party B Contact'),
+        help_text=_('Representative contact for Party B'),
     )
 
     sales_contract = models.ForeignKey(
@@ -838,10 +900,119 @@ class PurchaseOrder(TotalPriceMixin, Order):
     STATUS_CLASS = PurchaseOrderStatus
     UNLOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
 
+    class OutputType(models.TextChoices):
+        WORKSHOP = 'workshop', _('Xưởng')
+        CONSTRUCTION_SITE = 'construction_site', _('Công trường')
+        COMMERCIAL = 'commercial', _('Thương mại')
+
+    WORKSHOP_LOCATION_TYPE = 'Xưởng'
+    CONSTRUCTION_SITE_LOCATION_TYPE = 'Công trường'
+
     class Meta:
         """Model meta options."""
 
         verbose_name = _('Purchase Order')
+
+    def validate_output_destination(self, location):
+        """Validate destination compatibility with purchase order output type."""
+        if not self.output_type or not location:
+            return
+
+        if self.output_type == self.OutputType.COMMERCIAL:
+            raise ValidationError({
+                'destination': _(
+                    'Destination is not allowed when purchase order output is commercial'
+                )
+            })
+
+        if self.build_order:
+            raise ValidationError({
+                'destination': _(
+                    'Destination is not allowed when purchase order is linked to a build order'
+                )
+            })
+
+        location_type_name = location.location_type.name if location.location_type else None
+
+        expected_type = (
+            self.WORKSHOP_LOCATION_TYPE
+            if self.output_type == self.OutputType.WORKSHOP
+            else self.CONSTRUCTION_SITE_LOCATION_TYPE
+        )
+
+        if location_type_name != expected_type:
+            raise ValidationError({
+                'destination': _('Destination type must match the selected purchase order output')
+            })
+
+    def clean(self):
+        """Validate output-specific rules for this purchase order."""
+        super().clean()
+
+        if not self.output_type:
+            return
+
+        errors = {}
+
+        if self.output_type == self.OutputType.COMMERCIAL:
+            if not self.sales_order:
+                errors['sales_order'] = _(
+                    'Sales order is required when purchase order output is commercial'
+                )
+            elif self.sales_order.status not in [
+                SalesOrderStatus.PENDING.value,
+                SalesOrderStatus.IN_PROGRESS.value,
+            ]:
+                errors['sales_order'] = _(
+                    'Commercial purchase orders can only link to pending or in-progress sales orders'
+                )
+
+            if self.destination:
+                errors['destination'] = _(
+                    'Destination is not allowed when purchase order output is commercial'
+                )
+            if self.build_order:
+                errors['build_order'] = _(
+                    'Build order is only allowed when purchase order output is workshop'
+                )
+        else:
+            if self.output_type == self.OutputType.WORKSHOP:
+                if self.destination and self.build_order:
+                    errors['destination'] = _(
+                        'Destination is not allowed when purchase order is linked to a build order'
+                    )
+                if not self.destination and not self.build_order:
+                    errors['destination'] = _(
+                        'Destination or build order is required when purchase order output is workshop'
+                    )
+            elif not self.destination:
+                errors['destination'] = _(
+                    'Destination is required when purchase order output is construction site'
+                )
+
+            if self.output_type != self.OutputType.WORKSHOP and self.build_order:
+                errors['build_order'] = _(
+                    'Build order is only allowed when purchase order output is workshop'
+                )
+
+            if self.destination:
+                try:
+                    self.validate_output_destination(self.destination)
+                except ValidationError as exc:
+                    errors.update(exc.message_dict)
+
+            if self.build_order and not self.build_order.active:
+                errors['build_order'] = _(
+                    'Build order must be pending, on hold, or in production'
+                )
+
+            if self.sales_order:
+                errors['sales_order'] = _(
+                    'Sales order is only allowed when purchase order output is commercial'
+                )
+
+        if errors:
+            raise ValidationError(errors)
 
     def save(self, *args, **kwargs):
         """Custom save method for PurchaseOrder models."""
@@ -853,6 +1024,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def clean_line_item(self, line):
         """Clean a line item for this PurchaseOrder."""
         super().clean_line_item(line)
+
+        if getattr(line, 'destination', None):
+            self.validate_output_destination(line.destination)
+
         line.received = 0
 
     def report_context(self) -> PurchaseOrderReportContext:
@@ -953,6 +1128,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
         help_text=_('Supplier order reference code'),
     )
 
+    output_type = models.CharField(
+        max_length=32,
+        choices=OutputType.choices,
+        null=True,
+        blank=True,
+        verbose_name=_('Output Type'),
+        help_text=_('Select whether this purchase order serves workshop, construction site, or commercial output'),
+    )
+
     sales_order = models.ForeignKey(
         'order.SalesOrder',
         on_delete=models.SET_NULL,
@@ -961,6 +1145,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         blank=True,
         verbose_name=_('Sales Order'),
         help_text=_('Sales order linked to this purchase order'),
+    )
+
+    build_order = models.ForeignKey(
+        'build.Build',
+        on_delete=models.SET_NULL,
+        related_name='workshop_purchase_orders',
+        null=True,
+        blank=True,
+        verbose_name=_('Build Order'),
+        help_text=_('Build order linked to this workshop purchase order'),
     )
 
     received_by = models.ForeignKey(
@@ -1111,7 +1305,24 @@ class PurchaseOrder(TotalPriceMixin, Order):
             for part in unique_parts:
                 part.schedule_pricing_update(create=True, refresh=False)
 
+            if self.output_type == self.OutputType.COMMERCIAL:
+                self.sync_sales_order_lines()
+
             trigger_event(PurchaseOrderEvents.COMPLETED, id=self.pk)
+
+    def sync_sales_order_lines(self):
+        """Update linked sales order lines from completed commercial purchase lines."""
+        for line in self.lines.all().select_related('sales_order_line'):
+            sales_order_line = line.sales_order_line
+
+            if sales_order_line is None:
+                continue
+
+            sales_order_line.shipped = min(
+                sales_order_line.quantity,
+                sales_order_line.shipped + line.received,
+            )
+            sales_order_line.save(update_fields=['shipped'])
 
     @transaction.atomic
     def issue_order(self):
@@ -1281,6 +1492,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # List of line items to update
         line_items_to_update: list[PurchaseOrderLineItem] = []
 
+        # Stock items to allocate to build lines after receipt
+        pending_build_allocations = []
+
         convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
         default_currency = currency_code_default()
 
@@ -1292,7 +1506,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         line_items = PurchaseOrderLineItem.objects.filter(
             pk__in=line_items_ids
-        ).prefetch_related('part', 'part__part', 'order')
+        ).prefetch_related('part', 'part__part', 'order', 'build_line')
 
         # Map order line items to their corresponding stock items
         line_item_map = {line.pk: line for line in line_items}
@@ -1437,6 +1651,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     item.set_status(status, custom_values=custom_stock_status_values)
                     stock_items.append(item)
 
+                    if line.build_line:
+                        pending_build_allocations.append((item, line.build_line))
+
             else:
                 new_item = stock.models.StockItem(
                     **stock_data,
@@ -1455,6 +1672,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
                 bulk_create_items.append(new_item)
 
+                if line.build_line:
+                    pending_build_allocations.append((new_item, line.build_line))
+
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
             stock.models.StockItem.objects.bulk_create(bulk_create_items)
@@ -1467,6 +1687,25 @@ class PurchaseOrder(TotalPriceMixin, Order):
             ).prefetch_related('location')
 
             stock_items.extend(created_items)
+
+            created_item_map = {item.tree_id: item for item in created_items}
+            pending_build_allocations = [
+                (created_item_map.get(item.tree_id, item), build_line)
+                for item, build_line in pending_build_allocations
+            ]
+
+        if pending_build_allocations:
+            from build.models import BuildItem
+
+            BuildItem.objects.bulk_create([
+                BuildItem(
+                    build_line=build_line,
+                    stock_item=item,
+                    quantity=item.quantity,
+                )
+                for item, build_line in pending_build_allocations
+                if item.pk
+            ])
 
         # Generate a new tracking entry for each stock item
         for item in stock_items:
@@ -2207,6 +2446,37 @@ class PurchaseOrderLineItem(OrderLineItem):
         """Return the API URL associated with the PurchaseOrderLineItem model."""
         return reverse('api-po-line-list')
 
+    def build_line_reserved_quantity(self):
+        """Return open purchase-order quantity already reserved against this build line."""
+        if self.build_line is None:
+            return Decimal(0)
+
+        queryset = PurchaseOrderLineItem.objects.filter(
+            build_line=self.build_line,
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
+        )
+
+        if self.pk:
+            queryset = queryset.exclude(pk=self.pk)
+
+        reserved = queryset.aggregate(
+            quantity=Coalesce(
+                Sum('quantity'), Decimal(0), output_field=models.DecimalField()
+            )
+        )
+
+        return reserved['quantity']
+
+    def build_line_available_quantity(self):
+        """Return available build-line quantity after other PO reservations."""
+        if self.build_line is None:
+            return Decimal(0)
+
+        return max(
+            self.build_line.unallocated_quantity() - self.build_line_reserved_quantity(),
+            Decimal(0),
+        )
+
     def clean(self) -> None:
         """Custom clean method for the PurchaseOrderLineItem model.
 
@@ -2241,6 +2511,72 @@ class PurchaseOrderLineItem(OrderLineItem):
                         'build_order': _('Build order part must match line item part')
                     })
 
+        if self.order.output_type == PurchaseOrder.OutputType.COMMERCIAL:
+            if self.sales_order_line is None:
+                raise ValidationError({
+                    'sales_order_line': _(
+                        'Sales order line is required when purchase order output is commercial'
+                    )
+                })
+
+            if self.sales_order_line.order_id != self.order.sales_order_id:
+                raise ValidationError({
+                    'sales_order_line': _(
+                        'Sales order line must belong to the linked sales order'
+                    )
+                })
+
+            if self.part and self.sales_order_line.part_id != self.part.part_id:
+                raise ValidationError({
+                    'part': _('Supplier part must match the linked sales order line part')
+                })
+        elif self.sales_order_line is not None:
+            raise ValidationError({
+                'sales_order_line': _(
+                    'Sales order line is only allowed when purchase order output is commercial'
+                )
+            })
+
+        if self.order.output_type == PurchaseOrder.OutputType.WORKSHOP:
+            if self.order.build_order:
+                if self.build_line is None:
+                    raise ValidationError({
+                        'build_line': _(
+                            'Build order line is required when workshop purchase order is linked to a build order'
+                        )
+                    })
+
+                if self.build_line.build_id != self.order.build_order_id:
+                    raise ValidationError({
+                        'build_line': _(
+                            'Build order line must belong to the linked build order'
+                        )
+                    })
+
+                if self.part and self.build_line.part.pk != self.part.part_id:
+                    raise ValidationError({
+                        'part': _('Supplier part must match the linked build order line part')
+                    })
+
+                if self.quantity > self.build_line_available_quantity():
+                    raise ValidationError({
+                        'quantity': _(
+                            'Quantity exceeds the unallocated build order line quantity'
+                        )
+                    })
+            elif self.build_line is not None:
+                raise ValidationError({
+                    'build_line': _(
+                        'Build order line is only allowed when purchase order is linked to a build order'
+                    )
+                })
+        elif self.build_line is not None:
+            raise ValidationError({
+                'build_line': _(
+                    'Build order line is only allowed when purchase order output is workshop'
+                )
+            })
+
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
         return '{n} x {part} - {po}'.format(
@@ -2274,6 +2610,26 @@ class PurchaseOrderLineItem(OrderLineItem):
         related_name='purchase_order_line_items',
         verbose_name=_('Part'),
         help_text=_('Supplier part'),
+    )
+
+    sales_order_line = models.ForeignKey(
+        'order.SalesOrderLineItem',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='purchase_order_line_items',
+        verbose_name=_('Sales Order Line Item'),
+        help_text=_('Sales order line item fulfilled by this purchase order line'),
+    )
+
+    build_line = models.ForeignKey(
+        'build.BuildLine',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='purchase_order_line_items',
+        verbose_name=_('Build Order Line Item'),
+        help_text=_('Build order line item fulfilled by this purchase order line'),
     )
 
     received = models.DecimalField(

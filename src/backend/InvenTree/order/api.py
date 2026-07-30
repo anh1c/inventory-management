@@ -168,6 +168,24 @@ class OrderFilter(FilterSet):
         label=_('Project Code'),
     )
 
+    contract = rest_filters.ModelChoiceFilter(
+        queryset=models.Contract.objects.all(),
+        field_name='contracts',
+        label=_('Contract'),
+    )
+
+    contract_buyer = rest_filters.ModelChoiceFilter(
+        queryset=company.models.Company.objects.all(),
+        field_name='contracts__buyer',
+        label=_('Contract Buyer'),
+    )
+
+    contract_seller = rest_filters.ModelChoiceFilter(
+        queryset=company.models.Company.objects.all(),
+        field_name='contracts__seller',
+        label=_('Contract Seller'),
+    )
+
     has_project_code = rest_filters.BooleanFilter(
         method='filter_has_project_code', label=_('Has Project Code')
     )
@@ -301,7 +319,14 @@ class ContractFilter(FilterSet):
         """Metaclass options."""
 
         model = models.Contract
-        fields = ['contract_type', 'project_code', 'sales_contract']
+        fields = [
+            'contract_type',
+            'project_code',
+            'sales_contract',
+            'purchase_contract',
+            'buyer',
+            'seller',
+        ]
 
     project_code = rest_filters.ModelChoiceFilter(
         queryset=common.models.ProjectCode.objects.all(),
@@ -313,6 +338,28 @@ class ContractFilter(FilterSet):
         queryset=models.Contract.objects.filter(contract_type=models.Contract.ContractType.SALES),
         field_name='sales_contract',
         label=_('Sales Contract'),
+    )
+
+    purchase_contract = rest_filters.ModelChoiceFilter(
+        queryset=models.Contract.objects.filter(contract_type=models.Contract.ContractType.PURCHASE),
+        label=_('Purchase Contract'),
+        method='filter_purchase_contract',
+    )
+
+    def filter_purchase_contract(self, queryset, name, purchase_contract):
+        """Filter sales contracts linked to the selected purchase contract."""
+        return queryset.filter(purchase_contracts=purchase_contract)
+
+    buyer = rest_filters.ModelChoiceFilter(
+        queryset=company.models.Company.objects.all(),
+        field_name='buyer',
+        label=_('Buyer'),
+    )
+
+    seller = rest_filters.ModelChoiceFilter(
+        queryset=company.models.Company.objects.all(),
+        field_name='seller',
+        label=_('Seller'),
     )
 
     sales_order = rest_filters.ModelChoiceFilter(
@@ -342,6 +389,10 @@ class ContractOutputOptions(OutputConfiguration):
     OPTIONS = [
         InvenTreeOutputOption('project_code_detail'),
         InvenTreeOutputOption('sales_contract_detail'),
+        InvenTreeOutputOption('buyer_detail'),
+        InvenTreeOutputOption('seller_detail'),
+        InvenTreeOutputOption('party_a_contact_detail'),
+        InvenTreeOutputOption('party_b_contact_detail'),
     ]
 
 
@@ -349,7 +400,14 @@ class ContractMixin(SerializerContextMixin):
     """Mixin class for Contract endpoints."""
 
     queryset = models.Contract.objects.all().prefetch_related(
-        'project_code', 'sales_contract', 'sales_orders', 'purchase_orders'
+        'project_code',
+        'sales_contract',
+        'buyer',
+        'seller',
+        'party_a_contact',
+        'party_b_contact',
+        'sales_orders',
+        'purchase_orders',
     )
     serializer_class = serializers.ContractSerializer
 
@@ -374,12 +432,16 @@ class ContractList(
 
     ordering_field_aliases = {
         'project_code': ['project_code__code'],
+        'buyer': ['buyer__name'],
+        'seller': ['seller__name'],
     }
 
     search_fields = [
         'reference',
         'title',
         'project_code__code',
+        'buyer__name',
+        'seller__name',
         'party_a_name',
         'party_b_name',
         'work_scope',
@@ -389,6 +451,8 @@ class ContractList(
         'reference',
         'contract_type',
         'project_code',
+        'buyer',
+        'seller',
         'issue_date',
         'effective_date',
         'total_amount',
@@ -799,6 +863,8 @@ class PurchaseOrderLineItemList(
             other_line = models.PurchaseOrderLineItem.objects.filter(
                 part=data.get('part'),
                 order=data.get('order'),
+                sales_order_line=data.get('sales_order_line'),
+                build_line=data.get('build_line'),
                 target_date=data.get('target_date'),
                 destination=data.get('destination'),
             ).first()
@@ -900,6 +966,19 @@ class SalesOrderFilter(OrderFilter):
     include_variants = rest_filters.BooleanFilter(
         label=_('Include Variants'), method='filter_include_variants'
     )
+
+    commercial_linkable = rest_filters.BooleanFilter(
+        label=_('Commercial Linkable'), method='filter_commercial_linkable'
+    )
+
+    def filter_commercial_linkable(self, queryset, name, value):
+        """Filter sales orders which can be linked to commercial purchase orders."""
+        statuses = [SalesOrderStatus.PENDING.value, SalesOrderStatus.IN_PROGRESS.value]
+
+        if str2bool(value):
+            return queryset.filter(status__in=statuses)
+
+        return queryset.exclude(status__in=statuses)
 
     def filter_include_variants(self, queryset, name, value):
         """Filter by whether or not to include variants of the selected part.

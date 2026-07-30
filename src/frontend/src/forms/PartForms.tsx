@@ -51,6 +51,7 @@ export function usePartFields({
       units: {},
       link: {},
       default_location: {
+        label: t`Kho mặc định`,
         filters: {
           structural: false
         }

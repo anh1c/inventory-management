@@ -94,7 +94,8 @@ export function useBuildOrderFields({
       title: {},
       quantity: {},
       project_code: {
-        icon: <IconList />
+        icon: <IconList />,
+        required: true
       },
       priority: {},
       parent: {
