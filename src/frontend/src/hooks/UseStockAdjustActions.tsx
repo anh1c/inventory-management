@@ -15,6 +15,7 @@ import {
   useMergeStockItem,
   useRemoveStockItem,
   useReturnStockItem,
+  useScheduleStockTransfer,
   useTransferStockItem
 } from '../forms/StockForms';
 import { InvenTreeIcon } from '../functions/icons';
@@ -31,6 +32,7 @@ interface StockAdjustActionProps {
   delete?: boolean;
   merge?: boolean;
   remove?: boolean;
+  scheduleTransfer?: boolean;
   transfer?: boolean;
   return?: boolean;
 }
@@ -62,6 +64,7 @@ export function useStockAdjustActions(
   const deleteStock = useDeleteStockItem(props.formProps);
   const mergeStock = useMergeStockItem(props.formProps);
   const removeStock = useRemoveStockItem(props.formProps);
+  const scheduleTransfer = useScheduleStockTransfer(props.formProps);
   const transferStock = useTransferStockItem(props.formProps);
   const returnStock = useReturnStockItem(props.formProps);
 
@@ -80,6 +83,7 @@ export function useStockAdjustActions(
     props.changeBatch != false && modals.push(changeBatch);
     props.merge != false && modals.push(mergeStock);
     props.remove != false && modals.push(removeStock);
+    props.scheduleTransfer != false && modals.push(scheduleTransfer);
     props.transfer != false && modals.push(transferStock);
     props.return === true && modals.push(returnStock);
     props.delete != false &&
@@ -134,6 +138,16 @@ export function useStockAdjustActions(
         tooltip: t`Transfer selected stock items`,
         onClick: () => {
           transferStock.open();
+        }
+      });
+
+    props.scheduleTransfer != false &&
+      menuActions.push({
+        name: t`Schedule Stock Transfer`,
+        icon: <InvenTreeIcon icon='calendar' iconProps={{ color: 'blue' }} />,
+        tooltip: t`Reserve selected stock and transfer it on a schedule`,
+        onClick: () => {
+          scheduleTransfer.open();
         }
       });
 

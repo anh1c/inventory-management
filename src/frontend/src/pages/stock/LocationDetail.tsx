@@ -11,7 +11,8 @@ import {
   IconListDetails,
   IconPackages,
   IconSitemap,
-  IconTable
+  IconTable,
+  IconTruckDelivery
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -52,6 +53,7 @@ import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockLocationParametricTable from '../../tables/stock/StockLocationParametricTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
+import { StockTransferOrderTable } from '../../tables/stock/StockTransferOrderTable';
 
 export default function Stock() {
   const { id: _id } = useParams();
@@ -221,6 +223,12 @@ export default function Stock() {
         )
       },
       {
+        name: 'stock-transfers',
+        label: t`Stock Transfers`,
+        icon: <IconTruckDelivery />,
+        content: <StockTransferOrderTable locationId={location.pk} />
+      },
+      {
         name: 'default_parts',
         label: t`Default Parts`,
         icon: <IconPackages />,
@@ -306,7 +314,7 @@ export default function Stock() {
 
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
-    enabled: true,
+    enabled: Boolean(location.pk),
     changeBatch: false,
     delete: false,
     merge: false,

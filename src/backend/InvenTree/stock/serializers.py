@@ -46,6 +46,8 @@ from .models import (
     StockItemTracking,
     StockLocation,
     StockLocationType,
+    StockTransferLine,
+    StockTransferOrder,
 )
 
 logger = structlog.get_logger('inventree')
@@ -1841,6 +1843,209 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs
                 )
+
+
+class StockTransferLineSerializer(serializers.Serializer):
+    """Serializer for an item reserved against a scheduled stock transfer."""
+
+    pk = serializers.PrimaryKeyRelatedField(
+        source='stock_item',
+        queryset=StockItem.objects.all(),
+        label=_('Stock Item'),
+    )
+    stock_item_detail = StockItemSerializer(source='stock_item', read_only=True)
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=Decimal('0.00001'),
+        label=_('Quantity'),
+    )
+
+    class Meta:
+        """Serializer metadata."""
+
+        fields = ['pk', 'stock_item_detail', 'quantity']
+
+
+class StockTransferOrderSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for scheduled stock transfer orders."""
+
+    lines = StockTransferLineSerializer(many=True)
+    source_location_detail = LocationBriefSerializer(
+        source='source_location', read_only=True
+    )
+    destination_location_detail = LocationBriefSerializer(
+        source='destination_location', read_only=True
+    )
+    created_by_detail = UserSerializer(source='created_by', read_only=True)
+    reference = serializers.CharField(source='__str__', read_only=True)
+
+    class Meta:
+        """Serializer metadata."""
+
+        model = StockTransferOrder
+        fields = [
+            'pk',
+            'reference',
+            'source_location',
+            'source_location_detail',
+            'destination_location',
+            'destination_location_detail',
+            'scheduled_departure',
+            'expected_arrival',
+            'alert_days',
+            'status',
+            'notes',
+            'created_by',
+            'created_by_detail',
+            'created_at',
+            'updated_at',
+            'departed_at',
+            'completed_at',
+            'error_message',
+            'lines',
+        ]
+        read_only_fields = [
+            'pk',
+            'source_location',
+            'status',
+            'created_by',
+            'created_at',
+            'updated_at',
+            'departed_at',
+            'completed_at',
+            'error_message',
+        ]
+
+    def skip_create_fields(self):
+        """Exclude nested transfer lines from model-level validation."""
+        return ['lines']
+
+    def validate(self, data):
+        """Validate dates, locations and all requested stock quantities."""
+        data = super().validate(data)
+
+        if self.instance and self.instance.status != StockTransferOrder.Status.SCHEDULED:
+            raise ValidationError(
+                _('Only scheduled stock transfers can be modified')
+            )
+
+        lines = data.get('lines')
+
+        if self.instance and lines is not None:
+            raise ValidationError({
+                'lines': _(
+                    'Stock items cannot be changed after a transfer is scheduled'
+                )
+            })
+
+        if not self.instance and not lines:
+            raise ValidationError({'lines': _('At least one stock item is required')})
+
+        if lines:
+            source_locations = {line['stock_item'].location_id for line in lines}
+
+            if None in source_locations or len(source_locations) != 1:
+                raise ValidationError({
+                    'lines': _('All stock items must be in the same source location')
+                })
+
+            data['source_location'] = lines[0]['stock_item'].location
+
+            destination = data.get(
+                'destination_location',
+                getattr(self.instance, 'destination_location', None),
+            )
+
+            if destination and destination.pk in source_locations:
+                raise ValidationError({
+                    'destination_location': _(
+                        'Destination location must differ from source location'
+                    )
+                })
+
+            requested = {}
+
+            for line in lines:
+                item = line['stock_item']
+                quantity = line['quantity']
+                requested[item.pk] = requested.get(item.pk, Decimal(0)) + quantity
+
+            for item_pk, quantity in requested.items():
+                item = StockItem.objects.get(pk=item_pk)
+
+                if quantity <= 0:
+                    raise ValidationError({
+                        'lines': _('Transfer quantity must be greater than zero')
+                    })
+
+                available = item.unallocated_quantity()
+
+                if self.instance:
+                    available += sum(
+                        line.quantity
+                        for line in self.instance.lines.filter(stock_item=item)
+                    )
+
+                if quantity > available:
+                    raise ValidationError({
+                        'lines': _(
+                            'Transfer quantity exceeds the available stock quantity'
+                        )
+                    })
+
+                if item.serialized and quantity != item.quantity:
+                    raise ValidationError({
+                        'lines': _('Serialized stock items must be transferred in full')
+                    })
+
+        departure = data.get(
+            'scheduled_departure',
+            getattr(self.instance, 'scheduled_departure', None),
+        )
+        arrival = data.get(
+            'expected_arrival', getattr(self.instance, 'expected_arrival', None)
+        )
+
+        if departure and arrival and arrival < departure:
+            raise ValidationError({
+                'expected_arrival': _(
+                    'Expected arrival must be after scheduled departure'
+                )
+            })
+
+        return data
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create the transfer and reserve the requested quantities."""
+        lines = validated_data.pop('lines')
+        request = self.context.get('request')
+
+        transfer = StockTransferOrder.objects.create(
+            created_by=getattr(request, 'user', None),
+            **validated_data,
+        )
+
+        for line in lines:
+            StockTransferLine.objects.create(transfer=transfer, **line)
+
+        return transfer
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        """Update the editable schedule fields for a pending transfer."""
+        return super().update(instance, validated_data)
+
+
+class StockTransferOrderActionSerializer(serializers.Serializer):
+    """Serializer for actions on a scheduled stock transfer."""
+
+    class Meta:
+        """Serializer metadata."""
+
+        fields = []
 
 
 class StockReturnSerializer(StockAdjustmentSerializer):

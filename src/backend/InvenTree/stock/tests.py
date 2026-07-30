@@ -5,6 +5,7 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.test import override_settings
+from django.utils import timezone
 
 from djmoney.money import Money
 
@@ -22,6 +23,8 @@ from .models import (
     StockItemTracking,
     StockLocation,
     StockLocationType,
+    StockTransferLine,
+    StockTransferOrder,
 )
 
 
@@ -51,6 +54,66 @@ class StockTestBase(InvenTreeTestCase):
         cls.drawer1 = StockLocation.objects.get(name='Drawer_1')
         cls.drawer2 = StockLocation.objects.get(name='Drawer_2')
         cls.drawer3 = StockLocation.objects.get(name='Drawer_3')
+
+
+class ScheduledStockTransferTest(StockTestBase):
+    """Tests for scheduled warehouse transfers."""
+
+    def setUp(self):
+        """Create a stock item and a scheduled transfer."""
+        super().setUp()
+
+        self.item = StockItem.objects.create(
+            part=Part.objects.get(pk=1),
+            location=self.office,
+            quantity=10,
+        )
+        self.transfer = StockTransferOrder.objects.create(
+            source_location=self.office,
+            destination_location=self.diningroom,
+            scheduled_departure=timezone.now() + datetime.timedelta(days=1),
+            expected_arrival=timezone.now() + datetime.timedelta(days=2),
+            created_by=self.user,
+        )
+        StockTransferLine.objects.create(
+            transfer=self.transfer,
+            stock_item=self.item,
+            quantity=4,
+        )
+
+    def test_reserve_depart_and_complete(self):
+        """Reserved stock is unavailable, then moves through transit to destination."""
+        self.assertEqual(self.item.unallocated_quantity(), 6)
+
+        self.assertTrue(self.transfer.depart())
+        self.transfer.refresh_from_db()
+        line = self.transfer.lines.get()
+        transit_item = line.stock_item
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 6)
+        self.assertEqual(self.item.unallocated_quantity(), 6)
+        self.assertEqual(self.transfer.status, StockTransferOrder.Status.IN_TRANSIT)
+        self.assertIsNone(transit_item.location)
+        self.assertEqual(transit_item.status, StockStatus.QUARANTINED.value)
+        self.assertEqual(transit_item.unallocated_quantity(), 0)
+
+        self.assertTrue(self.transfer.complete())
+        self.transfer.refresh_from_db()
+        transit_item.refresh_from_db()
+
+        self.assertEqual(self.transfer.status, StockTransferOrder.Status.COMPLETED)
+        self.assertEqual(transit_item.location, self.diningroom)
+        self.assertEqual(transit_item.status, StockStatus.OK.value)
+        self.assertEqual(transit_item.unallocated_quantity(), 4)
+
+    def test_cancel_releases_reservation(self):
+        """Cancelling a scheduled transfer releases its reserved quantity."""
+        self.assertEqual(self.item.unallocated_quantity(), 6)
+        self.assertTrue(self.transfer.cancel())
+        self.item.refresh_from_db()
+        self.assertEqual(self.transfer.status, StockTransferOrder.Status.CANCELLED)
+        self.assertEqual(self.item.unallocated_quantity(), 10)
 
 
 class StockTest(StockTestBase):

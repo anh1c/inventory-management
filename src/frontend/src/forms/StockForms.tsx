@@ -816,6 +816,44 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
   return fields;
 }
 
+function scheduledStockTransferFields(items: any[]): ApiFormFieldSet {
+  const transferFields = stockTransferFields(items);
+  const locationField = transferFields.location;
+
+  delete transferFields.location;
+
+  return {
+    ...transferFields,
+    destination_location: {
+      ...locationField,
+      value: undefined,
+      label: t`Destination Location`,
+      description: t`Warehouse location that will receive the stock`
+    },
+    scheduled_departure: {
+      field_type: 'datetime',
+      required: true,
+      value: dayjs().add(1, 'day').format('YYYY-MM-DD HH:mm:ss'),
+      label: t`Scheduled Departure`,
+      description: t`Stock becomes in transit at this date and time`
+    },
+    expected_arrival: {
+      field_type: 'datetime',
+      required: true,
+      value: dayjs().add(2, 'day').format('YYYY-MM-DD HH:mm:ss'),
+      label: t`Expected Arrival`,
+      description: t`Stock is received into the destination at this date and time`
+    },
+    alert_days: {
+      field_type: 'integer',
+      required: true,
+      value: 3,
+      label: t`Advance Warning Days`,
+      description: t`Notify before stock departs and arrives`
+    }
+  };
+}
+
 function stockReturnFields(items: any[]): ApiFormFieldSet {
   if (!items) {
     return {};
@@ -1327,6 +1365,21 @@ export function useTransferStockItem(props: StockOperationProps) {
     preFormContent: (
       <Alert color='blue'>
         {t`Transfer selected items to the specified location.`}
+      </Alert>
+    )
+  });
+}
+
+export function useScheduleStockTransfer(props: StockOperationProps) {
+  return useStockOperationModal({
+    ...props,
+    fieldGenerator: scheduledStockTransferFields,
+    endpoint: ApiEndpoints.stock_transfer_order_list,
+    title: t`Schedule Stock Transfer`,
+    successMessage: t`Stock transfer scheduled`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Selected quantities become unavailable immediately, leave the source on the scheduled departure, and arrive at the destination on the expected arrival.`}
       </Alert>
     )
   });
