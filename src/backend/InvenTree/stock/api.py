@@ -68,6 +68,7 @@ from stock.models import (
     StockItemTracking,
     StockLocation,
     StockLocationType,
+    StockTransferOrder,
 )
 from stock.status_codes import StockHistoryCode, StockStatus
 
@@ -220,6 +221,128 @@ class StockTransfer(StockAdjustView):
     """API endpoint for performing stock movements."""
 
     serializer_class = StockSerializers.StockTransferSerializer
+
+
+class StockTransferOrderFilter(FilterSet):
+    """Filter set for scheduled stock transfers."""
+
+    class Meta:
+        """Filter metadata."""
+
+        model = StockTransferOrder
+        fields = [
+            'status',
+            'source_location',
+            'destination_location',
+            'created_by',
+        ]
+
+    location = rest_filters.NumberFilter(
+        method='filter_location',
+        label=_('Source or destination location'),
+    )
+
+    def filter_location(self, queryset, name, value):
+        """Return transfers entering or leaving the selected location."""
+        return queryset.filter(
+            Q(source_location_id=value) | Q(destination_location_id=value)
+        )
+
+
+class StockTransferOrderMixin(SerializerContextMixin):
+    """Shared API configuration for scheduled stock transfers."""
+
+    queryset = StockTransferOrder.objects.prefetch_related(
+        'lines__stock_item__part',
+        'source_location',
+        'destination_location',
+        'created_by',
+    )
+    serializer_class = StockSerializers.StockTransferOrderSerializer
+    role_required = 'stock.change'
+
+
+class StockTransferOrderList(StockTransferOrderMixin, ListCreateAPI):
+    """List and create scheduled stock transfer orders."""
+
+    filterset_class = StockTransferOrderFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = [
+        'notes',
+        'source_location__name',
+        'destination_location__name',
+        'lines__stock_item__part__name',
+        'lines__stock_item__part__IPN',
+    ]
+    ordering_fields = [
+        'scheduled_departure',
+        'expected_arrival',
+        'status',
+        'created_at',
+        'updated_at',
+    ]
+    ordering = ['-scheduled_departure', '-pk']
+
+
+class StockTransferOrderDetail(
+    StockTransferOrderMixin, RetrieveUpdateDestroyAPI
+):
+    """Retrieve or update a scheduled stock transfer."""
+
+    def destroy(self, request, *args, **kwargs):
+        """Preserve transfer history instead of deleting transfer records."""
+        return Response(
+            {'detail': _('Stock transfer orders cannot be deleted; cancel them instead')},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+
+class StockTransferOrderAction(StockTransferOrderMixin, CreateAPI):
+    """Run a state transition on a stock transfer order."""
+
+    serializer_class = StockSerializers.StockTransferOrderActionSerializer
+    action = None
+
+    def create(self, request, *args, **kwargs):
+        """Execute the configured transfer action."""
+        transfer = self.get_object()
+        action = getattr(transfer, self.action)
+
+        try:
+            changed = action(user=request.user)
+        except DjangoValidationError as exc:
+            raise ValidationError(
+                getattr(exc, 'message_dict', {'detail': exc.messages})
+            )
+
+        if not changed:
+            raise ValidationError(
+                {'status': _('This action is not valid for the current transfer status')}
+            )
+
+        transfer.refresh_from_db()
+        response = StockSerializers.StockTransferOrderSerializer(
+            transfer, context=self.get_serializer_context()
+        )
+        return Response(response.data, status=status.HTTP_200_OK)
+
+
+class StockTransferOrderCancel(StockTransferOrderAction):
+    """Cancel a scheduled or in-transit stock transfer."""
+
+    action = 'cancel'
+
+
+class StockTransferOrderDepart(StockTransferOrderAction):
+    """Manually mark a scheduled stock transfer as departed."""
+
+    action = 'depart'
+
+
+class StockTransferOrderComplete(StockTransferOrderAction):
+    """Manually receive an in-transit stock transfer."""
+
+    action = 'complete'
 
 
 class StockReturn(StockAdjustView):
@@ -1711,6 +1834,42 @@ stock_api_urls = [
     path('add/', StockAdd.as_view(), name='api-stock-add'),
     path('remove/', StockRemove.as_view(), name='api-stock-remove'),
     path('transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
+    path(
+        'transfer-order/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(StockTransferOrder),
+                    path(
+                        'cancel/',
+                        StockTransferOrderCancel.as_view(),
+                        name='api-stock-transfer-order-cancel',
+                    ),
+                    path(
+                        'depart/',
+                        StockTransferOrderDepart.as_view(),
+                        name='api-stock-transfer-order-depart',
+                    ),
+                    path(
+                        'complete/',
+                        StockTransferOrderComplete.as_view(),
+                        name='api-stock-transfer-order-complete',
+                    ),
+                    path(
+                        '',
+                        StockTransferOrderDetail.as_view(),
+                        name='api-stock-transfer-order-detail',
+                    ),
+                ]),
+            ),
+            path(
+                '',
+                StockTransferOrderList.as_view(),
+                name='api-stock-transfer-order-list',
+            ),
+        ]),
+    ),
     path('return/', StockReturn.as_view(), name='api-stock-return'),
     path('assign/', StockAssign.as_view(), name='api-stock-assign'),
     path('merge/', StockMerge.as_view(), name='api-stock-merge'),

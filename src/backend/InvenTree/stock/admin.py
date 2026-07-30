@@ -9,6 +9,8 @@ from .models import (
     StockItemTracking,
     StockLocation,
     StockLocationType,
+    StockTransferLine,
+    StockTransferOrder,
 )
 
 
@@ -73,6 +75,31 @@ class StockItemAdmin(admin.ModelAdmin):
         'supplier_part',
         'consumed_by',
     ]
+
+
+class StockTransferLineInline(admin.TabularInline):
+    """Inline stock items reserved by a transfer order."""
+
+    model = StockTransferLine
+    extra = 0
+    autocomplete_fields = ['stock_item']
+
+
+@admin.register(StockTransferOrder)
+class StockTransferOrderAdmin(admin.ModelAdmin):
+    """Admin interface for scheduled stock transfers."""
+
+    list_display = (
+        'id',
+        'source_location',
+        'destination_location',
+        'scheduled_departure',
+        'expected_arrival',
+        'status',
+    )
+    list_filter = ('status',)
+    autocomplete_fields = ['source_location', 'destination_location', 'created_by']
+    inlines = [StockTransferLineInline]
 
 
 @admin.register(StockItemTracking)

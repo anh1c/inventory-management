@@ -9697,3 +9697,27 @@ msgstr "Xin hãy sử dụng chức năng tạo lại mật khẩu để đăng 
 #: users/serializers.py:497
 msgid "Welcome to InvenTree"
 msgstr "Chào mừng đến với InvenTree"
+
+#: stock/tasks.py
+msgid "Stock transfer departing soon"
+msgstr "Hàng sắp rời kho"
+
+#: stock/tasks.py
+msgid "%(reference)s will leave %(source)s for %(destination)s on %(date)s"
+msgstr "%(reference)s sẽ rời %(source)s để chuyển đến %(destination)s vào %(date)s"
+
+#: stock/tasks.py
+msgid "Stock transfer arriving soon"
+msgstr "Hàng sắp đến kho"
+
+#: stock/tasks.py
+msgid "%(reference)s is expected at %(destination)s on %(date)s"
+msgstr "%(reference)s dự kiến đến %(destination)s vào %(date)s"
+
+#: stock/models.py
+msgid "Additional information for this stock transfer"
+msgstr "Thông tin bổ sung cho lệnh chuyển kho này"
+
+#: stock/serializers.py
+msgid "Stock items cannot be changed after a transfer is scheduled"
+msgstr "Không thể thay đổi mặt hàng sau khi lệnh chuyển kho đã được lên lịch"

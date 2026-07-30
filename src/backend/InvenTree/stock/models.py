@@ -1572,11 +1572,18 @@ class StockItem(
         return total
 
     def allocation_count(self):
-        """Return the total quantity allocated to builds or orders."""
+        """Return the total quantity allocated to builds, orders or stock transfers."""
         bo = self.build_allocation_count()
         so = self.sales_order_allocation_count()
+        transfer = self.scheduled_transfer_lines.filter(
+            transfer__status__in=[
+                StockTransferOrder.Status.SCHEDULED,
+                StockTransferOrder.Status.IN_TRANSIT,
+                StockTransferOrder.Status.FAILED,
+            ]
+        ).aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))['q']
 
-        return bo + so
+        return bo + so + (transfer or Decimal(0))
 
     def unallocated_quantity(self):
         """Return the quantity of this StockItem which is *not* allocated."""
@@ -2880,6 +2887,293 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
             if instance.part:
                 instance.part.schedule_pricing_update(create=True)
+
+
+class StockTransferOrder(InvenTree.models.InvenTreeModel):
+    """A scheduled movement of stock between two warehouse locations."""
+
+    class Status(models.TextChoices):
+        """Status values for a scheduled stock transfer."""
+
+        SCHEDULED = 'scheduled', _('Scheduled')
+        IN_TRANSIT = 'in_transit', _('In transit')
+        COMPLETED = 'completed', _('Completed')
+        CANCELLED = 'cancelled', _('Cancelled')
+        FAILED = 'failed', _('Failed')
+
+    class Meta:
+        """Model metadata."""
+
+        ordering = ['-scheduled_departure', '-pk']
+        verbose_name = _('Stock Transfer Order')
+        verbose_name_plural = _('Stock Transfer Orders')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-stock-transfer-order-list')
+
+    def get_absolute_url(self):
+        """Return the frontend URL for this transfer."""
+        return '/web/stock/location/index/stock-transfers'
+
+    def __str__(self):
+        """Return a human-readable reference."""
+        return f'TRF-{self.pk:05d}' if self.pk else str(_('New stock transfer'))
+
+    source_location = models.ForeignKey(
+        StockLocation,
+        on_delete=models.PROTECT,
+        related_name='outgoing_transfer_orders',
+        verbose_name=_('Source Location'),
+        help_text=_('Warehouse location the stock leaves from'),
+    )
+
+    destination_location = models.ForeignKey(
+        StockLocation,
+        on_delete=models.PROTECT,
+        related_name='incoming_transfer_orders',
+        verbose_name=_('Destination Location'),
+        help_text=_('Warehouse location the stock is transferred to'),
+    )
+
+    scheduled_departure = models.DateTimeField(
+        verbose_name=_('Scheduled Departure'),
+        help_text=_('Date and time the stock is scheduled to leave the source location'),
+    )
+
+    expected_arrival = models.DateTimeField(
+        verbose_name=_('Expected Arrival'),
+        help_text=_('Date and time the stock is expected to arrive at the destination'),
+    )
+
+    alert_days = models.PositiveSmallIntegerField(
+        default=3,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Advance Warning Days'),
+        help_text=_('Number of days before departure and arrival to send notifications'),
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.SCHEDULED,
+        db_index=True,
+        verbose_name=_('Status'),
+    )
+
+    notes = models.TextField(
+        blank=True,
+        verbose_name=_('Notes'),
+        help_text=_('Additional information for this stock transfer'),
+    )
+
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_stock_transfer_orders',
+        verbose_name=_('Created By'),
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated'))
+    departed_at = models.DateTimeField(
+        null=True, blank=True, verbose_name=_('Actual Departure')
+    )
+    completed_at = models.DateTimeField(
+        null=True, blank=True, verbose_name=_('Actual Arrival')
+    )
+    departure_notified = models.BooleanField(default=False)
+    arrival_notified = models.BooleanField(default=False)
+    error_message = models.TextField(blank=True, verbose_name=_('Error Message'))
+
+    def clean(self):
+        """Validate locations and transfer schedule."""
+        super().clean()
+
+        errors = {}
+
+        if (
+            self.source_location_id
+            and self.destination_location_id
+            and self.source_location_id == self.destination_location_id
+        ):
+            errors['destination_location'] = _(
+                'Destination location must differ from source location'
+            )
+
+        if (
+            self.scheduled_departure
+            and self.expected_arrival
+            and self.expected_arrival < self.scheduled_departure
+        ):
+            errors['expected_arrival'] = _(
+                'Expected arrival must be after scheduled departure'
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
+    @transaction.atomic
+    def depart(self, user=None):
+        """Move reserved stock out of its source location."""
+        if self.status != self.Status.SCHEDULED:
+            return False
+
+        transfer = StockTransferOrder.objects.select_for_update().get(pk=self.pk)
+
+        if transfer.status != self.Status.SCHEDULED:
+            return False
+
+        actor = user or transfer.created_by
+
+        for line in transfer.lines.select_related('stock_item').select_for_update():
+            item = StockItem.objects.select_for_update().get(pk=line.stock_item_id)
+
+            if item.location_id != transfer.source_location_id:
+                raise ValidationError(
+                    _('Reserved stock is no longer in the source location')
+                )
+
+            if line.quantity > item.quantity:
+                raise ValidationError(_('Reserved quantity is no longer available'))
+
+            if line.quantity < item.quantity:
+                item = item.splitStock(
+                    line.quantity,
+                    location=transfer.source_location,
+                    user=actor,
+                    notes=str(_('Split for scheduled stock transfer')),
+                    allow_production=True,
+                )
+                line.stock_item = item
+                line.save(update_fields=['stock_item'])
+
+            line.original_status = item.status
+            line.save(update_fields=['original_status'])
+
+            item.location = None
+            item.set_status(StockStatus.QUARANTINED.value)
+            item.save()
+            item.add_tracking_entry(
+                StockHistoryCode.STOCK_MOVE,
+                actor,
+                notes=str(_('Stock departed for scheduled transfer')),
+                deltas={
+                    'transfer_order': transfer.pk,
+                    'source_location': transfer.source_location_id,
+                    'destination_location': transfer.destination_location_id,
+                },
+            )
+
+        transfer.status = self.Status.IN_TRANSIT
+        transfer.departed_at = InvenTree.helpers.current_time()
+        transfer.error_message = ''
+        transfer.save(update_fields=['status', 'departed_at', 'error_message', 'updated_at'])
+        self.refresh_from_db()
+        return True
+
+    @transaction.atomic
+    def complete(self, user=None):
+        """Receive in-transit stock into the destination location."""
+        if self.status == self.Status.SCHEDULED:
+            self.depart(user=user)
+            self.refresh_from_db()
+
+        if self.status != self.Status.IN_TRANSIT:
+            return False
+
+        transfer = StockTransferOrder.objects.select_for_update().get(pk=self.pk)
+        actor = user or transfer.created_by
+
+        for line in transfer.lines.select_related('stock_item').select_for_update():
+            item = StockItem.objects.select_for_update().get(pk=line.stock_item_id)
+            item.move(
+                transfer.destination_location,
+                str(_('Completed scheduled stock transfer')),
+                actor,
+                quantity=item.quantity,
+                status=line.original_status or StockStatus.OK.value,
+            )
+
+        transfer.status = self.Status.COMPLETED
+        transfer.completed_at = InvenTree.helpers.current_time()
+        transfer.error_message = ''
+        transfer.save(
+            update_fields=['status', 'completed_at', 'error_message', 'updated_at']
+        )
+        self.refresh_from_db()
+        return True
+
+    @transaction.atomic
+    def cancel(self, user=None):
+        """Cancel this transfer and release any reserved stock."""
+        if self.status not in [
+            self.Status.SCHEDULED,
+            self.Status.IN_TRANSIT,
+            self.Status.FAILED,
+        ]:
+            return False
+
+        transfer = StockTransferOrder.objects.select_for_update().get(pk=self.pk)
+
+        if transfer.departed_at is not None:
+            actor = user or transfer.created_by
+
+            for line in transfer.lines.select_related('stock_item').select_for_update():
+                item = StockItem.objects.select_for_update().get(pk=line.stock_item_id)
+                item.move(
+                    transfer.source_location,
+                    str(_('Scheduled stock transfer cancelled')),
+                    actor,
+                    quantity=item.quantity,
+                    status=line.original_status or StockStatus.OK.value,
+                )
+
+        transfer.status = self.Status.CANCELLED
+        transfer.save(update_fields=['status', 'updated_at'])
+        self.refresh_from_db()
+        return True
+
+
+class StockTransferLine(models.Model):
+    """A reserved stock quantity belonging to a scheduled transfer."""
+
+    class Meta:
+        """Model metadata."""
+
+        unique_together = [('transfer', 'stock_item')]
+        verbose_name = _('Stock Transfer Line')
+        verbose_name_plural = _('Stock Transfer Lines')
+
+    transfer = models.ForeignKey(
+        StockTransferOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Stock Transfer Order'),
+    )
+
+    stock_item = models.ForeignKey(
+        StockItem,
+        on_delete=models.PROTECT,
+        related_name='scheduled_transfer_lines',
+        verbose_name=_('Stock Item'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(Decimal('0.00001'))],
+        verbose_name=_('Quantity'),
+    )
+
+    original_status = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_('Original Stock Status'),
+    )
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):

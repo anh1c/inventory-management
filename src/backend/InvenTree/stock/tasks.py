@@ -2,6 +2,9 @@
 
 from datetime import datetime, timedelta
 
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+
 import structlog
 from opentelemetry import trace
 
@@ -10,6 +13,113 @@ from InvenTree.tasks import ScheduledTask, offload_task, scheduled_task
 
 tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
+
+
+def _create_transfer_notification(transfer, event):
+    """Create a single in-app notification for a stock transfer event."""
+    from common.models import NotificationMessage
+
+    if not transfer.created_by:
+        return
+
+    if event == 'departure':
+        name = _('Stock transfer departing soon')
+        message = _(
+            '%(reference)s will leave %(source)s for %(destination)s on %(date)s'
+        ) % {
+            'reference': str(transfer),
+            'source': transfer.source_location,
+            'destination': transfer.destination_location,
+            'date': timezone.localtime(transfer.scheduled_departure).strftime(
+                '%d/%m/%Y %H:%M'
+            ),
+        }
+    else:
+        name = _('Stock transfer arriving soon')
+        message = _(
+            '%(reference)s is expected at %(destination)s on %(date)s'
+        ) % {
+            'reference': str(transfer),
+            'destination': transfer.destination_location,
+            'date': timezone.localtime(transfer.expected_arrival).strftime(
+                '%d/%m/%Y %H:%M'
+            ),
+        }
+
+    NotificationMessage.objects.create(
+        target_object=transfer,
+        source_object=transfer.created_by,
+        user=transfer.created_by,
+        category=f'stock.transfer.{event}',
+        name=name,
+        message=message,
+    )
+
+
+@tracer.start_as_current_span('process_scheduled_stock_transfers')
+@scheduled_task(ScheduledTask.MINUTES, 5)
+def process_scheduled_stock_transfers():
+    """Send transfer warnings and advance due stock transfers."""
+    from stock.models import StockTransferOrder
+
+    now = timezone.now()
+    active = StockTransferOrder.objects.filter(
+        status__in=[
+            StockTransferOrder.Status.SCHEDULED,
+            StockTransferOrder.Status.IN_TRANSIT,
+        ]
+    ).select_related('source_location', 'destination_location', 'created_by')
+
+    for transfer in active:
+        warning_delta = timedelta(days=transfer.alert_days)
+
+        if (
+            not transfer.departure_notified
+            and now >= transfer.scheduled_departure - warning_delta
+        ):
+            _create_transfer_notification(transfer, 'departure')
+            transfer.departure_notified = True
+            transfer.save(update_fields=['departure_notified', 'updated_at'])
+
+        if (
+            not transfer.arrival_notified
+            and now >= transfer.expected_arrival - warning_delta
+        ):
+            _create_transfer_notification(transfer, 'arrival')
+            transfer.arrival_notified = True
+            transfer.save(update_fields=['arrival_notified', 'updated_at'])
+
+    for transfer in active.filter(
+        status=StockTransferOrder.Status.SCHEDULED,
+        scheduled_departure__lte=now,
+    ):
+        try:
+            transfer.depart()
+        except Exception as exc:
+            logger.exception(
+                'Failed to depart scheduled stock transfer', transfer=transfer.pk
+            )
+            StockTransferOrder.objects.filter(pk=transfer.pk).update(
+                status=StockTransferOrder.Status.FAILED,
+                error_message=str(exc),
+            )
+
+    arrivals = StockTransferOrder.objects.filter(
+        status=StockTransferOrder.Status.IN_TRANSIT,
+        expected_arrival__lte=now,
+    )
+
+    for transfer in arrivals:
+        try:
+            transfer.complete()
+        except Exception as exc:
+            logger.exception(
+                'Failed to complete scheduled stock transfer', transfer=transfer.pk
+            )
+            StockTransferOrder.objects.filter(pk=transfer.pk).update(
+                status=StockTransferOrder.Status.FAILED,
+                error_message=str(exc),
+            )
 
 
 @tracer.start_as_current_span('rebuild_stock_items')

@@ -74,11 +74,11 @@ msgstr "Hủy bỏ"
 #: src/components/nav/NavigationDrawer.tsx:199
 #: src/forms/PurchaseOrderForms.tsx:1240
 #: src/forms/StockForms.tsx:805
-#: src/forms/StockForms.tsx:852
-#: src/forms/StockForms.tsx:905
-#: src/forms/StockForms.tsx:951
+#: src/forms/StockForms.tsx:890
+#: src/forms/StockForms.tsx:943
 #: src/forms/StockForms.tsx:989
-#: src/forms/StockForms.tsx:1099
+#: src/forms/StockForms.tsx:1027
+#: src/forms/StockForms.tsx:1137
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:976
 msgid "Actions"
 msgstr "Chức năng"
@@ -131,14 +131,14 @@ msgstr "Không"
 #: src/forms/SalesOrderForms.tsx:529
 #: src/forms/StockForms.tsx:368
 #: src/forms/StockForms.tsx:800
-#: src/forms/StockForms.tsx:847
-#: src/forms/StockForms.tsx:900
-#: src/forms/StockForms.tsx:946
+#: src/forms/StockForms.tsx:885
+#: src/forms/StockForms.tsx:938
 #: src/forms/StockForms.tsx:984
-#: src/forms/StockForms.tsx:1027
-#: src/forms/StockForms.tsx:1095
-#: src/forms/StockForms.tsx:1143
-#: src/forms/StockForms.tsx:1187
+#: src/forms/StockForms.tsx:1022
+#: src/forms/StockForms.tsx:1065
+#: src/forms/StockForms.tsx:1133
+#: src/forms/StockForms.tsx:1181
+#: src/forms/StockForms.tsx:1225
 #: src/pages/build/BuildDetail.tsx:219
 #: src/pages/part/PartDetail.tsx:1220
 #: src/tables/ColumnRenderers.tsx:91
@@ -236,20 +236,20 @@ msgstr "Mặt hàng tồn kho"
 #: src/pages/company/CompanyDetail.tsx:263
 #: src/pages/part/CategoryDetail.tsx:314
 #: src/pages/part/PartStockHistoryDetail.tsx:117
-#: src/pages/stock/LocationDetail.tsx:130
-#: src/pages/stock/LocationDetail.tsx:211
+#: src/pages/stock/LocationDetail.tsx:132
+#: src/pages/stock/LocationDetail.tsx:213
 msgid "Stock Items"
 msgstr "Mặt hàng tồn kho"
 
 #: lib/enums/ModelInformation.tsx:98
 #: lib/enums/Roles.tsx:47
-#: src/pages/stock/LocationDetail.tsx:457
+#: src/pages/stock/LocationDetail.tsx:465
 msgid "Stock Location"
 msgstr "Vị trí kho"
 
 #: lib/enums/ModelInformation.tsx:99
-#: src/pages/stock/LocationDetail.tsx:185
-#: src/pages/stock/LocationDetail.tsx:449
+#: src/pages/stock/LocationDetail.tsx:187
+#: src/pages/stock/LocationDetail.tsx:457
 #: src/pages/stock/StockDetail.tsx:999
 msgid "Stock Locations"
 msgstr "Vị trí kho"
@@ -1336,7 +1336,7 @@ msgid "Remove the associated image from this item?"
 msgstr "Xóa hình liên quan khỏi mục này?"
 
 #: src/components/details/DetailsImage.tsx:83
-#: src/forms/StockForms.tsx:904
+#: src/forms/StockForms.tsx:942
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:898
@@ -1843,7 +1843,7 @@ msgstr "Máy chủ"
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:91
 #: src/pages/part/PartDetail.tsx:421
-#: src/pages/stock/LocationDetail.tsx:91
+#: src/pages/stock/LocationDetail.tsx:93
 #: src/tables/machine/MachineTypeTable.tsx:67
 #: src/tables/machine/MachineTypeTable.tsx:149
 #: src/tables/machine/MachineTypeTable.tsx:252
@@ -2381,7 +2381,7 @@ msgid "Change"
 msgstr "Thay đổi"
 
 #: src/components/items/RoleTable.tsx:150
-#: src/forms/StockForms.tsx:950
+#: src/forms/StockForms.tsx:988
 #: src/tables/stock/StockItemTestResultTable.tsx:368
 msgid "Add"
 msgstr "Thêm"
@@ -3001,7 +3001,7 @@ msgstr "Thông tin plugin"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:182
 #: src/pages/sales/ReturnOrderDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:120
-#: src/pages/stock/LocationDetail.tsx:111
+#: src/pages/stock/LocationDetail.tsx:113
 #: src/tables/ColumnRenderers.tsx:459
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
 #: src/tables/machine/MachineTypeTable.tsx:159
@@ -3202,8 +3202,8 @@ msgstr "Hết hàng"
 #: src/forms/StockForms.tsx:803
 #: src/pages/Index/Settings/SystemSettings.tsx:233
 #: src/pages/part/PartDetail.tsx:770
-#: src/pages/stock/LocationDetail.tsx:427
-#: src/pages/stock/LocationDetail.tsx:457
+#: src/pages/stock/LocationDetail.tsx:435
+#: src/pages/stock/LocationDetail.tsx:465
 #: src/pages/stock/StockDetail.tsx:643
 #: src/tables/stock/StockItemTable.tsx:75
 msgid "Stock"
@@ -3251,14 +3251,14 @@ msgstr "Danh mục"
 #: src/forms/BuildForms.tsx:836
 #: src/forms/PurchaseOrderForms.tsx:1030
 #: src/forms/StockForms.tsx:801
-#: src/forms/StockForms.tsx:848
-#: src/forms/StockForms.tsx:901
-#: src/forms/StockForms.tsx:947
+#: src/forms/StockForms.tsx:886
+#: src/forms/StockForms.tsx:939
 #: src/forms/StockForms.tsx:985
-#: src/forms/StockForms.tsx:1028
-#: src/forms/StockForms.tsx:1096
-#: src/forms/StockForms.tsx:1144
-#: src/forms/StockForms.tsx:1188
+#: src/forms/StockForms.tsx:1023
+#: src/forms/StockForms.tsx:1066
+#: src/forms/StockForms.tsx:1134
+#: src/forms/StockForms.tsx:1182
+#: src/forms/StockForms.tsx:1226
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:298
@@ -3285,7 +3285,7 @@ msgstr "Số serial"
 #: src/forms/PurchaseOrderForms.tsx:1239
 #: src/forms/ReturnOrderForms.tsx:245
 #: src/forms/SalesOrderForms.tsx:532
-#: src/forms/StockForms.tsx:850
+#: src/forms/StockForms.tsx:888
 #: src/pages/part/PartStockHistoryDetail.tsx:61
 #: src/pages/part/PartStockHistoryDetail.tsx:241
 #: src/pages/part/PartStockHistoryDetail.tsx:265
@@ -3309,14 +3309,14 @@ msgstr "Số lượng"
 #: src/forms/BuildForms.tsx:445
 #: src/forms/BuildForms.tsx:514
 #: src/forms/StockForms.tsx:802
-#: src/forms/StockForms.tsx:849
-#: src/forms/StockForms.tsx:902
-#: src/forms/StockForms.tsx:948
+#: src/forms/StockForms.tsx:887
+#: src/forms/StockForms.tsx:940
 #: src/forms/StockForms.tsx:986
-#: src/forms/StockForms.tsx:1029
-#: src/forms/StockForms.tsx:1097
-#: src/forms/StockForms.tsx:1145
-#: src/forms/StockForms.tsx:1189
+#: src/forms/StockForms.tsx:1024
+#: src/forms/StockForms.tsx:1067
+#: src/forms/StockForms.tsx:1135
+#: src/forms/StockForms.tsx:1183
+#: src/forms/StockForms.tsx:1227
 #: src/tables/build/BuildLineTable.tsx:96
 msgid "Batch"
 msgstr "Lô"
@@ -3990,13 +3990,13 @@ msgid "Sales Requirements"
 msgstr "Nhu cầu bán hàng"
 
 #: src/components/wizards/OrderPartsWizard.tsx:129
-#: src/forms/StockForms.tsx:903
-#: src/forms/StockForms.tsx:949
+#: src/forms/StockForms.tsx:941
 #: src/forms/StockForms.tsx:987
-#: src/forms/StockForms.tsx:1030
-#: src/forms/StockForms.tsx:1098
-#: src/forms/StockForms.tsx:1146
-#: src/forms/StockForms.tsx:1190
+#: src/forms/StockForms.tsx:1025
+#: src/forms/StockForms.tsx:1068
+#: src/forms/StockForms.tsx:1136
+#: src/forms/StockForms.tsx:1184
+#: src/forms/StockForms.tsx:1228
 #: src/pages/company/SupplierPartDetail.tsx:191
 #: src/pages/company/SupplierPartDetail.tsx:384
 #: src/pages/part/PartDetail.tsx:511
@@ -4777,6 +4777,7 @@ msgstr "Số lượng hoàn thành"
 #: src/tables/settings/ImportSessionTable.tsx:118
 #: src/tables/stock/StockItemTable.tsx:181
 #: src/tables/stock/StockTrackingTable.tsx:82
+#: src/tables/stock/StockTransferOrderTable.tsx:99
 msgid "Status"
 msgstr "Trạng thái"
 
@@ -4861,6 +4862,7 @@ msgstr "Đã phân bổ"
 #: src/forms/SalesOrderForms.tsx:519
 #: src/pages/build/BuildDetail.tsx:109
 #: src/pages/build/BuildDetail.tsx:345
+#: src/tables/stock/StockTransferOrderTable.tsx:58
 msgid "Source Location"
 msgstr "Vị trí nguồn"
 
@@ -5786,7 +5788,7 @@ msgstr "Điều chỉnh bao bì"
 
 #: src/forms/PurchaseOrderForms.tsx:971
 #: src/forms/StockForms.tsx:693
-#: src/hooks/UseStockAdjustActions.tsx:152
+#: src/hooks/UseStockAdjustActions.tsx:166
 msgid "Change Status"
 msgstr "Thay đổi trạng thái"
 
@@ -6018,163 +6020,212 @@ msgstr "Đến vị trí mặc định"
 msgid "Move"
 msgstr "Di chuyển"
 
+#: src/forms/StockForms.tsx:830
+#: src/pages/build/BuildDetail.tsx:353
+#: src/tables/stock/StockTransferOrderTable.tsx:66
+msgid "Destination Location"
+msgstr "Vị trí đích"
+
+#: src/forms/StockForms.tsx:831
+msgid "Warehouse location that will receive the stock"
+msgstr "Vị trí kho sẽ tiếp nhận hàng"
+
+#: src/forms/StockForms.tsx:837
+#: src/tables/stock/StockTransferOrderTable.tsx:81
+msgid "Scheduled Departure"
+msgstr "Thời gian dự kiến rời kho"
+
+#: src/forms/StockForms.tsx:838
+msgid "Stock becomes in transit at this date and time"
+msgstr "Hàng chuyển sang trạng thái đang vận chuyển tại thời điểm này"
+
+#: src/forms/StockForms.tsx:844
+#: src/tables/stock/StockTransferOrderTable.tsx:87
+msgid "Expected Arrival"
+msgstr "Thời gian dự kiến đến kho"
+
+#: src/forms/StockForms.tsx:845
+msgid "Stock is received into the destination at this date and time"
+msgstr "Hàng được ghi nhận vào kho đích tại thời điểm này"
+
 #: src/forms/StockForms.tsx:851
+msgid "Advance Warning Days"
+msgstr "Số ngày cảnh báo trước"
+
+#: src/forms/StockForms.tsx:852
+msgid "Notify before stock departs and arrives"
+msgstr "Thông báo trước khi hàng rời kho và đến kho"
+
+#: src/forms/StockForms.tsx:889
 msgid "Return"
 msgstr "Trả lại"
 
-#: src/forms/StockForms.tsx:988
+#: src/forms/StockForms.tsx:1026
 #: src/pages/Index/Scan.tsx:180
 msgid "Count"
 msgstr "Đếm"
 
-#: src/forms/StockForms.tsx:1295
-#: src/hooks/UseStockAdjustActions.tsx:112
+#: src/forms/StockForms.tsx:1333
+#: src/hooks/UseStockAdjustActions.tsx:116
 msgid "Add Stock"
 msgstr "Nhập thêm tồn kho"
 
-#: src/forms/StockForms.tsx:1296
+#: src/forms/StockForms.tsx:1334
 msgid "Stock added"
 msgstr "tồn kho added"
 
-#: src/forms/StockForms.tsx:1299
+#: src/forms/StockForms.tsx:1337
 msgid "Increase the quantity of the selected stock items by a given amount."
 msgstr "Tăng số lượng các mặt hàng tồn kho đã chọn theo giá trị nhập."
 
-#: src/forms/StockForms.tsx:1310
-#: src/hooks/UseStockAdjustActions.tsx:122
+#: src/forms/StockForms.tsx:1348
+#: src/hooks/UseStockAdjustActions.tsx:126
 msgid "Remove Stock"
 msgstr "Giảm tồn kho"
 
-#: src/forms/StockForms.tsx:1311
+#: src/forms/StockForms.tsx:1349
 msgid "Stock removed"
 msgstr "tồn kho đã xóa"
 
-#: src/forms/StockForms.tsx:1314
+#: src/forms/StockForms.tsx:1352
 msgid "Decrease the quantity of the selected stock items by a given amount."
 msgstr "Giảm số lượng các mặt hàng tồn kho đã chọn theo giá trị nhập."
 
-#: src/forms/StockForms.tsx:1325
-#: src/hooks/UseStockAdjustActions.tsx:132
+#: src/forms/StockForms.tsx:1363
+#: src/hooks/UseStockAdjustActions.tsx:136
 msgid "Transfer Stock"
 msgstr "Chuyển kho"
 
-#: src/forms/StockForms.tsx:1326
+#: src/forms/StockForms.tsx:1364
 msgid "Stock transferred"
 msgstr "tồn kho transferred"
 
-#: src/forms/StockForms.tsx:1329
+#: src/forms/StockForms.tsx:1367
 msgid "Transfer selected items to the specified location."
 msgstr "Chuyển các mục đã chọn đến vị trí chỉ định."
 
-#: src/forms/StockForms.tsx:1340
-#: src/hooks/UseStockAdjustActions.tsx:182
+#: src/forms/StockForms.tsx:1378
+#: src/hooks/UseStockAdjustActions.tsx:146
+msgid "Schedule Stock Transfer"
+msgstr "Lên lịch chuyển kho"
+
+#: src/forms/StockForms.tsx:1379
+msgid "Stock transfer scheduled"
+msgstr "Đã lên lịch chuyển kho"
+
+#: src/forms/StockForms.tsx:1382
+msgid "Selected quantities become unavailable immediately, leave the source on the scheduled departure, and arrive at the destination on the expected arrival."
+msgstr "Số lượng đã chọn sẽ ngừng khả dụng ngay, rời kho nguồn theo lịch và được ghi nhận tại kho đích vào thời gian dự kiến đến."
+
+#: src/forms/StockForms.tsx:1393
+#: src/hooks/UseStockAdjustActions.tsx:196
 msgid "Return Stock"
 msgstr "Return tồn kho"
 
-#: src/forms/StockForms.tsx:1341
+#: src/forms/StockForms.tsx:1394
 msgid "Stock returned"
 msgstr "tồn kho returned"
 
-#: src/forms/StockForms.tsx:1344
+#: src/forms/StockForms.tsx:1397
 msgid "Return selected items into stock, to the specified location."
 msgstr "Trả các mục đã chọn về tồn kho tại vị trí chỉ định."
 
-#: src/forms/StockForms.tsx:1355
-#: src/hooks/UseStockAdjustActions.tsx:102
+#: src/forms/StockForms.tsx:1408
+#: src/hooks/UseStockAdjustActions.tsx:106
 msgid "Count Stock"
 msgstr "Kiểm kê tồn kho"
 
-#: src/forms/StockForms.tsx:1356
+#: src/forms/StockForms.tsx:1409
 msgid "Stock counted"
 msgstr "Kho đã đếm"
 
-#: src/forms/StockForms.tsx:1359
+#: src/forms/StockForms.tsx:1412
 msgid "Count the selected stock items, and adjust the quantity accordingly."
 msgstr "Kiểm kê các mặt hàng tồn kho đã chọn và điều chỉnh số lượng tương ứng."
 
-#: src/forms/StockForms.tsx:1370
+#: src/forms/StockForms.tsx:1423
 msgid "Change Stock Status"
 msgstr "Đổi trạng thái tồn kho"
 
-#: src/forms/StockForms.tsx:1371
+#: src/forms/StockForms.tsx:1424
 msgid "Stock status changed"
 msgstr "tồn kho trạng thái changed"
 
-#: src/forms/StockForms.tsx:1374
+#: src/forms/StockForms.tsx:1427
 msgid "Change the status of the selected stock items."
 msgstr "Đổi trạng thái các mặt hàng tồn kho đã chọn."
 
-#: src/forms/StockForms.tsx:1397
-#: src/hooks/UseStockAdjustActions.tsx:162
+#: src/forms/StockForms.tsx:1450
+#: src/hooks/UseStockAdjustActions.tsx:176
 msgid "Change Batch Code"
 msgstr "Đổi mã lô"
 
-#: src/forms/StockForms.tsx:1400
+#: src/forms/StockForms.tsx:1453
 msgid "Change batch code for the selected stock items"
 msgstr "Đổi mã lô cho các mặt hàng tồn kho đã chọn"
 
-#: src/forms/StockForms.tsx:1417
-#: src/hooks/UseStockAdjustActions.tsx:142
+#: src/forms/StockForms.tsx:1470
+#: src/hooks/UseStockAdjustActions.tsx:156
 msgid "Merge Stock"
 msgstr "Gộp tồn kho"
 
-#: src/forms/StockForms.tsx:1418
+#: src/forms/StockForms.tsx:1471
 msgid "Stock merged"
 msgstr "tồn kho merged"
 
-#: src/forms/StockForms.tsx:1420
+#: src/forms/StockForms.tsx:1473
 msgid "Merge Stock Items"
 msgstr "Merge mặt hàng tồn kho"
 
-#: src/forms/StockForms.tsx:1422
+#: src/forms/StockForms.tsx:1475
 msgid "Merge operation cannot be reversed"
 msgstr "Merge thao tác không thể được reversed"
 
-#: src/forms/StockForms.tsx:1423
+#: src/forms/StockForms.tsx:1476
 msgid "Tracking information may be lost when merging items"
 msgstr "truy xuất thông tin may được lost khi merging mục"
 
-#: src/forms/StockForms.tsx:1424
+#: src/forms/StockForms.tsx:1477
 msgid "Supplier information may be lost when merging items"
 msgstr "nhà cung cấp thông tin may được lost khi merging mục"
 
-#: src/forms/StockForms.tsx:1442
+#: src/forms/StockForms.tsx:1495
 msgid "Assign Stock to Customer"
 msgstr "Gán tồn kho cho khách hàng"
 
-#: src/forms/StockForms.tsx:1443
+#: src/forms/StockForms.tsx:1496
 msgid "Stock assigned to customer"
 msgstr "tồn kho được giao tới khách hàng"
 
-#: src/forms/StockForms.tsx:1453
+#: src/forms/StockForms.tsx:1506
 msgid "Delete Stock Items"
 msgstr "Xóa mặt mặt hàng tồn kho"
 
-#: src/forms/StockForms.tsx:1454
+#: src/forms/StockForms.tsx:1507
 msgid "Stock deleted"
 msgstr "tồn kho deleted"
 
-#: src/forms/StockForms.tsx:1457
+#: src/forms/StockForms.tsx:1510
 msgid "This operation will permanently delete the selected stock items."
 msgstr "Thao tác này sẽ xóa vĩnh viễn các mặt hàng tồn kho đã chọn."
 
-#: src/forms/StockForms.tsx:1466
+#: src/forms/StockForms.tsx:1519
 msgid "Parent stock location"
 msgstr "Vị trí kho lớn"
 
-#: src/forms/StockForms.tsx:1597
+#: src/forms/StockForms.tsx:1650
 msgid "Find Serial Number"
 msgstr "Tìm số serial"
 
-#: src/forms/StockForms.tsx:1608
+#: src/forms/StockForms.tsx:1661
 msgid "No matching items"
 msgstr "Không có mục phù hợp"
 
-#: src/forms/StockForms.tsx:1614
+#: src/forms/StockForms.tsx:1667
 msgid "Multiple matching items"
 msgstr "Có nhiều mục phù hợp"
 
-#: src/forms/StockForms.tsx:1623
+#: src/forms/StockForms.tsx:1676
 msgid "Invalid response from server"
 msgstr "Phản hồi máy chủ không hợp lệ"
 
@@ -6411,55 +6462,59 @@ msgstr "Bạn có chắc chắn muốn xóa đối tượng này?"
 #~ msgid "Latest serial number"
 #~ msgstr "Latest serial number"
 
-#: src/hooks/UseStockAdjustActions.tsx:104
+#: src/hooks/UseStockAdjustActions.tsx:108
 msgid "Count selected stock items"
 msgstr "Count đã chọn mặt hàng tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:114
+#: src/hooks/UseStockAdjustActions.tsx:118
 msgid "Add to selected stock items"
 msgstr "thêm tới đã chọn mặt hàng tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:124
+#: src/hooks/UseStockAdjustActions.tsx:128
 msgid "Remove from selected stock items"
 msgstr "xóa từ đã chọn mặt hàng tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:134
+#: src/hooks/UseStockAdjustActions.tsx:138
 msgid "Transfer selected stock items"
 msgstr "Transfer đã chọn mặt hàng tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:144
+#: src/hooks/UseStockAdjustActions.tsx:148
+msgid "Reserve selected stock and transfer it on a schedule"
+msgstr "Giữ chỗ lượng hàng đã chọn và chuyển kho theo lịch"
+
+#: src/hooks/UseStockAdjustActions.tsx:158
 msgid "Merge selected stock items"
 msgstr "Merge đã chọn mặt hàng tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:154
+#: src/hooks/UseStockAdjustActions.tsx:168
 msgid "Change status of selected stock items"
 msgstr "thay đổi trạng thái của đã chọn mặt hàng tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:164
+#: src/hooks/UseStockAdjustActions.tsx:178
 msgid "Change batch code of selected stock items"
 msgstr "thay đổi mã lô của đã chọn mặt hàng tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:172
+#: src/hooks/UseStockAdjustActions.tsx:186
 msgid "Assign Stock"
 msgstr "Gán tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:174
+#: src/hooks/UseStockAdjustActions.tsx:188
 msgid "Assign selected stock items to a customer"
 msgstr "Gán các mặt hàng tồn kho đã chọn cho khách hàng"
 
-#: src/hooks/UseStockAdjustActions.tsx:184
+#: src/hooks/UseStockAdjustActions.tsx:198
 msgid "Return selected items into stock"
 msgstr "Return đã chọn mục into tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:192
+#: src/hooks/UseStockAdjustActions.tsx:206
 msgid "Delete Stock"
 msgstr "xóa tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:194
+#: src/hooks/UseStockAdjustActions.tsx:208
 msgid "Delete selected stock items"
 msgstr "xóa đã chọn mặt hàng tồn kho"
 
-#: src/hooks/UseStockAdjustActions.tsx:219
+#: src/hooks/UseStockAdjustActions.tsx:233
 #: src/pages/part/PartDetail.tsx:1150
 msgid "Stock Actions"
 msgstr "Thao tác tồn kho"
@@ -8091,7 +8146,7 @@ msgstr "Custom trạng thái"
 #: src/pages/build/BuildDetail.tsx:256
 #: src/pages/build/BuildDetail.tsx:750
 #: src/pages/build/BuildIndex.tsx:34
-#: src/pages/stock/LocationDetail.tsx:149
+#: src/pages/stock/LocationDetail.tsx:151
 #: src/tables/build/BuildOrderTable.tsx:127
 #: src/tables/build/BuildOrderTable.tsx:188
 #: src/tables/stock/StockLocationTable.tsx:48
@@ -8144,10 +8199,6 @@ msgstr "Vị trí bất kỳ"
 #~ msgid "Test Statistics"
 #~ msgstr "Test Statistics"
 
-#: src/pages/build/BuildDetail.tsx:353
-msgid "Destination Location"
-msgstr "Vị trí đích"
-
 #: src/pages/build/BuildDetail.tsx:368
 #~ msgid "Reporting Actions"
 #~ msgstr "Reporting Actions"
@@ -8165,6 +8216,7 @@ msgstr "Đã tạo"
 #: src/pages/build/BuildDetail.tsx:393
 #: src/tables/build/BuildOrderTable.tsx:97
 #: src/tables/sales/SalesOrderLineItemTable.tsx:345
+#: src/tables/stock/StockTransferOrderTable.tsx:33
 msgid "Completed"
 msgstr "Đã hoàn thành"
 
@@ -8361,7 +8413,7 @@ msgstr "Hiển thị lệnh sản xuất bên ngoài"
 #: src/pages/sales/SalesIndex.tsx:61
 #: src/pages/sales/SalesIndex.tsx:107
 #: src/pages/sales/SalesIndex.tsx:140
-#: src/pages/stock/LocationDetail.tsx:193
+#: src/pages/stock/LocationDetail.tsx:195
 msgid "Table View"
 msgstr "Table xem"
 
@@ -8382,7 +8434,7 @@ msgstr "Calendar xem"
 #: src/pages/sales/SalesIndex.tsx:79
 #: src/pages/sales/SalesIndex.tsx:125
 #: src/pages/sales/SalesIndex.tsx:152
-#: src/pages/stock/LocationDetail.tsx:199
+#: src/pages/stock/LocationDetail.tsx:201
 msgid "Parametric View"
 msgstr "Parametric xem"
 
@@ -8944,7 +8996,7 @@ msgstr "Normal người dùng"
 #~ msgstr "Basic user"
 
 #: src/pages/part/CategoryDetail.tsx:103
-#: src/pages/stock/LocationDetail.tsx:103
+#: src/pages/stock/LocationDetail.tsx:105
 #: src/tables/settings/ErrorTable.tsx:63
 #: src/tables/settings/ErrorTable.tsx:108
 msgid "Path"
@@ -8960,7 +9012,7 @@ msgid "Subcategories"
 msgstr "Phụ mục"
 
 #: src/pages/part/CategoryDetail.tsx:149
-#: src/pages/stock/LocationDetail.tsx:143
+#: src/pages/stock/LocationDetail.tsx:145
 #: src/tables/part/PartCategoryTable.tsx:91
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
@@ -8989,7 +9041,7 @@ msgid "Move items to parent category"
 msgstr "Move mục tới cha category"
 
 #: src/pages/part/CategoryDetail.tsx:196
-#: src/pages/stock/LocationDetail.tsx:262
+#: src/pages/stock/LocationDetail.tsx:270
 msgid "Delete items"
 msgstr "Xoá"
 
@@ -9216,6 +9268,7 @@ msgstr "Ngày tạo"
 #: src/pages/part/PartDetail.tsx:660
 #: src/tables/ColumnRenderers.tsx:639
 #: src/tables/Filter.tsx:433
+#: src/tables/stock/StockTransferOrderTable.tsx:109
 msgid "Created By"
 msgstr "Tạo bởi"
 
@@ -9378,11 +9431,6 @@ msgstr "Giá bán"
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:267
 msgid "Sale History"
 msgstr "Lịch sử bán hàng"
-
-#: src/pages/part/PartSchedulingDetail.tsx:51
-#: src/pages/part/PartSchedulingDetail.tsx:291
-#~ msgid "Scheduled"
-#~ msgstr "Scheduled"
 
 #: src/pages/part/PartSchedulingDetail.tsx:95
 #~ msgid "Quantity is speculative"
@@ -9989,29 +10037,33 @@ msgstr "Bỏ kiểm tra"
 msgid "Mark shipment as unchecked"
 msgstr "Mark phiếu giao hàng as unđã kiểm tra"
 
-#: src/pages/stock/LocationDetail.tsx:119
+#: src/pages/stock/LocationDetail.tsx:121
 msgid "Parent Location"
 msgstr "Vị trí cha"
 
-#: src/pages/stock/LocationDetail.tsx:137
-#: src/pages/stock/LocationDetail.tsx:185
+#: src/pages/stock/LocationDetail.tsx:139
+#: src/pages/stock/LocationDetail.tsx:187
 msgid "Sublocations"
 msgstr "Vị trí con"
 
-#: src/pages/stock/LocationDetail.tsx:155
+#: src/pages/stock/LocationDetail.tsx:157
 #: src/tables/stock/StockLocationTable.tsx:57
 msgid "Location Type"
 msgstr "Loại vị trí"
 
-#: src/pages/stock/LocationDetail.tsx:166
+#: src/pages/stock/LocationDetail.tsx:168
 msgid "Top level stock location"
 msgstr "Vị trí kho tổng"
 
-#: src/pages/stock/LocationDetail.tsx:179
+#: src/pages/stock/LocationDetail.tsx:181
 msgid "Location Details"
 msgstr "Chi tiết địa điểm"
 
-#: src/pages/stock/LocationDetail.tsx:225
+#: src/pages/stock/LocationDetail.tsx:227
+msgid "Stock Transfers"
+msgstr "Lệnh chuyển kho"
+
+#: src/pages/stock/LocationDetail.tsx:233
 msgid "Default Parts"
 msgstr "Vật tư mặc định"
 
@@ -10019,82 +10071,82 @@ msgstr "Vật tư mặc định"
 #~ msgid "Child Locations Action"
 #~ msgstr "Child Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:249
-#: src/pages/stock/LocationDetail.tsx:411
+#: src/pages/stock/LocationDetail.tsx:257
+#: src/pages/stock/LocationDetail.tsx:419
 #: src/tables/stock/StockLocationTable.tsx:124
 msgid "Edit Stock Location"
 msgstr "Sửa vị trí kho"
 
-#: src/pages/stock/LocationDetail.tsx:258
+#: src/pages/stock/LocationDetail.tsx:266
 msgid "Move items to parent location"
 msgstr "Move mục tới cha vị trí"
 
-#: src/pages/stock/LocationDetail.tsx:270
-#: src/pages/stock/LocationDetail.tsx:416
+#: src/pages/stock/LocationDetail.tsx:278
+#: src/pages/stock/LocationDetail.tsx:424
 msgid "Delete Stock Location"
 msgstr "Xoá vị trí kho"
-
-#: src/pages/stock/LocationDetail.tsx:273
-msgid "Items Action"
-msgstr "Thao tác mục"
-
-#: src/pages/stock/LocationDetail.tsx:275
-msgid "Action for stock items in this location"
-msgstr "Thao tác cho kho tại vị trí này"
-
-#: src/pages/stock/LocationDetail.tsx:280
-#: src/pages/stock/LocationDetail.tsx:407
-#: src/tables/stock/StockLocationTable.tsx:145
-msgid "Location Actions"
-msgstr "Thao tác vị trí"
 
 #: src/pages/stock/LocationDetail.tsx:280
 #~ msgid "Locations Action"
 #~ msgstr "Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:282
+#: src/pages/stock/LocationDetail.tsx:281
+msgid "Items Action"
+msgstr "Thao tác mục"
+
+#: src/pages/stock/LocationDetail.tsx:283
+msgid "Action for stock items in this location"
+msgstr "Thao tác cho kho tại vị trí này"
+
+#: src/pages/stock/LocationDetail.tsx:288
+#: src/pages/stock/LocationDetail.tsx:415
+#: src/tables/stock/StockLocationTable.tsx:145
+msgid "Location Actions"
+msgstr "Thao tác vị trí"
+
+#: src/pages/stock/LocationDetail.tsx:290
 msgid "Action for child locations in this location"
 msgstr "Thao tác cho vị trí phụ tại vị trí này"
 
-#: src/pages/stock/LocationDetail.tsx:317
+#: src/pages/stock/LocationDetail.tsx:325
 msgid "Scan Stock Item"
 msgstr "quét mặt hàng tồn kho"
 
-#: src/pages/stock/LocationDetail.tsx:335
+#: src/pages/stock/LocationDetail.tsx:343
 #: src/pages/stock/StockDetail.tsx:814
 msgid "Scanned stock item into location"
 msgstr "Scanned mặt hàng tồn kho into vị trí"
 
-#: src/pages/stock/LocationDetail.tsx:341
+#: src/pages/stock/LocationDetail.tsx:349
 #: src/pages/stock/StockDetail.tsx:820
 msgid "Error scanning stock item"
 msgstr "Lỗi scanning mặt hàng tồn kho"
 
-#: src/pages/stock/LocationDetail.tsx:348
+#: src/pages/stock/LocationDetail.tsx:356
 msgid "Scan Stock Location"
 msgstr "quét vị trí kho"
 
-#: src/pages/stock/LocationDetail.tsx:360
+#: src/pages/stock/LocationDetail.tsx:368
 msgid "Scanned stock location into location"
 msgstr "Scanned vị trí kho into vị trí"
 
-#: src/pages/stock/LocationDetail.tsx:366
+#: src/pages/stock/LocationDetail.tsx:374
 msgid "Error scanning stock location"
 msgstr "Lỗi scanning vị trí kho"
 
-#: src/pages/stock/LocationDetail.tsx:384
+#: src/pages/stock/LocationDetail.tsx:392
 msgid "Scan in stock items"
 msgstr "quét trong mặt hàng tồn kho"
 
-#: src/pages/stock/LocationDetail.tsx:386
+#: src/pages/stock/LocationDetail.tsx:394
 msgid "Scan item into this location"
 msgstr "quét mục into này vị trí"
 
-#: src/pages/stock/LocationDetail.tsx:390
+#: src/pages/stock/LocationDetail.tsx:398
 msgid "Scan in container"
 msgstr "quét trong container"
 
-#: src/pages/stock/LocationDetail.tsx:392
+#: src/pages/stock/LocationDetail.tsx:400
 msgid "Scan container into this location"
 msgstr "quét container into này vị trí"
 
@@ -13280,6 +13332,7 @@ msgid "Sent"
 msgstr "Đã gửi"
 
 #: src/tables/settings/EmailTable.tsx:29
+#: src/tables/stock/StockTransferOrderTable.tsx:35
 msgid "Failed"
 msgstr "Thất bại"
 
@@ -14099,6 +14152,70 @@ msgstr "mặt hàng tồn kho không longer tồn tại"
 #: src/tables/stock/StockTrackingTable.tsx:276
 msgid "No user information"
 msgstr "không người dùng thông tin"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:31
+msgid "Scheduled"
+msgstr "Đã lên lịch"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:32
+msgid "In Transit"
+msgstr "Đang vận chuyển"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:34
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:51
+msgid "Transfer Reference"
+msgstr "Mã lệnh chuyển"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:74
+msgid "Item Count"
+msgstr "Số mặt hàng"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:93
+msgid "Warning Days"
+msgstr "Số ngày cảnh báo"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:115
+msgid "Error Message"
+msgstr "Thông báo lỗi"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:132
+msgid "Could not update the stock transfer"
+msgstr "Không thể cập nhật lệnh chuyển kho"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:142
+msgid "Mark as Departed"
+msgstr "Xác nhận đã rời kho"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:143
+msgid "Move reserved stock into transit"
+msgstr "Chuyển hàng đã giữ chỗ sang trạng thái đang vận chuyển"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:150
+msgid "Stock transfer marked as departed"
+msgstr "Đã xác nhận hàng rời kho"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:154
+msgid "Receive at Destination"
+msgstr "Xác nhận đến kho đích"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:155
+msgid "Receive in-transit stock into the destination location"
+msgstr "Ghi nhận hàng đang vận chuyển vào kho đích"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:162
+msgid "Stock transfer completed"
+msgstr "Đã hoàn tất chuyển kho"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:167
+msgid "Cancel the transfer and release the reserved stock"
+msgstr "Hủy lệnh chuyển và giải phóng lượng hàng đã giữ chỗ"
+
+#: src/tables/stock/StockTransferOrderTable.tsx:172
+msgid "Stock transfer cancelled"
+msgstr "Đã hủy lệnh chuyển kho"
 
 #: src/tables/stock/TestStatisticsTable.tsx:34
 #: src/tables/stock/TestStatisticsTable.tsx:64
