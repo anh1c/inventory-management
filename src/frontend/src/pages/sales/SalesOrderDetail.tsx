@@ -430,7 +430,9 @@ export default function SalesOrderDetail() {
         name: 'build-orders',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !user.hasViewRole(UserRoles.build),
+        hidden:
+          !user.hasViewRole(UserRoles.build) ||
+          globalSettings.isSet('BUILDORDER_DISABLED', true),
         content: order?.pk ? (
           <BuildOrderTable salesOrderId={order.pk} />
         ) : (
@@ -451,7 +453,7 @@ export default function SalesOrderDetail() {
         has_note: !!order.notes
       })
     ];
-  }, [order, id, user, soStatus, user]);
+  }, [order, id, user, soStatus, globalSettings]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),

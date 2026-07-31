@@ -334,7 +334,9 @@ export default function StockDetail() {
         name: 'consumed_by',
         label: t`Consumed By`,
         model: ModelType.build,
-        hidden: !stockitem.consumed_by,
+        hidden:
+          !stockitem.consumed_by ||
+          globalSettings.isSet('BUILDORDER_DISABLED', true),
         icon: 'build',
         model_field: 'reference'
       },
@@ -343,7 +345,9 @@ export default function StockDetail() {
         name: 'build',
         label: t`Build Order`,
         model: ModelType.build,
-        hidden: !stockitem.build,
+        hidden:
+          !stockitem.build ||
+          globalSettings.isSet('BUILDORDER_DISABLED', true),
         model_field: 'reference'
       },
       {
@@ -465,11 +469,12 @@ export default function StockDetail() {
   const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
     return (
+      !globalSettings.isSet('BUILDORDER_DISABLED', true) &&
       stockitem?.part_detail?.component && // Must be a "component"
       !stockitem?.sales_order && // Must not be assigned to a sales order
       !stockitem?.belongs_to
     ); // Must not be installed into another item
-  }, [stockitem]);
+  }, [stockitem, globalSettings]);
 
   const showSalesAllocations: boolean = useMemo(() => {
     return stockitem?.part_detail?.salable;

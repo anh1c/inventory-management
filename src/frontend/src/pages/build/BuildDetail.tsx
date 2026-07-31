@@ -39,6 +39,7 @@ import {
   HoldItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
+import PermissionDenied from '../../components/errors/PermissionDenied';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
@@ -143,6 +144,7 @@ export default function BuildDetail() {
 
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
+  const buildOrdersEnabled = !globalSettings.isSet('BUILDORDER_DISABLED', true);
 
   // Fetch the number of BOM items associated with the build order
   const { instance: buildLineData, instanceQuery: buildLineQuery } =
@@ -754,6 +756,10 @@ export default function BuildDetail() {
           />
         ];
   }, [build, instanceQuery]);
+
+  if (!buildOrdersEnabled) {
+    return <PermissionDenied />;
+  }
 
   return (
     <>

@@ -24,6 +24,7 @@ import common.currency
 import common.filters
 import common.models
 import common.serializers
+import common.settings
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
@@ -1017,6 +1018,30 @@ class PartSerializer(
 
         return img
 
+    def validate(self, data):
+        """Validate part data against disabled manufacturing settings."""
+        data = super().validate(data)
+
+        if common.settings.get_global_setting(
+            'BUILDORDER_DISABLED', backup_value=True
+        ):
+            errors = {}
+
+            if data.get('assembly') is True:
+                errors['assembly'] = _(
+                    'Assembly parts are disabled while manufacturing is disabled'
+                )
+
+            if data.get('component') is True:
+                errors['component'] = _(
+                    'Component parts are disabled while manufacturing is disabled'
+                )
+
+            if errors:
+                raise ValidationError(errors)
+
+        return data
+
     @transaction.atomic
     def create(self, validated_data):
         """Custom method for creating a new Part instance using this serializer."""
@@ -1036,7 +1061,9 @@ class PartSerializer(
         if duplicate:
             original = duplicate['part']
 
-            if duplicate.get('copy_bom', False):
+            if duplicate.get('copy_bom', False) and not common.settings.get_global_setting(
+                'BUILDORDER_DISABLED', backup_value=True
+            ):
                 instance.copy_bom_from(original)
 
             if duplicate.get('copy_notes', False):

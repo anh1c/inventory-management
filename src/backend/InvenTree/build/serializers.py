@@ -400,6 +400,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     def validate(self, data):
         """Perform form validation."""
         part = self.get_part()
+        build = self.get_build()
 
         # Cache a list of serial numbers (to be used in the "save" method)
         self.serials = None
@@ -431,6 +432,11 @@ class BuildOutputCreateSerializer(serializers.Serializer):
                 msg += ','.join([str(e) for e in existing])
 
                 raise ValidationError({'serial_numbers': msg})
+
+        if not build.is_fully_allocated(tracked=False):
+            raise ValidationError(
+                _('Cannot create build output until all required stock has been allocated')
+            )
 
         return data
 
@@ -561,6 +567,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             'location',
             'status_custom_key',
             'accept_incomplete_allocation',
+            'auto_consume_allocated_stock',
             'notes',
         ]
 
@@ -583,11 +590,56 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Complete outputs if stock has not been fully allocated'),
     )
 
+    auto_consume_allocated_stock = serializers.BooleanField(
+        default=False,
+        required=False,
+        label=_('Auto Consume Allocated Stock'),
+        help_text=_('Consume allocated build stock before completing outputs'),
+    )
+
     notes = serializers.CharField(label=_('Notes'), required=False, allow_blank=True)
+
+    @staticmethod
+    def has_unconsumed_stock(build):
+        """Return True if any required untracked build stock remains unconsumed."""
+        return (
+            build.build_lines.exclude(bom_item__consumable=True)
+            .filter(bom_item__sub_part__trackable=False, quantity__gt=F('consumed'))
+            .exists()
+        )
+
+    @staticmethod
+    def consume_allocated_stock(build, user, notes=''):
+        """Consume allocated untracked stock up to each build line's remaining need."""
+        lines = (
+            build.build_lines.exclude(bom_item__consumable=True)
+            .filter(bom_item__sub_part__trackable=False)
+            .prefetch_related('allocations')
+        )
+
+        for line in lines:
+            remaining = max(line.quantity - line.consumed, 0)
+
+            if remaining <= 0:
+                continue
+
+            for allocation in list(line.allocations.all()):
+                quantity = min(allocation.quantity, remaining)
+
+                if quantity <= 0:
+                    continue
+
+                allocation.complete_allocation(quantity=quantity, notes=notes, user=user)
+                remaining -= quantity
+
+                if remaining <= 0:
+                    break
 
     def validate(self, data):
         """Perform data validation for this serializer."""
         super().validate(data)
+
+        build = self.context['build']
 
         outputs = data.get('outputs', [])
 
@@ -618,6 +670,20 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         if len(outputs) == 0:
             raise ValidationError(_('A list of build outputs must be provided'))
 
+        auto_consume = data.get('auto_consume_allocated_stock', False)
+
+        if not build.is_fully_allocated(tracked=False):
+            raise ValidationError(
+                _('Cannot complete build output until all required stock has been allocated')
+            )
+
+        if not auto_consume and self.has_unconsumed_stock(build):
+            raise ValidationError(
+                _(
+                    'Không thể hoàn thiện đầu ra sản xuất khi chưa tiêu hao đủ vật tư cần thiết'
+                )
+            )
+
         return data
 
     def save(self):
@@ -630,6 +696,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         location = data.get('location', None)
         status = data.get('status_custom_key', StockStatus.OK.value)
         notes = data.get('notes', '')
+        auto_consume = data.get('auto_consume_allocated_stock', False)
 
         outputs = data.get('outputs', [])
 
@@ -641,6 +708,11 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         # Mark the specified build outputs as "complete"
         with transaction.atomic():
+            if auto_consume:
+                self.consume_allocated_stock(
+                    build, request.user if request else None, notes=notes
+                )
+
             for item in outputs:
                 output = item['output']
                 quantity = item.get('quantity', None)

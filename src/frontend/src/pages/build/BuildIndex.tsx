@@ -54,6 +54,7 @@ function BuildOrderCalendar() {
  */
 export default function BuildIndex() {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const [buildOrderView, setBuildOrderView] = useLocalStorage<string>({
     key: 'build-order-view',
@@ -92,7 +93,11 @@ export default function BuildIndex() {
     ];
   }, [user, buildOrderView]);
 
-  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.build)) {
+  if (
+    globalSettings.isSet('BUILDORDER_DISABLED', true) ||
+    !user.isLoggedIn() ||
+    !user.hasViewRole(UserRoles.build)
+  ) {
     return <PermissionDenied />;
   }
 

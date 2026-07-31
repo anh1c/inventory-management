@@ -18,10 +18,10 @@ export function notYetImplemented() {
 /**
  * Show a notification that the user does not have permission to perform the action
  */
-export function permissionDenied() {
+export function permissionDenied(message?: string) {
   notifications.show({
     title: t`Permission Denied`,
-    message: t`You do not have permission to perform this action`,
+    message: message ?? t`You do not have permission to perform this action`,
     color: 'red'
   });
 }

@@ -51,6 +51,7 @@ from .models import (
     SelectionListEntry,
     WebhookEndpoint,
     WebhookMessage,
+    WorkTicket,
 )
 
 CONTENT_TYPE_JSON = 'application/json'
@@ -1785,6 +1786,33 @@ class ProjectCodesTest(InvenTreeAPITestCase):
             data={'code': 'PRJ-999'},
             expected_code=403,
         )
+
+
+class WorkTicketAPITest(InvenTreeAPITestCase):
+    """Verify the manager-assignee status workflow."""
+
+    def test_status_workflow(self):
+        project = ProjectCode.objects.create(code='TICKET-001')
+        assignee = get_user_model().objects.create_user(username='ticket-assignee')
+        ticket = WorkTicket.objects.create(
+            title='Prepare quotation',
+            project_code=project,
+            assigned_by=self.user,
+            assigned_to=assignee,
+        )
+        self.assertEqual(ticket.code, 'CV-0000001')
+        url = reverse('api-work-ticket-detail', kwargs={'pk': ticket.pk})
+
+        self.client.force_authenticate(user=assignee)
+        self.patch(url, {'status': WorkTicket.Status.PROCESSING})
+        self.patch(url, {'status': WorkTicket.Status.REVIEW})
+        response = self.patch(url, {'status': WorkTicket.Status.DONE}, expected_code=403)
+        self.assertEqual(
+            response.data['detail'], 'Bạn không có quyền chuyển trạng thái công việc.'
+        )
+
+        self.client.force_authenticate(user=self.user)
+        self.patch(url, {'status': WorkTicket.Status.DONE})
 
 
 class CustomUnitAPITest(InvenTreeAPITestCase):

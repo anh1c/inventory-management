@@ -249,7 +249,8 @@ function NavTabs() {
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
-  const navTabs = getNavTabs(user);
+  const globalSettings = useGlobalSettingsState();
+  const navTabs = getNavTabs(user, globalSettings);
   const userSettings = useUserSettingsState();
 
   const withIcons: boolean = useMemo(
@@ -265,7 +266,7 @@ function NavTabs() {
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
-    const mainNavTabs = getNavTabs(user);
+    const mainNavTabs = getNavTabs(user, globalSettings);
 
     // static content
     mainNavTabs.forEach((tab) => {
@@ -312,7 +313,7 @@ function NavTabs() {
     });
 
     return _tabs;
-  }, [extraNavs, navTabs, user, withIcons]);
+  }, [extraNavs, globalSettings, navTabs, user, withIcons]);
 
   return (
     <Tabs

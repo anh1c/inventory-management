@@ -37,12 +37,14 @@ export function useSalesOrderFields({
   duplicateOrderId,
   create,
   linkedPurchaseContractId,
-  linkedSalesContractId
+  linkedSalesContractId,
+  projectCodeId
 }: {
   duplicateOrderId?: number;
   create?: boolean;
   linkedPurchaseContractId?: number;
   linkedSalesContractId?: number;
+  projectCodeId?: number;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
   const [selectedContract, setSelectedContract] = useState<any>(undefined);
@@ -96,6 +98,7 @@ export function useSalesOrderFields({
           disabled: !!linkedSalesContractId,
           filters: {
             contract_type: 'sales',
+            ...(projectCodeId ? { project_code: projectCodeId } : {}),
             ...(linkedPurchaseContractId
               ? { purchase_contract: linkedPurchaseContractId }
               : {})
@@ -112,8 +115,8 @@ export function useSalesOrderFields({
       project_code: {
         label: 'Mã dự án',
         required: true,
-        value: selectedContract?.project_code,
-        disabled: !!selectedContract?.project_code
+        value: projectCodeId ?? selectedContract?.project_code,
+        disabled: !!projectCodeId || !!selectedContract?.project_code
       },
       description: {
         label: 'Mô tả'
@@ -202,7 +205,8 @@ export function useSalesOrderFields({
     customerId,
     contractDateError,
     linkedPurchaseContractId,
-    linkedSalesContractId
+    linkedSalesContractId,
+    projectCodeId
   ]);
 }
 

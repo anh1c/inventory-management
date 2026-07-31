@@ -381,6 +381,11 @@ export function useCompleteBuildOutputsForm({
         }
       },
       notes: {},
+      auto_consume_allocated_stock: {
+        label: 'Tự động tiêu hao vật tư đã cấp phát',
+        description:
+          'Tiêu hao các vật tư đã cấp phát cho lệnh sản xuất trước khi hoàn thiện đầu ra'
+      },
       accept_incomplete_allocation: {
         hidden: !hasTrackedItems
       }

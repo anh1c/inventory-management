@@ -788,6 +788,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 'BO-{ref:04d}',
         'validator': build.validators.validate_build_order_reference_pattern,
     },
+    'BUILDORDER_DISABLED': {
+        'name': _('Disable build orders'),
+        'description': _('Temporarily disable manufacturing and build order functionality'),
+        'default': True,
+        'validator': bool,
+    },
     'BUILDORDER_REQUIRE_RESPONSIBLE': {
         'name': _('Require Responsible Owner'),
         'description': _('A responsible owner must be assigned to each order'),

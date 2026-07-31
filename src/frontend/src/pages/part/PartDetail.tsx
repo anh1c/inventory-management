@@ -296,6 +296,7 @@ export default function PartDetail() {
 
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
+  const buildOrdersDisabled = globalSettings.isSet('BUILDORDER_DISABLED', true);
 
   const { instance: serials } = useInstance({
     endpoint: ApiEndpoints.part_serial_numbers,
@@ -543,6 +544,7 @@ export default function PartDetail() {
         label: t`Allocated to Build Orders`,
         hidden:
           fetching ||
+          buildOrdersDisabled ||
           (partRequirements.required_for_build_orders <= 0 &&
             partRequirements.allocated_to_build_orders <= 0)
       },
@@ -795,7 +797,9 @@ export default function PartDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmarks />,
-        hidden: (!part.component && !part.salable) || part.virtual,
+        hidden:
+          ((buildOrdersDisabled || !part.component) && !part.salable) ||
+          part.virtual,
         content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
       },
       {
@@ -803,7 +807,7 @@ export default function PartDetail() {
         label: t`Bill of Materials`,
         controls: <BomValidationInformation partId={part.pk ?? -1} />,
         icon: <IconListTree />,
-        hidden: !part.assembly,
+        hidden: buildOrdersDisabled || !part.assembly,
         content: part?.pk ? (
           <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
         ) : (
@@ -814,7 +818,7 @@ export default function PartDetail() {
         name: 'used_in',
         label: t`Used In`,
         icon: <IconStack2 />,
-        hidden: !part.component,
+        hidden: buildOrdersDisabled || !part.component,
         content: <UsedInTable partId={part.pk ?? -1} />
       },
       {
@@ -869,7 +873,10 @@ export default function PartDetail() {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
+        hidden:
+          !part.assembly ||
+          !user.hasViewRole(UserRoles.build) ||
+          buildOrdersDisabled,
         content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {

@@ -8,6 +8,7 @@ export enum ModelType {
   partcategory = 'partcategory',
   parttesttemplate = 'parttesttemplate',
   projectcode = 'projectcode',
+  workticket = 'workticket',
   stockitem = 'stockitem',
   stocklocation = 'stocklocation',
   stocklocationtype = 'stocklocationtype',

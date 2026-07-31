@@ -16,6 +16,7 @@ import build.models as build_models
 import build.serializers
 import common.filters
 import common.serializers
+import common.settings
 import company.models as company_models
 import order.models
 import part.filters as part_filters
@@ -69,6 +70,7 @@ class ContractBriefSerializer(InvenTreeModelSerializer):
             'contract_type',
             'title',
             'project_code',
+            'work_ticket',
             'project_code_detail',
             'buyer',
             'seller',
@@ -161,6 +163,7 @@ class ContractSerializer(
             'contract_type',
             'title',
             'project_code',
+            'work_ticket',
             'project_code_detail',
             'project_code_label',
             'buyer',
@@ -319,6 +322,18 @@ class ContractSerializer(
     def validate(self, data):
         """Validate contract order relationships and derived values."""
         data = super().validate(data)
+
+        work_ticket = data.get('work_ticket', getattr(self.instance, 'work_ticket', None))
+        request = self.context.get('request')
+        if work_ticket:
+            if request and request.user.pk not in {
+                work_ticket.assigned_to_id,
+                work_ticket.assigned_by_id,
+            }:
+                raise ValidationError({
+                    'work_ticket': _('Only the ticket assignee or assigner can create linked records')
+                })
+            data['project_code'] = work_ticket.project_code
 
         contract_type = data.get(
             'contract_type', getattr(self.instance, 'contract_type', None)
@@ -549,6 +564,10 @@ class AbstractOrderSerializer(
 
     created_by = UserSerializer(read_only=True)
 
+    work_ticket_detail = common.serializers.WorkTicketSerializer(
+        source='work_ticket', read_only=True, allow_null=True
+    )
+
     duplicate = DuplicateOrderSerializer(
         label=_('Duplicate Order'),
         help_text=_('Specify options for duplicating this order'),
@@ -565,7 +584,7 @@ class AbstractOrderSerializer(
     def annotate_queryset(queryset):
         """Add extra information to the queryset."""
         queryset = queryset.annotate(line_items=SubqueryCount('lines'))
-        queryset = queryset.select_related('created_by')
+        queryset = queryset.select_related('created_by', 'work_ticket')
 
         return queryset
 
@@ -584,6 +603,8 @@ class AbstractOrderSerializer(
             'completed_lines',
             'link',
             'project_code',
+            'work_ticket',
+            'work_ticket_detail',
             'reference',
             'responsible',
             'contact',
@@ -636,6 +657,18 @@ class AbstractOrderSerializer(
         data = super().validate(data)
         contract = data.get('contract')
 
+        work_ticket = data.get('work_ticket', getattr(self.instance, 'work_ticket', None))
+        request = self.context.get('request')
+        if work_ticket:
+            if request and request.user.pk not in {
+                work_ticket.assigned_to_id,
+                work_ticket.assigned_by_id,
+            }:
+                raise ValidationError({
+                    'work_ticket': _('Only the ticket assignee or assigner can create linked records')
+                })
+            data['project_code'] = work_ticket.project_code
+
         if 'contract' not in data and self.instance is not None:
             contract = self.instance.contracts.first()
 
@@ -666,6 +699,10 @@ class AbstractOrderSerializer(
             sales_order = data.get('sales_order', getattr(self.instance, 'sales_order', None))
             build_order = data.get('build_order', getattr(self.instance, 'build_order', None))
             destination = data.get('destination', getattr(self.instance, 'destination', None))
+            build_orders_enabled = common.settings.get_global_setting(
+                'BUILDORDER_DISABLED', backup_value=True
+            )
+            build_orders_enabled = not build_orders_enabled
 
             if output_type == order.models.PurchaseOrder.OutputType.COMMERCIAL:
                 if not sales_order:
@@ -707,6 +744,13 @@ class AbstractOrderSerializer(
                 order.models.PurchaseOrder.OutputType.CONSTRUCTION_SITE,
             ):
                 if output_type == order.models.PurchaseOrder.OutputType.WORKSHOP:
+                    if not build_orders_enabled and build_order:
+                        raise ValidationError({
+                            'build_order': _(
+                                'Build order functionality is currently disabled'
+                            )
+                        })
+
                     if destination and build_order:
                         raise ValidationError({
                             'destination': _(
@@ -888,6 +932,7 @@ class AbstractOrderSerializer(
             if copy_lines:
                 for line in copy_from.lines.all():
                     instance.clean_line_item(line)
+                    line.full_clean()
                     line.save()
 
             if copy_extra_lines:
@@ -1753,10 +1798,10 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         """
         super().validate(data)
 
-        order = self.context['order']
+        purchase_order = self.context['order']
         items = data.get('items', [])
 
-        location = data.get('location', order.destination)
+        location = data.get('location', purchase_order.destination)
 
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
@@ -1767,6 +1812,40 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         # Check if the location is not specified for any particular item
         for item in items:
             line = item['line_item']
+            direct_allocation_order = (
+                purchase_order.output_type
+                == order.models.PurchaseOrder.OutputType.COMMERCIAL
+                or (
+                    purchase_order.output_type
+                    == order.models.PurchaseOrder.OutputType.WORKSHOP
+                    and purchase_order.build_order_id is not None
+                )
+            )
+
+            if (
+                purchase_order.output_type
+                == order.models.PurchaseOrder.OutputType.COMMERCIAL
+            ):
+                if line.order_id != purchase_order.pk:
+                    raise ValidationError({_('Line item does not match purchase order')})
+                if line.sales_order_line is None:
+                    raise ValidationError({
+                        'line_item': _(
+                            'Commercial purchase line must link to a sales order line'
+                        )
+                    })
+                item['location'] = item.get('location') or location or line.get_destination()
+
+            if purchase_order.output_type == order.models.PurchaseOrder.OutputType.WORKSHOP:
+                if line.order_id != purchase_order.pk:
+                    raise ValidationError({_('Line item does not match purchase order')})
+                if purchase_order.build_order_id is not None and line.build_line is None:
+                    raise ValidationError({
+                        'line_item': _(
+                            'Workshop purchase line must link to a build order line'
+                        )
+                    })
+                item['location'] = item.get('location') or location or line.get_destination()
 
             if not item.get('location', None):
                 # If a global location is specified, use that
@@ -1776,12 +1855,16 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                 # The line item specifies a location?
                 item['location'] = line.get_destination()
 
-            if not item['location']:
+            if (
+                not item['location']
+                and not direct_allocation_order
+            ):
                 raise ValidationError({
                     'location': _('Destination location must be specified')
                 })
 
-            order.validate_output_destination(item['location'])
+            if not direct_allocation_order:
+                purchase_order.validate_output_destination(item['location'])
 
             barcode = item.get('barcode', '')
 
@@ -1798,15 +1881,15 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         data = self.validated_data
 
         request = self.context.get('request')
-        order = self.context['order']
+        purchase_order = self.context['order']
 
         items = data['items']
 
         # Location can be provided, or default to the order destination
-        location = data.get('location', order.destination)
+        location = data.get('location', purchase_order.destination)
 
         try:
-            items = order.receive_line_items(
+            items = purchase_order.receive_line_items(
                 location, items, request.user if request else None
             )
         except (ValidationError, DjangoValidationError) as exc:

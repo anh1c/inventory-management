@@ -24,6 +24,8 @@ export function usePartFields({
   );
 
   return useMemo(() => {
+    const buildOrdersDisabled = globalSettings.isSet('BUILDORDER_DISABLED', true);
+
     const fields: ApiFormFieldSet = {
       category: {
         filters: {
@@ -64,10 +66,18 @@ export function usePartFields({
         }
       },
       component: {
-        default: globalSettings.isSet('PART_COMPONENT')
+        default: buildOrdersDisabled
+          ? false
+          : globalSettings.isSet('PART_COMPONENT'),
+        value: buildOrdersDisabled ? false : undefined,
+        hidden: buildOrdersDisabled
       },
       assembly: {
-        default: globalSettings.isSet('PART_ASSEMBLY')
+        default: buildOrdersDisabled
+          ? false
+          : globalSettings.isSet('PART_ASSEMBLY'),
+        value: buildOrdersDisabled ? false : undefined,
+        hidden: buildOrdersDisabled
       },
       is_template: {
         default: globalSettings.isSet('PART_TEMPLATE')
@@ -157,7 +167,7 @@ export function usePartFields({
           },
           copy_bom: {
             value: globalSettings.isSet('PART_COPY_BOM'),
-            hidden: !duplicatePartInstance?.assembly
+            hidden: buildOrdersDisabled || !duplicatePartInstance?.assembly
           },
           copy_notes: {
             value: true

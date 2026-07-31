@@ -159,6 +159,8 @@ export default function ContractDetail() {
     params: {
       project_code_detail: true,
       sales_contract_detail: true,
+      buyer_detail: true,
+      seller_detail: true,
       party_a_contact_detail: true,
       party_b_contact_detail: true
     }
@@ -217,7 +219,8 @@ export default function ContractDetail() {
         label: 'Tên Bên A',
         icon: 'suppliers',
         model: ModelType.company,
-        model_formatter: () => contract?.seller_detail?.name ?? contract?.party_a_name ?? '-',
+        model_formatter: () =>
+          contract?.seller_detail?.name || contract?.party_a_name || '-',
         copy: true
       },
       {
@@ -249,7 +252,8 @@ export default function ContractDetail() {
         label: 'Tên Bên B',
         icon: 'suppliers',
         model: ModelType.company,
-        model_formatter: () => contract?.buyer_detail?.name ?? contract?.party_b_name ?? '-',
+        model_formatter: () =>
+          contract?.buyer_detail?.name || contract?.party_b_name || '-',
         copy: true
       },
       {

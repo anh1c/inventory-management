@@ -16,6 +16,7 @@ import StocktakeDashboardWidget from './widgets/StocktakeDashboardWidget';
 function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
   const user = useUserState.getState();
   const globalSettings = useGlobalSettingsState.getState();
+  const buildOrdersDisabled = globalSettings.isSet('BUILDORDER_DISABLED', true);
 
   const widgets: DashboardWidgetProps[] = [
     QueryCountDashboardWidget({
@@ -44,7 +45,8 @@ function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
         active: true, // Only show active parts
         assembly: true, // Only show parts which are assemblies
         bom_valid: false // Only show parts with invalid BOMs
-      }
+      },
+      enabled: !buildOrdersDisabled
     }),
     // TODO: 'latest parts'
     // TODO: 'recently updated stock'
@@ -64,7 +66,8 @@ function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'bld-req',
       description: t`Show parts which are required for active build orders`,
       modelType: ModelType.part,
-      params: { stock_to_build: true }
+      params: { stock_to_build: true },
+      enabled: !buildOrdersDisabled
     }),
     QueryCountDashboardWidget({
       title: t`Expired Stock Items`,
@@ -87,21 +90,24 @@ function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'act-bo',
       description: t`Show the number of build orders which are currently active`,
       modelType: ModelType.build,
-      params: { outstanding: true }
+      params: { outstanding: true },
+      enabled: !buildOrdersDisabled
     }),
     QueryCountDashboardWidget({
       title: t`Overdue Build Orders`,
       label: 'ovr-bo',
       description: t`Show the number of build orders which are overdue`,
       modelType: ModelType.build,
-      params: { overdue: true }
+      params: { overdue: true },
+      enabled: !buildOrdersDisabled
     }),
     QueryCountDashboardWidget({
       title: t`Assigned Build Orders`,
       label: 'asn-bo',
       description: t`Show the number of build orders which are assigned to you`,
       modelType: ModelType.build,
-      params: { assigned_to_me: true, outstanding: true }
+      params: { assigned_to_me: true, outstanding: true },
+      enabled: !buildOrdersDisabled
     }),
     QueryCountDashboardWidget({
       title: t`Active Sales Orders`,

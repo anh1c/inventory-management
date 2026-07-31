@@ -3,19 +3,23 @@ import { Accordion } from '@mantine/core';
 
 import { UserRoles } from '@lib/enums/Roles';
 import { StylishText } from '../../components/items/StylishText';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import PartBuildAllocationsTable from '../../tables/part/PartBuildAllocationsTable';
 import PartSalesAllocationsTable from '../../tables/part/PartSalesAllocationsTable';
 
 export default function PartAllocationPanel({ part }: Readonly<{ part: any }>) {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   return (
     <Accordion
       multiple={true}
       defaultValue={['buildallocations', 'salesallocations']}
     >
-      {part.component && user.hasViewRole(UserRoles.build) && (
+      {part.component &&
+        user.hasViewRole(UserRoles.build) &&
+        !globalSettings.isSet('BUILDORDER_DISABLED', true) && (
         <Accordion.Item value='buildallocations' key='buildallocations'>
           <Accordion.Control>
             <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>

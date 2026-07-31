@@ -168,6 +168,12 @@ class OrderFilter(FilterSet):
         label=_('Project Code'),
     )
 
+    work_ticket = rest_filters.ModelChoiceFilter(
+        queryset=common.models.WorkTicket.objects.all(),
+        field_name='work_ticket',
+        label=_('Work Ticket'),
+    )
+
     contract = rest_filters.ModelChoiceFilter(
         queryset=models.Contract.objects.all(),
         field_name='contracts',

@@ -51,7 +51,7 @@ import { TableHoverCard } from '../TableHoverCard';
 /**
  * Construct a list of columns for the part table
  */
-function partTableColumns(): TableColumn[] {
+function partTableColumns(buildOrdersDisabled: boolean): TableColumn[] {
   return [
     PartColumn({
       part: '',
@@ -85,7 +85,7 @@ function partTableColumns(): TableColumn[] {
 
         const stock = record?.total_in_stock ?? 0;
         const allocated =
-          (record?.allocated_to_build_orders ?? 0) +
+          (buildOrdersDisabled ? 0 : (record?.allocated_to_build_orders ?? 0)) +
           (record?.allocated_to_sales_orders ?? 0);
         const available = Math.max(0, stock - allocated);
         const min_stock = record?.minimum_stock ?? 0;
@@ -110,13 +110,13 @@ function partTableColumns(): TableColumn[] {
           );
         }
 
-        if (record.building) {
+        if (!buildOrdersDisabled && record.building) {
           extra.push(
             <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
           );
         }
 
-        if (record.allocated_to_build_orders > 0) {
+        if (!buildOrdersDisabled && record.allocated_to_build_orders > 0) {
           extra.push(
             <Text key='bo-allocations'>
               {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
@@ -344,7 +344,13 @@ export function PartListTable({
   tableName?: string;
   defaultPartData?: any;
 }>) {
-  const tableColumns = useMemo(() => partTableColumns(), []);
+  const globalSettings = useGlobalSettingsState();
+  const buildOrdersDisabled = globalSettings.isSet('BUILDORDER_DISABLED', true);
+
+  const tableColumns = useMemo(
+    () => partTableColumns(buildOrdersDisabled),
+    [buildOrdersDisabled]
+  );
   const tableFilters = useMemo(() => partTableFilters(), []);
 
   const table = useTable(tableName ?? 'part-list', {
@@ -356,7 +362,6 @@ export function PartListTable({
     ]
   });
   const user = useUserState();
-  const globalSettings = useGlobalSettingsState();
   const openImporter = useImporterState((state) => state.openImporter);
 
   const importSessionFields = useMemo(() => {
@@ -429,8 +434,10 @@ export function PartListTable({
           },
           copy_bom: {
             value:
-              selectedPart.assembly && globalSettings.isSet('PART_COPY_BOM'),
-            hidden: !selectedPart.assembly
+              !buildOrdersDisabled &&
+              selectedPart.assembly &&
+              globalSettings.isSet('PART_COPY_BOM'),
+            hidden: buildOrdersDisabled || !selectedPart.assembly
           },
           copy_notes: {
             value: true
@@ -445,7 +452,7 @@ export function PartListTable({
         }
       }
     };
-  }, [createPartFields, globalSettings, selectedPart]);
+  }, [buildOrdersDisabled, createPartFields, globalSettings, selectedPart]);
 
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,

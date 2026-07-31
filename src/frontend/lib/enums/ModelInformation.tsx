@@ -156,6 +156,14 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.project_code_list,
     icon: 'list_details'
   },
+  workticket: {
+    label: () => 'Ticket công việc',
+    label_multiple: () => 'Ticket công việc',
+    url_overview: '/planning/tickets/index/',
+    url_detail: '/planning/tickets/:pk/',
+    api_endpoint: ApiEndpoints.work_ticket_list,
+    icon: 'list_details'
+  },
   contract: {
     label: () => t`Contract`,
     label_multiple: () => t`Contracts`,

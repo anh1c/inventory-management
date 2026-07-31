@@ -222,7 +222,8 @@ export default function PurchaseOrderDetail() {
         link: true,
         name: 'sales_order',
         label: t`Sales Order`,
-        hidden: !order.sales_order
+        hidden: !order.sales_order,
+        model_formatter: (salesOrder: any) => salesOrder?.reference
       },
       {
         type: 'link',

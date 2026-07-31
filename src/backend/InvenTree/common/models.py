@@ -9,6 +9,7 @@ import hmac
 import json
 import math
 import os
+import re
 import uuid
 from collections import OrderedDict
 from datetime import timedelta, timezone
@@ -32,7 +33,7 @@ from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
-from django.db.models import enums
+from django.db.models import Q, enums
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.dispatch import receiver
@@ -70,6 +71,13 @@ from InvenTree.tracing import TRACE_PROC, TRACE_PROV
 from InvenTree.version import inventree_identifier
 
 logger = structlog.get_logger('inventree')
+
+
+def generate_next_work_ticket_code():
+    """Generate the next sequential work ticket code."""
+    codes = WorkTicket.objects.values_list('code', flat=True)
+    numbers = [int(code[3:]) for code in codes if re.fullmatch(r'CV-\d+', code)]
+    return f'CV-{max(numbers, default=0) + 1:07d}'
 
 
 class RenderMeta(enums.ChoicesType):
@@ -188,6 +196,89 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('User or group responsible for this project'),
         related_name='project_codes',
     )
+
+
+class WorkTicket(models.Model):
+    """A unit of work assigned by a manager within a project."""
+
+    class Status(models.TextChoices):
+        OPEN = 'open', _('Open')
+        PROCESSING = 'processing', _('Processing')
+        REVIEW = 'review', _('Review')
+        DONE = 'done', _('Done')
+
+    class Meta:
+        ordering = ['-updated', '-pk']
+        verbose_name = _('Work Ticket')
+        verbose_name_plural = _('Work Tickets')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-work-ticket-list')
+
+    @classmethod
+    def api_defaults(cls, request=None):
+        """Expose the next generated code to ticket creation forms."""
+        return {'code': generate_next_work_ticket_code()}
+
+    @classmethod
+    def get_overdue_filter(cls):
+        """Return tickets whose target completion date has passed."""
+        return ~Q(status=cls.Status.DONE) & Q(
+            target_date__isnull=False,
+            target_date__lt=InvenTree.helpers.current_date(),
+        )
+
+    def __str__(self):
+        """Render the ticket title."""
+        return f'{self.code}: {self.title}'
+
+    code = models.CharField(
+        max_length=64,
+        unique=True,
+        default=generate_next_work_ticket_code,
+        editable=False,
+        verbose_name=_('Work Code'),
+    )
+    title = models.CharField(max_length=200, verbose_name=_('Title'))
+    description = models.TextField(blank=True, verbose_name=_('Work Content'))
+    project_code = models.ForeignKey(
+        ProjectCode,
+        on_delete=models.PROTECT,
+        related_name='work_tickets',
+        verbose_name=_('Project Code'),
+    )
+    assigned_to = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='assigned_work_tickets',
+        verbose_name=_('Assigned To'),
+    )
+    assigned_by = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='created_work_tickets',
+        verbose_name=_('Assigned By'),
+    )
+    status = models.CharField(
+        max_length=16,
+        choices=Status.choices,
+        default=Status.OPEN,
+        verbose_name=_('Status'),
+    )
+    target_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Target Completion Date'),
+    )
+    completion_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name=_('Completion Date'),
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
 
 class BaseInvenTreeSetting(models.Model):

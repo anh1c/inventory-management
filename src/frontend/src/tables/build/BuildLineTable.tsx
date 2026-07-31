@@ -284,7 +284,13 @@ export default function BuildLineTable({
       );
     }
 
-    const sufficient = available >= record.quantity - record.allocated;
+    const remainingRequired = Math.max(
+      0,
+      (record.requiredQuantity ?? record.quantity ?? 0) -
+        (record.consumed ?? 0) -
+        (record.allocatedQuantity ?? record.allocated ?? 0)
+    );
+    const sufficient = remainingRequired <= 0 || available >= remainingRequired;
 
     if (!sufficient) {
       extra.push(
@@ -299,6 +305,9 @@ export default function BuildLineTable({
         icon={sufficient ? 'info' : 'exclamation'}
         iconColor={sufficient ? 'blue' : 'orange'}
         value={
+          remainingRequired <= 0 ? (
+            'Đã đủ'
+          ) :
           available > 0 ? (
             `${formatDecimal(available)}`
           ) : (

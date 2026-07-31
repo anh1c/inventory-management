@@ -47,7 +47,10 @@ import {
 } from '@lib/functions/Navigation';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { useUserSettingsState } from '../../states/SettingsStates';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
 import { getModelInfo } from '../render/ModelType';
@@ -207,6 +210,7 @@ export function SearchDrawer({
   const [searchText] = useDebouncedValue(value, 500);
 
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
 
   const [searchRegex, setSearchRegex] = useState<boolean>(false);
@@ -294,6 +298,7 @@ export function SearchDrawer({
           part_detail: true
         },
         enabled:
+          !globalSettings.isSet('BUILDORDER_DISABLED', true) &&
           user.hasViewRole(UserRoles.build) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
       },
@@ -377,7 +382,7 @@ export function SearchDrawer({
           userSettings.isSet('SEARCH_PREVIEW_SHOW_RETURN_ORDERS')
       }
     ];
-  }, [user, userSettings]);
+  }, [globalSettings, user, userSettings]);
 
   // Construct a list of search queries based on user permissions
   const searchQueries: SearchQuery[] = useMemo(() => {

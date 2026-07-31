@@ -83,7 +83,9 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         id: 'build',
         title: t`Sản xuất`,
         link: '/manufacturing/',
-        hidden: !user.hasViewRole(UserRoles.build),
+        hidden:
+          !user.hasViewRole(UserRoles.build) ||
+          globalSettings.isSet('BUILDORDER_DISABLED', true),
         icon: 'build'
       },
       {
@@ -110,6 +112,12 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         icon: 'batch'
       },
       {
+        id: 'planning',
+        title: t`Kế hoạch`,
+        link: '/planning/',
+        icon: 'tasks'
+      },
+      {
         id: 'users',
         title: t`Users`,
         link: '/core/index/users',
@@ -122,7 +130,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         icon: 'group'
       }
     ];
-  }, [user]);
+  }, [user, globalSettings]);
 
   const menuItemsAction: MenuLinkItem[] = useMemo(() => {
     return [
