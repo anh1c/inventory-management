@@ -88,6 +88,10 @@ export const WorkTicketDetail = Loadable(
   lazy(() => import('./pages/planning/WorkTicketDetail'))
 );
 
+export const WorkPlanDetail = Loadable(
+  lazy(() => import('./pages/planning/WorkPlanDetail'))
+);
+
 export const CompaniesIndex = Loadable(
   lazy(() => import('./pages/company/CompaniesIndex'))
 );
@@ -221,7 +225,9 @@ export const routes = (
         <Route path='index/*' element={<ProjectsIndex />} />
       </Route>
       <Route path='planning/'>
-        <Route index element={<Navigate to='tickets/index/' replace />} />
+        <Route index element={<Navigate to='plans/index/' replace />} />
+        <Route path='plans/index/*' element={<WorkTicketsIndex />} />
+        <Route path='plans/:id/*' element={<WorkPlanDetail />} />
         <Route path='tickets/index/*' element={<WorkTicketsIndex />} />
         <Route path='tickets/:id/*' element={<WorkTicketDetail />} />
         <Route path='tickets/*' element={<Navigate to='index/' replace />} />

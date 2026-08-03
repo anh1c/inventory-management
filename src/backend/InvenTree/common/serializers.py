@@ -1,7 +1,7 @@
 """JSON serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import BooleanField, Case, Count, OuterRef, Subquery, Value, When
+from django.db.models import BooleanField, Case, Count, OuterRef, Q, Subquery, Value, When
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -414,20 +414,173 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
     )
 
 
+class WorkPlanSerializer(InvenTreeModelSerializer):
+    """Serializer for project work plans and their aggregate progress."""
+
+    created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    created_by_detail = UserSerializer(source='created_by', read_only=True)
+    manager_detail = UserSerializer(source='manager', read_only=True)
+    project_code_detail = ProjectCodeSerializer(source='project_code', read_only=True)
+    code = serializers.CharField(read_only=True)
+    ticket_count = serializers.IntegerField(read_only=True, default=0)
+    completed_ticket_count = serializers.IntegerField(read_only=True, default=0)
+
+    class Meta:
+        model = common_models.WorkPlan
+        fields = [
+            'pk', 'code', 'name', 'description', 'project_code',
+            'project_code_detail', 'manager', 'manager_detail', 'created_by',
+            'created_by_detail', 'status', 'priority', 'start_date', 'target_date',
+            'ticket_count', 'completed_ticket_count', 'created', 'updated',
+        ]
+        read_only_fields = [
+            'code', 'ticket_count', 'completed_ticket_count', 'created', 'updated'
+        ]
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add ticket totals required by plan overview screens."""
+        return queryset.annotate(
+            ticket_count=Count('tickets', distinct=True),
+            completed_ticket_count=Count(
+                'tickets',
+                filter=Q(tickets__status=common_models.WorkTicket.Status.DONE),
+                distinct=True,
+            ),
+        )
+
+    def validate(self, attrs):
+        """Only the creator or plan manager can change a plan."""
+        attrs = super().validate(attrs)
+        request = self.context.get('request')
+        if (
+            self.instance
+            and request
+            and not request.user.is_staff
+            and request.user.pk not in {
+                self.instance.created_by_id,
+                self.instance.manager_id,
+            }
+        ):
+            raise PermissionDenied(_('Only the plan creator or manager can edit this plan'))
+
+        start_date = attrs.get(
+            'start_date', getattr(self.instance, 'start_date', None)
+        )
+        target_date = attrs.get(
+            'target_date', getattr(self.instance, 'target_date', None)
+        )
+        if start_date and target_date and target_date < start_date:
+            raise serializers.ValidationError({
+                'target_date': _(
+                    'Target completion date must not be before start date'
+                )
+            })
+
+        project_code = attrs.get(
+            'project_code', getattr(self.instance, 'project_code', None)
+        )
+        if (
+            self.instance
+            and project_code
+            and project_code.pk != self.instance.project_code_id
+            and self.instance.tickets.exists()
+        ):
+            raise serializers.ValidationError({
+                'project_code': _('Project code cannot be changed after tasks are added')
+            })
+
+        status = attrs.get('status', getattr(self.instance, 'status', None))
+        if (
+            self.instance
+            and status == common_models.WorkPlan.Status.DONE
+            and self.instance.tickets.exclude(
+                status=common_models.WorkTicket.Status.DONE
+            ).exists()
+        ):
+            raise serializers.ValidationError({
+                'status': _('All work tickets must be completed before closing the plan')
+            })
+        return attrs
+
+
+class WorkTicketReferenceSerializer(InvenTreeModelSerializer):
+    """Compact work-ticket representation for hierarchy fields."""
+
+    class Meta:
+        model = common_models.WorkTicket
+        fields = ['pk', 'code', 'title', 'status']
+
+
 class WorkTicketSerializer(InvenTreeModelSerializer):
     """Serializer enforcing the manager-assignee work ticket workflow."""
+
+    MANY_TO_MANY_FIELDS = ('dependencies',)
 
     assigned_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
     assigned_by_detail = UserSerializer(source='assigned_by', read_only=True)
     assigned_to_detail = UserSerializer(source='assigned_to', read_only=True)
+    plan_detail = WorkPlanSerializer(source='plan', read_only=True)
+    project_code_detail = ProjectCodeSerializer(
+        source='project_code', read_only=True
+    )
+    parent_detail = WorkTicketReferenceSerializer(source='parent', read_only=True)
+    dependency_details = WorkTicketReferenceSerializer(
+        source='dependencies', many=True, read_only=True
+    )
+    open_subtask_count = serializers.IntegerField(read_only=True, default=0)
     code = serializers.CharField(read_only=True)
 
     class Meta:
         model = common_models.WorkTicket
-        fields = ['pk', 'code', 'title', 'description', 'project_code', 'assigned_to', 'assigned_to_detail', 'assigned_by', 'assigned_by_detail', 'status', 'target_date', 'completion_date', 'overdue', 'created', 'updated']
+        fields = [
+            'pk', 'code', 'title', 'description', 'notes', 'plan', 'plan_detail',
+            'project_code', 'project_code_detail', 'parent', 'parent_detail', 'dependencies',
+            'dependency_details', 'assigned_to', 'assigned_to_detail',
+            'assigned_by', 'assigned_by_detail', 'status', 'priority',
+            'start_date', 'target_date', 'completion_date', 'estimated_hours',
+            'actual_hours', 'overdue', 'created', 'updated',
+            'open_subtask_count',
+        ]
         read_only_fields = ['code', 'completion_date', 'overdue', 'created', 'updated']
 
     overdue = serializers.BooleanField(read_only=True, default=False)
+
+    def skip_create_fields(self):
+        """Skip many-to-many fields when building the validation model."""
+        return [*super().skip_create_fields(), *self.MANY_TO_MANY_FIELDS]
+
+    def run_validation(self, data=serializers.empty):
+        """Validate many-to-many dependencies without direct model assignment."""
+        if self.instance is None or data in [serializers.empty, None]:
+            return super().run_validation(data)
+
+        initial_data = data.copy()
+        dependency_data = initial_data.pop('dependencies', serializers.empty)
+        validated_data = super().run_validation(initial_data)
+
+        if dependency_data is not serializers.empty:
+            validated_data['dependencies'] = self.fields[
+                'dependencies'
+            ].run_validation(dependency_data)
+            self._validate_dependencies(validated_data)
+
+        return validated_data
+
+    def create(self, validated_data):
+        """Create a ticket and then apply its dependencies."""
+        dependencies = validated_data.pop('dependencies', [])
+        instance = super().create(validated_data)
+        instance.dependencies.set(dependencies)
+        return instance
+
+    def update(self, instance, validated_data):
+        """Update a ticket and explicitly apply dependency changes."""
+        dependencies = validated_data.pop('dependencies', None)
+        instance = super().update(instance, validated_data)
+        if dependencies is not None:
+            instance.dependencies.set(dependencies)
+        return instance
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -436,24 +589,166 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
                 When(common_models.WorkTicket.get_overdue_filter(), then=Value(True)),
                 default=Value(False),
                 output_field=BooleanField(),
-            )
+            ),
+            open_subtask_count=Count(
+                'subtasks',
+                filter=~Q(subtasks__status=common_models.WorkTicket.Status.DONE),
+                distinct=True,
+            ),
         )
+
+    def _validate_dependencies(self, attrs):
+        """Ensure dependency links stay within the same plan and project."""
+        dependencies = attrs.get('dependencies')
+        if dependencies is None:
+            return
+
+        plan = attrs.get('plan', getattr(self.instance, 'plan', None))
+        project_code = attrs.get(
+            'project_code', getattr(self.instance, 'project_code', None)
+        )
+
+        for dependency in dependencies:
+            if self.instance and dependency.pk == self.instance.pk:
+                raise serializers.ValidationError({
+                    'dependencies': _('A work ticket cannot depend on itself')
+                })
+            if project_code and dependency.project_code_id != project_code.pk:
+                raise serializers.ValidationError({
+                    'dependencies': _('Dependencies must use the same project code')
+                })
+            if dependency.plan_id != (plan.pk if plan else None):
+                raise serializers.ValidationError({
+                    'dependencies': _('Dependencies must belong to the same plan')
+                })
+            if self.instance:
+                pending = [dependency]
+                visited = set()
+                while pending:
+                    candidate = pending.pop()
+                    if candidate.pk in visited:
+                        continue
+                    if candidate.pk == self.instance.pk:
+                        raise serializers.ValidationError({
+                            'dependencies': _(
+                                'Dependency would create a circular relationship'
+                            )
+                        })
+                    visited.add(candidate.pk)
+                    pending.extend(candidate.dependencies.all())
 
     def validate(self, attrs):
         """Allow only the assignee and manager to advance their respective steps."""
         request = self.context.get('request')
+        plan = attrs.get('plan', getattr(self.instance, 'plan', None))
+        project_code = attrs.get(
+            'project_code', getattr(self.instance, 'project_code', None)
+        )
+        if plan and project_code and plan.project_code_id != project_code.pk:
+            raise serializers.ValidationError({
+                'project_code': _('Work ticket must use the same project code as its plan')
+            })
+        start_date = attrs.get(
+            'start_date', getattr(self.instance, 'start_date', None)
+        )
+        target_date = attrs.get(
+            'target_date', getattr(self.instance, 'target_date', None)
+        )
+        if start_date and target_date and target_date < start_date:
+            raise serializers.ValidationError({
+                'target_date': _(
+                    'Target completion date must not be before start date'
+                )
+            })
+
+        parent = attrs.get('parent', getattr(self.instance, 'parent', None))
+        if parent:
+            if self.instance and parent.pk == self.instance.pk:
+                raise serializers.ValidationError({
+                    'parent': _('A work ticket cannot be its own parent')
+                })
+            if project_code and parent.project_code_id != project_code.pk:
+                raise serializers.ValidationError({
+                    'parent': _('Parent work ticket must use the same project code')
+                })
+            if parent.plan_id != (plan.pk if plan else None):
+                raise serializers.ValidationError({
+                    'parent': _('Parent work ticket must belong to the same plan')
+                })
+
+            ancestor = parent
+            while ancestor:
+                if self.instance and ancestor.pk == self.instance.pk:
+                    raise serializers.ValidationError({
+                        'parent': _('Parent work ticket would create a circular hierarchy')
+                    })
+                ancestor = ancestor.parent
+
+        self._validate_dependencies(attrs)
+
         if not self.instance:
             return attrs
 
-        if any(field != 'status' for field in attrs):
-            if request and request.user.pk == self.instance.assigned_by_id:
-                return attrs
+        non_status_fields = set(attrs) - {'status'}
+        can_manage = bool(
+            request
+            and (
+                request.user.is_staff
+                or request.user.pk == self.instance.assigned_by_id
+                or (
+                    self.instance.plan_id
+                    and request.user.pk
+                    in {
+                        self.instance.plan.manager_id,
+                        self.instance.plan.created_by_id,
+                    }
+                )
+            )
+        )
+        assignee_editable_fields = {'actual_hours', 'notes'}
+        can_update_progress = bool(
+            request
+            and request.user.pk == self.instance.assigned_to_id
+            and non_status_fields.issubset(assignee_editable_fields)
+        )
+        if non_status_fields and not can_manage and not can_update_progress:
             raise PermissionDenied(_('Only the assigning manager can edit this ticket'))
 
         if 'status' not in attrs or attrs['status'] == self.instance.status:
             return attrs
 
         current, target = self.instance.status, attrs['status']
+        if self.instance.plan_id and self.instance.plan.status in {
+            common_models.WorkPlan.Status.ON_HOLD,
+            common_models.WorkPlan.Status.DONE,
+            common_models.WorkPlan.Status.CANCELLED,
+        }:
+            raise serializers.ValidationError({
+                'status': _('Work status cannot be changed while the plan is inactive')
+            })
+
+        if target == common_models.WorkTicket.Status.PROCESSING:
+            dependencies = attrs.get('dependencies')
+            if dependencies is None:
+                dependencies = self.instance.dependencies.all()
+            if any(
+                dependency.status != common_models.WorkTicket.Status.DONE
+                for dependency in dependencies
+            ):
+                raise serializers.ValidationError({
+                    'status': _('Complete all dependencies before starting this work ticket')
+                })
+
+        if (
+            target == common_models.WorkTicket.Status.DONE
+            and self.instance.subtasks.exclude(
+                status=common_models.WorkTicket.Status.DONE
+            ).exists()
+        ):
+            raise serializers.ValidationError({
+                'status': _('Complete all subtasks before completing this work ticket')
+            })
+
         assignee_transition = (current, target) in {
             (common_models.WorkTicket.Status.OPEN, common_models.WorkTicket.Status.PROCESSING),
             (common_models.WorkTicket.Status.PROCESSING, common_models.WorkTicket.Status.REVIEW),
@@ -463,9 +758,23 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
             common_models.WorkTicket.Status.DONE,
         )
 
-        if assignee_transition and request and request.user.pk == self.instance.assigned_to_id:
+        if assignee_transition and request and (
+            request.user.is_staff
+            or request.user.pk == self.instance.assigned_to_id
+        ):
             return attrs
-        if manager_transition and request and request.user.pk == self.instance.assigned_by_id:
+        if manager_transition and request and (
+            request.user.is_staff
+            or request.user.pk == self.instance.assigned_by_id
+            or (
+                self.instance.plan_id
+                and request.user.pk
+                in {
+                    self.instance.plan.manager_id,
+                    self.instance.plan.created_by_id,
+                }
+            )
+        ):
             attrs['completion_date'] = now()
             return attrs
         raise PermissionDenied(_('Bạn không có quyền chuyển trạng thái công việc.'))

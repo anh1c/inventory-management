@@ -326,10 +326,20 @@ class ContractSerializer(
         work_ticket = data.get('work_ticket', getattr(self.instance, 'work_ticket', None))
         request = self.context.get('request')
         if work_ticket:
-            if request and request.user.pk not in {
+            allowed_users = {
                 work_ticket.assigned_to_id,
                 work_ticket.assigned_by_id,
-            }:
+            }
+            if work_ticket.plan_id:
+                allowed_users.update({
+                    work_ticket.plan.manager_id,
+                    work_ticket.plan.created_by_id,
+                })
+            if (
+                request
+                and not request.user.is_staff
+                and request.user.pk not in allowed_users
+            ):
                 raise ValidationError({
                     'work_ticket': _('Only the ticket assignee or assigner can create linked records')
                 })
@@ -660,10 +670,20 @@ class AbstractOrderSerializer(
         work_ticket = data.get('work_ticket', getattr(self.instance, 'work_ticket', None))
         request = self.context.get('request')
         if work_ticket:
-            if request and request.user.pk not in {
+            allowed_users = {
                 work_ticket.assigned_to_id,
                 work_ticket.assigned_by_id,
-            }:
+            }
+            if work_ticket.plan_id:
+                allowed_users.update({
+                    work_ticket.plan.manager_id,
+                    work_ticket.plan.created_by_id,
+                })
+            if (
+                request
+                and not request.user.is_staff
+                and request.user.pk not in allowed_users
+            ):
                 raise ValidationError({
                     'work_ticket': _('Only the ticket assignee or assigner can create linked records')
                 })

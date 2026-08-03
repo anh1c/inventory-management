@@ -59,14 +59,18 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function BuildOrderTable({
   partId,
   parentBuildId,
-  salesOrderId
+  salesOrderId,
+  workTicketId,
+  workTicketProjectCodeId
 }: Readonly<{
   partId?: number;
   parentBuildId?: number;
   salesOrderId?: number;
+  workTicketId?: number;
+  workTicketProjectCodeId?: number;
 }>) {
   const globalSettings = useGlobalSettingsState();
-  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index', {
+  const table = useTable(workTicketId ? `buildorder-ticket-${workTicketId}` : (!!partId ? 'buildorder-part' : 'buildorder-index'), {
     initialFilters: [
       {
         name: 'outstanding',
@@ -202,10 +206,30 @@ export function BuildOrderTable({
 
   const user = useUserState();
 
-  const buildOrderFields = useBuildOrderFields({
+  const baseBuildOrderFields = useBuildOrderFields({
     create: true,
     modalId: 'create-build-order'
   });
+  const buildOrderFields = useMemo(
+    () => ({
+      ...baseBuildOrderFields,
+      ...(workTicketId
+        ? {
+            work_ticket: {
+              field_type: 'number' as const,
+              hidden: true,
+              value: workTicketId
+            },
+            project_code: {
+              ...baseBuildOrderFields.project_code,
+              value: workTicketProjectCodeId,
+              disabled: true
+            }
+          }
+        : {})
+    }),
+    [baseBuildOrderFields, workTicketId, workTicketProjectCodeId]
+  );
 
   const newBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
@@ -215,7 +239,9 @@ export function BuildOrderTable({
     initialData: {
       part: partId,
       sales_order: salesOrderId,
-      parent: parentBuildId
+      parent: parentBuildId,
+      work_ticket: workTicketId,
+      project_code: workTicketProjectCodeId
     },
     follow: true,
     modelType: ModelType.build,
@@ -245,6 +271,7 @@ export function BuildOrderTable({
             part: partId,
             ancestor: parentBuildId,
             sales_order: salesOrderId,
+            work_ticket: workTicketId,
             part_detail: true
           },
           tableActions: tableActions,

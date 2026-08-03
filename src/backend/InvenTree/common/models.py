@@ -80,6 +80,13 @@ def generate_next_work_ticket_code():
     return f'CV-{max(numbers, default=0) + 1:07d}'
 
 
+def generate_next_work_plan_code():
+    """Generate the next sequential work plan code."""
+    codes = WorkPlan.objects.values_list('code', flat=True)
+    numbers = [int(code[3:]) for code in codes if re.fullmatch(r'KH-\d+', code)]
+    return f'KH-{max(numbers, default=0) + 1:07d}'
+
+
 class RenderMeta(enums.ChoicesType):
     """Metaclass for rendering choices."""
 
@@ -198,7 +205,103 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class WorkTicket(models.Model):
+class WorkPlan(models.Model):
+    """A project plan containing a coordinated collection of work tickets."""
+
+    class Status(models.TextChoices):
+        DRAFT = 'draft', _('Draft')
+        ACTIVE = 'active', _('Active')
+        ON_HOLD = 'on_hold', _('On Hold')
+        DONE = 'done', _('Done')
+        CANCELLED = 'cancelled', _('Cancelled')
+
+    class Priority(models.TextChoices):
+        LOW = 'low', _('Low')
+        NORMAL = 'normal', _('Normal')
+        HIGH = 'high', _('High')
+        URGENT = 'urgent', _('Urgent')
+
+    class Meta:
+        ordering = ['-updated', '-pk']
+        verbose_name = _('Work Plan')
+        verbose_name_plural = _('Work Plans')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-work-plan-list')
+
+    @classmethod
+    def api_defaults(cls, request=None):
+        """Expose the next generated code to plan creation forms."""
+        return {'code': generate_next_work_plan_code()}
+
+    def __str__(self):
+        """Render the plan name."""
+        return f'{self.code}: {self.name}'
+
+    def clean(self):
+        """Ensure the plan date range is valid."""
+        super().clean()
+        if self.start_date and self.target_date and self.target_date < self.start_date:
+            raise ValidationError({
+                'target_date': _('Target completion date must not be before start date')
+            })
+
+    code = models.CharField(
+        max_length=64,
+        unique=True,
+        default=generate_next_work_plan_code,
+        editable=False,
+        verbose_name=_('Plan Code'),
+    )
+    name = models.CharField(max_length=200, verbose_name=_('Plan Name'))
+    description = models.TextField(blank=True, verbose_name=_('Description'))
+    project_code = models.ForeignKey(
+        ProjectCode,
+        on_delete=models.PROTECT,
+        related_name='work_plans',
+        verbose_name=_('Project Code'),
+    )
+    manager = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='managed_work_plans',
+        verbose_name=_('Plan Manager'),
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='created_work_plans',
+        verbose_name=_('Created By'),
+    )
+    status = models.CharField(
+        max_length=16,
+        choices=Status.choices,
+        default=Status.DRAFT,
+        verbose_name=_('Status'),
+    )
+    priority = models.CharField(
+        max_length=16,
+        choices=Priority.choices,
+        default=Priority.NORMAL,
+        verbose_name=_('Priority'),
+    )
+    start_date = models.DateField(blank=True, null=True, verbose_name=_('Start Date'))
+    target_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Target Completion Date'),
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+
+class WorkTicket(
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    models.Model,
+):
     """A unit of work assigned by a manager within a project."""
 
     class Status(models.TextChoices):
@@ -206,6 +309,12 @@ class WorkTicket(models.Model):
         PROCESSING = 'processing', _('Processing')
         REVIEW = 'review', _('Review')
         DONE = 'done', _('Done')
+
+    class Priority(models.TextChoices):
+        LOW = 'low', _('Low')
+        NORMAL = 'normal', _('Normal')
+        HIGH = 'high', _('High')
+        URGENT = 'urgent', _('Urgent')
 
     class Meta:
         ordering = ['-updated', '-pk']
@@ -234,6 +343,25 @@ class WorkTicket(models.Model):
         """Render the ticket title."""
         return f'{self.code}: {self.title}'
 
+    def clean(self):
+        """Validate scheduling and hierarchy constraints."""
+        super().clean()
+        errors = {}
+
+        if self.start_date and self.target_date and self.target_date < self.start_date:
+            errors['target_date'] = _(
+                'Target completion date must not be before start date'
+            )
+
+        if self.parent_id:
+            if self.parent_id == self.pk:
+                errors['parent'] = _('A work ticket cannot be its own parent')
+            elif self.project_code_id != self.parent.project_code_id:
+                errors['parent'] = _('Parent work ticket must use the same project code')
+
+        if errors:
+            raise ValidationError(errors)
+
     code = models.CharField(
         max_length=64,
         unique=True,
@@ -243,11 +371,34 @@ class WorkTicket(models.Model):
     )
     title = models.CharField(max_length=200, verbose_name=_('Title'))
     description = models.TextField(blank=True, verbose_name=_('Work Content'))
+    plan = models.ForeignKey(
+        WorkPlan,
+        on_delete=models.SET_NULL,
+        related_name='tickets',
+        null=True,
+        blank=True,
+        verbose_name=_('Work Plan'),
+    )
     project_code = models.ForeignKey(
         ProjectCode,
         on_delete=models.PROTECT,
         related_name='work_tickets',
         verbose_name=_('Project Code'),
+    )
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        related_name='subtasks',
+        null=True,
+        blank=True,
+        verbose_name=_('Parent Work Ticket'),
+    )
+    dependencies = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='dependent_tickets',
+        blank=True,
+        verbose_name=_('Dependencies'),
     )
     assigned_to = models.ForeignKey(
         User,
@@ -267,6 +418,13 @@ class WorkTicket(models.Model):
         default=Status.OPEN,
         verbose_name=_('Status'),
     )
+    priority = models.CharField(
+        max_length=16,
+        choices=Priority.choices,
+        default=Priority.NORMAL,
+        verbose_name=_('Priority'),
+    )
+    start_date = models.DateField(blank=True, null=True, verbose_name=_('Start Date'))
     target_date = models.DateField(
         blank=True,
         null=True,
@@ -276,6 +434,22 @@ class WorkTicket(models.Model):
         blank=True,
         null=True,
         verbose_name=_('Completion Date'),
+    )
+    estimated_hours = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Estimated Hours'),
+    )
+    actual_hours = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Actual Hours'),
     )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

@@ -14228,3 +14228,150 @@ msgstr "Read the docs"
 #: src/views/MobileAppView.tsx:43
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignore and continue to Desktop view"
+
+msgid "Work Plan"
+msgstr "Work Plan"
+
+msgid "Work Plans"
+msgstr "Work Plans"
+
+msgid "On Hold"
+msgstr "On Hold"
+
+msgid "Urgent"
+msgstr "Urgent"
+
+msgid "Edit Work Plan"
+msgstr "Edit Work Plan"
+
+msgid "Plan Code"
+msgstr "Plan Code"
+
+msgid "Plan Name"
+msgstr "Plan Name"
+
+msgid "Plan Manager"
+msgstr "Plan Manager"
+
+msgid "Overall Progress"
+msgstr "Overall Progress"
+
+msgid "tasks completed"
+msgstr "tasks completed"
+
+msgid "Planning"
+msgstr "Planning"
+
+msgid "Calendar"
+msgstr "Calendar"
+
+msgid "Create Work Plan"
+msgstr "Create Work Plan"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Processing"
+msgstr "Processing"
+
+msgid "Review"
+msgstr "Review"
+
+msgid "Add Work Ticket"
+msgstr "Add Work Ticket"
+
+msgid "Draft"
+msgstr "Draft"
+
+msgid "Low"
+msgstr "Low"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "High"
+msgstr "High"
+
+msgid "Target Completion Date"
+msgstr "Target Completion Date"
+
+msgid "Plan Details"
+msgstr "Plan Details"
+
+msgid "Work Tickets"
+msgstr "Work Tickets"
+
+msgid "Plan work, assign tasks and track project progress"
+msgstr "Plan work, assign tasks and track project progress"
+
+msgid "Delete Work Plan"
+msgstr "Delete Work Plan"
+
+msgid "tasks"
+msgstr "tasks"
+
+msgid "Work Content"
+msgstr "Work Content"
+
+msgid "Assigned To"
+msgstr "Assigned To"
+
+msgid "Update Work Status"
+msgstr "Update Work Status"
+
+msgid "Edit Work Ticket"
+msgstr "Edit Work Ticket"
+
+msgid "Work Code"
+msgstr "Work Code"
+
+msgid "Assigned By"
+msgstr "Assigned By"
+
+msgid "Work Details"
+msgstr "Work Details"
+
+msgid "Create Purchase Order from Work Ticket"
+msgstr "Create Purchase Order from Work Ticket"
+
+msgid "Create Sales Order from Work Ticket"
+msgstr "Create Sales Order from Work Ticket"
+
+msgid "Create Contract from Work Ticket"
+msgstr "Create Contract from Work Ticket"
+
+msgid "Create Purchase Order"
+msgstr "Create Purchase Order"
+
+msgid "Create Sales Order"
+msgstr "Create Sales Order"
+
+msgid "Create Contract"
+msgstr "Create Contract"
+
+msgid "Progress"
+msgstr "Progress"
+msgid "Parent Work Ticket"
+msgstr "Parent Work Ticket"
+
+msgid "Dependencies"
+msgstr "Dependencies"
+
+msgid "Estimated Hours"
+msgstr "Estimated Hours"
+
+msgid "Actual Hours"
+msgstr "Actual Hours"
+
+msgid "Subtasks"
+msgstr "Subtasks"
+
+msgid "Work Attachments"
+msgstr "Work Attachments"
+msgid "Priority"
+msgstr "Priority"
+
+msgid "Discussion and Notes"
+msgstr "Discussion and Notes"
+msgid "Update Work Progress"
+msgstr "Update Work Progress"

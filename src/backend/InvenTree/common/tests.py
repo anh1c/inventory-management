@@ -52,6 +52,7 @@ from .models import (
     WebhookEndpoint,
     WebhookMessage,
     WorkTicket,
+    WorkPlan,
 )
 
 CONTENT_TYPE_JSON = 'application/json'
@@ -1813,6 +1814,266 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
 
         self.client.force_authenticate(user=self.user)
         self.patch(url, {'status': WorkTicket.Status.DONE})
+
+    def test_plan_creation_and_ticket_mapping(self):
+        """A plan groups tickets and enforces a shared project code."""
+        project = ProjectCode.objects.create(code='PLAN-001')
+        other_project = ProjectCode.objects.create(code='PLAN-002')
+        manager = get_user_model().objects.create_user(username='plan-manager')
+
+        response = self.post(
+            reverse('api-work-plan-list'),
+            {
+                'name': 'Customer rollout',
+                'project_code': project.pk,
+                'manager': manager.pk,
+                'status': WorkPlan.Status.ACTIVE,
+                'priority': WorkPlan.Priority.HIGH,
+            },
+        )
+        plan_id = response.data['pk']
+        self.assertRegex(response.data['code'], r'^KH-\d{7}$')
+
+        ticket_response = self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Prepare materials',
+                'plan': plan_id,
+                'project_code': project.pk,
+                'assigned_to': manager.pk,
+            },
+        )
+        self.assertEqual(ticket_response.data['plan'], plan_id)
+
+        self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Invalid project task',
+                'plan': plan_id,
+                'project_code': other_project.pk,
+                'assigned_to': manager.pk,
+            },
+            expected_code=400,
+        )
+
+        response = self.get(reverse('api-work-plan-detail', kwargs={'pk': plan_id}))
+        self.assertEqual(response.data['ticket_count'], 1)
+        self.assertEqual(response.data['completed_ticket_count'], 0)
+
+    def test_plan_and_ticket_access_scope(self):
+        """Only administrators and related users can access planning records."""
+        project = ProjectCode.objects.create(code='ACCESS-001')
+        manager = get_user_model().objects.create_user(username='access-manager')
+        assignee = get_user_model().objects.create_user(username='access-assignee')
+        unrelated = get_user_model().objects.create_user(username='access-unrelated')
+        plan = WorkPlan.objects.create(
+            name='Restricted plan',
+            project_code=project,
+            manager=manager,
+            created_by=self.user,
+        )
+        ticket = WorkTicket.objects.create(
+            title='Restricted task',
+            plan=plan,
+            project_code=project,
+            assigned_by=self.user,
+            assigned_to=assignee,
+        )
+
+        plan_url = reverse('api-work-plan-detail', kwargs={'pk': plan.pk})
+        ticket_url = reverse('api-work-ticket-detail', kwargs={'pk': ticket.pk})
+
+        self.client.force_authenticate(user=manager)
+        self.get(plan_url, expected_code=200)
+        self.get(ticket_url, expected_code=200)
+        self.post(
+            reverse('api-work-plan-list'),
+            {'name': 'Denied plan', 'project_code': project.pk, 'manager': manager.pk},
+            expected_code=403,
+        )
+        self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Manager task',
+                'plan': plan.pk,
+                'project_code': project.pk,
+                'assigned_to': assignee.pk,
+            },
+            expected_code=201,
+        )
+
+        self.client.force_authenticate(user=assignee)
+        self.get(plan_url, expected_code=200)
+        self.get(ticket_url, expected_code=200)
+
+        self.client.force_authenticate(user=unrelated)
+        self.get(plan_url, expected_code=404)
+        self.get(ticket_url, expected_code=404)
+
+    def test_ticket_schedule_hierarchy_and_dependencies(self):
+        """Validate the extended scheduling and hierarchy fields."""
+        project = ProjectCode.objects.create(code='HIERARCHY-001')
+        other_project = ProjectCode.objects.create(code='HIERARCHY-002')
+        plan = WorkPlan.objects.create(
+            name='Delivery plan',
+            project_code=project,
+            manager=self.user,
+            created_by=self.user,
+        )
+        parent = WorkTicket.objects.create(
+            title='Parent task',
+            plan=plan,
+            project_code=project,
+            assigned_by=self.user,
+            assigned_to=self.user,
+        )
+
+        response = self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Child task',
+                'plan': plan.pk,
+                'project_code': project.pk,
+                'parent': parent.pk,
+                'dependencies': [parent.pk],
+                'assigned_to': self.user.pk,
+                'priority': WorkTicket.Priority.HIGH,
+                'start_date': '2026-08-03',
+                'target_date': '2026-08-05',
+                'estimated_hours': '12.50',
+                'actual_hours': '2.00',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['parent'], parent.pk)
+        self.assertEqual(response.data['dependencies'], [parent.pk])
+        self.assertEqual(response.data['priority'], WorkTicket.Priority.HIGH)
+
+        self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Invalid date task',
+                'plan': plan.pk,
+                'project_code': project.pk,
+                'assigned_to': self.user.pk,
+                'start_date': '2026-08-05',
+                'target_date': '2026-08-03',
+            },
+            expected_code=400,
+        )
+
+        foreign_parent = WorkTicket.objects.create(
+            title='Other project task',
+            project_code=other_project,
+            assigned_by=self.user,
+            assigned_to=self.user,
+        )
+        self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Invalid parent task',
+                'plan': plan.pk,
+                'project_code': project.pk,
+                'parent': foreign_parent.pk,
+                'assigned_to': self.user.pk,
+            },
+            expected_code=400,
+        )
+
+    def test_ticket_execution_guards_and_assignee_progress(self):
+        """Dependencies, subtasks and inactive plans guard the current workflow."""
+        project = ProjectCode.objects.create(code='WORKFLOW-001')
+        assignee = get_user_model().objects.create_user(username='workflow-assignee')
+        plan = WorkPlan.objects.create(
+            name='Guarded plan',
+            project_code=project,
+            manager=self.user,
+            created_by=self.user,
+            status=WorkPlan.Status.ACTIVE,
+        )
+        dependency = WorkTicket.objects.create(
+            title='Required task',
+            plan=plan,
+            project_code=project,
+            assigned_by=self.user,
+            assigned_to=self.user,
+        )
+        ticket = WorkTicket.objects.create(
+            title='Dependent task',
+            plan=plan,
+            project_code=project,
+            assigned_by=self.user,
+            assigned_to=assignee,
+        )
+        ticket.dependencies.add(dependency)
+        ticket_url = reverse('api-work-ticket-detail', kwargs={'pk': ticket.pk})
+
+        self.client.force_authenticate(user=assignee)
+        self.patch(
+            ticket_url,
+            {'status': WorkTicket.Status.PROCESSING},
+            expected_code=400,
+        )
+        self.patch(ticket_url, {'actual_hours': '1.50', 'notes': 'Started work'})
+        self.patch(ticket_url, {'title': 'Unauthorized edit'}, expected_code=403)
+
+        dependency.status = WorkTicket.Status.DONE
+        dependency.save()
+        self.patch(ticket_url, {'status': WorkTicket.Status.PROCESSING})
+        self.patch(ticket_url, {'status': WorkTicket.Status.REVIEW})
+
+        child = WorkTicket.objects.create(
+            title='Open subtask',
+            plan=plan,
+            project_code=project,
+            parent=ticket,
+            assigned_by=self.user,
+            assigned_to=assignee,
+        )
+        self.client.force_authenticate(user=self.user)
+        self.patch(ticket_url, {'status': WorkTicket.Status.DONE}, expected_code=400)
+        child.status = WorkTicket.Status.DONE
+        child.save()
+        self.patch(ticket_url, {'status': WorkTicket.Status.DONE})
+
+        plan.status = WorkPlan.Status.ON_HOLD
+        plan.save()
+        self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Blocked task',
+                'plan': plan.pk,
+                'project_code': project.pk,
+                'assigned_to': assignee.pk,
+            },
+            expected_code=400,
+        )
+
+    def test_plan_with_tickets_cannot_be_closed_early_or_deleted(self):
+        """Plan completion and deletion preserve its existing work tickets."""
+        project = ProjectCode.objects.create(code='PLAN-GUARD-001')
+        plan = WorkPlan.objects.create(
+            name='Plan with open task',
+            project_code=project,
+            manager=self.user,
+            created_by=self.user,
+            status=WorkPlan.Status.ACTIVE,
+        )
+        ticket = WorkTicket.objects.create(
+            title='Open task',
+            plan=plan,
+            project_code=project,
+            assigned_by=self.user,
+            assigned_to=self.user,
+        )
+        plan_url = reverse('api-work-plan-detail', kwargs={'pk': plan.pk})
+
+        self.patch(plan_url, {'status': WorkPlan.Status.DONE}, expected_code=400)
+        self.delete(plan_url, expected_code=400)
+
+        ticket.status = WorkTicket.Status.DONE
+        ticket.save()
+        self.patch(plan_url, {'status': WorkPlan.Status.DONE})
 
 
 class CustomUnitAPITest(InvenTreeAPITestCase):

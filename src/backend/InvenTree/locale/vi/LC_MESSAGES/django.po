@@ -9721,3 +9721,91 @@ msgstr "Thông tin bổ sung cho lệnh chuyển kho này"
 #: stock/serializers.py
 msgid "Stock items cannot be changed after a transfer is scheduled"
 msgstr "Không thể thay đổi mặt hàng sau khi lệnh chuyển kho đã được lên lịch"
+
+msgid "Work Plan"
+msgstr "Kế hoạch công việc"
+
+msgid "Work Plans"
+msgstr "Kế hoạch công việc"
+
+msgid "Plan Code"
+msgstr "Mã kế hoạch"
+
+msgid "Plan Name"
+msgstr "Tên kế hoạch"
+
+msgid "Plan Manager"
+msgstr "Người phụ trách kế hoạch"
+
+msgid "Target completion date must not be before start date"
+msgstr "Ngày dự kiến hoàn thành không được trước ngày bắt đầu"
+
+msgid "Only the plan creator or manager can edit this plan"
+msgstr "Chỉ người tạo hoặc người phụ trách mới có thể chỉnh sửa kế hoạch này"
+
+msgid "Only the plan creator or manager can delete this plan"
+msgstr "Chỉ người tạo hoặc người phụ trách mới có thể xóa kế hoạch này"
+
+msgid "Work ticket must use the same project code as its plan"
+msgstr "Công việc phải sử dụng cùng mã dự án với kế hoạch"
+
+msgid "Project code cannot be changed after tasks are added"
+msgstr "Không thể thay đổi mã dự án sau khi đã thêm công việc"
+msgid "Only administrators can create work plans"
+msgstr "Chỉ quản trị viên mới có thể tạo kế hoạch"
+
+msgid "Only administrators or the plan manager can create work tickets"
+msgstr "Chỉ quản trị viên hoặc người phụ trách kế hoạch mới có thể tạo công việc"
+
+msgid "A work ticket cannot be its own parent"
+msgstr "Một công việc không thể là công việc cha của chính nó"
+
+msgid "Parent work ticket must use the same project code"
+msgstr "Công việc cha phải sử dụng cùng mã dự án"
+
+msgid "Parent work ticket must belong to the same plan"
+msgstr "Công việc cha phải thuộc cùng kế hoạch"
+
+msgid "Parent work ticket would create a circular hierarchy"
+msgstr "Công việc cha sẽ tạo ra quan hệ phân cấp vòng"
+
+msgid "A work ticket cannot depend on itself"
+msgstr "Một công việc không thể phụ thuộc vào chính nó"
+
+msgid "Dependencies must use the same project code"
+msgstr "Các công việc phụ thuộc phải sử dụng cùng mã dự án"
+
+msgid "Dependencies must belong to the same plan"
+msgstr "Các công việc phụ thuộc phải thuộc cùng kế hoạch"
+
+msgid "Dependency would create a circular relationship"
+msgstr "Quan hệ phụ thuộc sẽ tạo thành vòng lặp"
+
+msgid "Parent Work Ticket"
+msgstr "Công việc cha"
+
+msgid "Dependencies"
+msgstr "Công việc phụ thuộc"
+
+msgid "Estimated Hours"
+msgstr "Thời lượng dự kiến (giờ)"
+
+msgid "Actual Hours"
+msgstr "Thời lượng thực tế (giờ)"
+msgid "All work tickets must be completed before closing the plan"
+msgstr "Phải hoàn thành tất cả công việc trước khi đóng kế hoạch"
+
+msgid "Work status cannot be changed while the plan is inactive"
+msgstr "Không thể thay đổi trạng thái công việc khi kế hoạch không hoạt động"
+
+msgid "Complete all dependencies before starting this work ticket"
+msgstr "Phải hoàn thành tất cả công việc phụ thuộc trước khi bắt đầu công việc này"
+
+msgid "Complete all subtasks before completing this work ticket"
+msgstr "Phải hoàn thành tất cả công việc con trước khi hoàn thành công việc này"
+
+msgid "Work tickets can only be added to draft or active plans"
+msgstr "Chỉ có thể thêm công việc vào kế hoạch nháp hoặc đang thực hiện"
+
+msgid "A work plan containing work tickets cannot be deleted"
+msgstr "Không thể xóa kế hoạch đang chứa công việc"

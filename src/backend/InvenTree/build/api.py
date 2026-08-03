@@ -50,7 +50,7 @@ class BuildFilter(FilterSet):
         """Metaclass options."""
 
         model = Build
-        fields = ['issued_by', 'sales_order', 'external']
+        fields = ['issued_by', 'sales_order', 'work_ticket', 'external']
 
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 

@@ -504,6 +504,77 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
 
 
+class WorkPlanFilter(FilterSet):
+    """Filters for work plan overview screens."""
+
+    class Meta:
+        model = common.models.WorkPlan
+        fields = ['status', 'priority', 'project_code', 'manager', 'created_by']
+
+
+class WorkPlanList(ListCreateAPI):
+    """List and create project work plans."""
+
+    queryset = common.models.WorkPlan.objects.select_related(
+        'project_code', 'manager', 'created_by'
+    )
+    serializer_class = common.serializers.WorkPlanSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = SEARCH_ORDER_FILTER
+    filterset_class = WorkPlanFilter
+    ordering_fields = ['created', 'updated', 'status', 'priority', 'name', 'target_date']
+    search_fields = ['code', 'name', 'description', 'project_code__code']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_staff:
+            queryset = queryset.filter(
+                Q(created_by=user)
+                | Q(manager=user)
+                | Q(tickets__assigned_to=user)
+                | Q(tickets__assigned_by=user)
+            ).distinct()
+        return common.serializers.WorkPlanSerializer.annotate_queryset(queryset)
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_staff:
+            raise PermissionDenied(_('Only administrators can create work plans'))
+        serializer.save(created_by=self.request.user)
+
+
+class WorkPlanDetail(RetrieveUpdateDestroyAPI):
+    """Retrieve, update, or delete a project work plan."""
+
+    queryset = WorkPlanList.queryset
+    serializer_class = common.serializers.WorkPlanSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_staff:
+            queryset = queryset.filter(
+                Q(created_by=user)
+                | Q(manager=user)
+                | Q(tickets__assigned_to=user)
+                | Q(tickets__assigned_by=user)
+            ).distinct()
+        return common.serializers.WorkPlanSerializer.annotate_queryset(queryset)
+
+    def perform_destroy(self, instance):
+        if instance.tickets.exists():
+            raise serializers.ValidationError({
+                'detail': _('A work plan containing work tickets cannot be deleted')
+            })
+        if not self.request.user.is_staff and self.request.user.pk not in {
+            instance.created_by_id,
+            instance.manager_id,
+        }:
+            raise PermissionDenied(_('Only the plan creator or manager can delete this plan'))
+        instance.delete()
+
+
 class WorkTicketFilter(FilterSet):
     """Filters for work-ticket table and calendar views."""
 
@@ -513,7 +584,10 @@ class WorkTicketFilter(FilterSet):
 
     class Meta:
         model = common.models.WorkTicket
-        fields = ['status', 'project_code', 'assigned_to', 'assigned_by']
+        fields = [
+            'plan', 'parent', 'priority', 'status', 'project_code',
+            'assigned_to', 'assigned_by',
+        ]
 
     def filter_overdue(self, queryset, name, value):
         return queryset.filter(common.models.WorkTicket.get_overdue_filter()) if value else queryset.exclude(common.models.WorkTicket.get_overdue_filter())
@@ -529,22 +603,54 @@ class WorkTicketList(ListCreateAPI):
     """List and create work tickets."""
 
     queryset = common.models.WorkTicket.objects.select_related(
-        'project_code', 'assigned_to', 'assigned_by'
-    )
+        'plan', 'project_code', 'parent', 'assigned_to', 'assigned_by'
+    ).prefetch_related('dependencies')
     serializer_class = common.serializers.WorkTicketSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = WorkTicketFilter
-    ordering_fields = ['created', 'updated', 'status', 'title']
+    ordering_fields = [
+        'created',
+        'updated',
+        'status',
+        'priority',
+        'title',
+        'project_code',
+        'start_date',
+        'target_date',
+        'completion_date',
+    ]
     search_fields = ['title', 'description', 'project_code__code']
 
     def get_queryset(self):
-        return common.serializers.WorkTicketSerializer.annotate_queryset(
-            super().get_queryset()
-        )
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_staff:
+            queryset = queryset.filter(
+                Q(assigned_to=user)
+                | Q(assigned_by=user)
+                | Q(plan__manager=user)
+                | Q(plan__created_by=user)
+            ).distinct()
+        return common.serializers.WorkTicketSerializer.annotate_queryset(queryset)
 
     def perform_create(self, serializer):
         """Record the assigning manager from the authenticated user."""
+        plan = serializer.validated_data.get('plan')
+        user = self.request.user
+        if not user.is_staff and (
+            not plan or user.pk not in {plan.created_by_id, plan.manager_id}
+        ):
+            raise PermissionDenied(
+                _('Only administrators or the plan manager can create work tickets')
+            )
+        if plan and plan.status not in {
+            common.models.WorkPlan.Status.DRAFT,
+            common.models.WorkPlan.Status.ACTIVE,
+        }:
+            raise serializers.ValidationError({
+                'plan': _('Work tickets can only be added to draft or active plans')
+            })
         serializer.save(assigned_by=self.request.user)
 
 
@@ -555,9 +661,29 @@ class WorkTicketDetail(RetrieveUpdateDestroyAPI):
     serializer_class = common.serializers.WorkTicketSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_staff:
+            queryset = queryset.filter(
+                Q(assigned_to=user)
+                | Q(assigned_by=user)
+                | Q(plan__manager=user)
+                | Q(plan__created_by=user)
+            ).distinct()
+        return common.serializers.WorkTicketSerializer.annotate_queryset(queryset)
+
     def perform_destroy(self, instance):
         """Only the assigning manager can remove a ticket."""
-        if self.request.user.pk != instance.assigned_by_id:
+        plan_manager_ids = (
+            {instance.plan.manager_id, instance.plan.created_by_id}
+            if instance.plan_id
+            else set()
+        )
+        if not self.request.user.is_staff and self.request.user.pk not in {
+            instance.assigned_by_id,
+            *plan_manager_ids,
+        }:
             raise PermissionDenied(_('Only the assigning manager can delete this ticket'))
         instance.delete()
 
@@ -1570,6 +1696,13 @@ common_api_urls = [
                 ]),
             ),
             path('', ProjectCodeList.as_view(), name='api-project-code-list'),
+        ]),
+    ),
+    path(
+        'work-plan/',
+        include([
+            path('<int:pk>/', WorkPlanDetail.as_view(), name='api-work-plan-detail'),
+            path('', WorkPlanList.as_view(), name='api-work-plan-list'),
         ]),
     ),
     path(

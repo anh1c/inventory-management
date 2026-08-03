@@ -7,15 +7,17 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import WorkTicketTable from '../../tables/planning/WorkTicketTable';
+import WorkPlanTable from '../../tables/planning/WorkPlanTable';
+import { t } from '@lingui/core/macro';
 
 export default function WorkTicketsIndex() {
-  const [view, setView] = useLocalStorage<string>({ key: 'work-ticket-view', defaultValue: 'table' });
+  const [view, setView] = useLocalStorage<string>({ key: 'planning-view', defaultValue: 'plans' });
 
   return (
     <Stack gap='sm'>
       <PageDetail
-        title='Kế hoạch'
-        subtitle='Giao việc và theo dõi tiến độ theo mã dự án'
+        title={t`Work Plans`}
+        subtitle={t`Plan work, assign tasks and track project progress`}
         icon={<IconTicket size={18} />}
       />
       <PanelGroup
@@ -23,13 +25,14 @@ export default function WorkTicketsIndex() {
         panels={[
           SegmentedControlPanel({
             name: 'index',
-            label: 'Công việc',
+            label: t`Planning`,
             icon: <IconTicket />,
             selection: view,
             onChange: setView,
             options: [
-              { value: 'table', label: 'Bảng', icon: <IconTable />, content: <WorkTicketTable /> },
-              { value: 'calendar', label: 'Lịch', icon: <IconCalendar />, content: <WorkTicketCalendar /> }
+              { value: 'plans', label: t`Work Plans`, icon: <IconTable />, content: <WorkPlanTable /> },
+              { value: 'tasks', label: t`Work Tickets`, icon: <IconTicket />, content: <WorkTicketTable /> },
+              { value: 'calendar', label: t`Calendar`, icon: <IconCalendar />, content: <WorkTicketCalendar /> }
             ]
           })
         ]}

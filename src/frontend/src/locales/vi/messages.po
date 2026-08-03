@@ -5698,7 +5698,7 @@ msgstr "Link this purchase order to the source sales order. Default project code
 #: src/pages/sales/SalesOrderDetail.tsx:258
 #: src/tables/ColumnRenderers.tsx:691
 msgid "Start Date"
-msgstr "bắt đầu ngày"
+msgstr "Ngày bắt đầu"
 
 #: src/forms/PurchaseOrderForms.tsx:582
 #~ msgid "Store at line item destination"
@@ -14241,3 +14241,150 @@ msgstr "Đọc tài liệu"
 #: src/views/MobileAppView.tsx:43
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignore và continue tới Desktop xem"
+
+msgid "Work Plan"
+msgstr "Kế hoạch công việc"
+
+msgid "Work Plans"
+msgstr "Kế hoạch"
+
+msgid "On Hold"
+msgstr "Tạm dừng"
+
+msgid "Urgent"
+msgstr "Khẩn cấp"
+
+msgid "Edit Work Plan"
+msgstr "Chỉnh sửa kế hoạch"
+
+msgid "Plan Code"
+msgstr "Mã kế hoạch"
+
+msgid "Plan Name"
+msgstr "Tên kế hoạch"
+
+msgid "Plan Manager"
+msgstr "Người phụ trách kế hoạch"
+
+msgid "Overall Progress"
+msgstr "Tiến độ tổng thể"
+
+msgid "tasks completed"
+msgstr "công việc đã hoàn thành"
+
+msgid "Planning"
+msgstr "Quản lý kế hoạch"
+
+msgid "Calendar"
+msgstr "Lịch"
+
+msgid "Create Work Plan"
+msgstr "Tạo kế hoạch"
+
+msgid "Open"
+msgstr "Chưa thực hiện"
+
+msgid "Processing"
+msgstr "Đang thực hiện"
+
+msgid "Review"
+msgstr "Chờ duyệt"
+
+msgid "Add Work Ticket"
+msgstr "Thêm công việc"
+
+msgid "Draft"
+msgstr "Bản nháp"
+
+msgid "Low"
+msgstr "Thấp"
+
+msgid "Normal"
+msgstr "Bình thường"
+
+msgid "High"
+msgstr "Cao"
+
+msgid "Target Completion Date"
+msgstr "Ngày dự kiến hoàn thành"
+
+msgid "Plan Details"
+msgstr "Thông tin kế hoạch"
+
+msgid "Work Tickets"
+msgstr "Công việc"
+
+msgid "Plan work, assign tasks and track project progress"
+msgstr "Lập kế hoạch, phân công và theo dõi tiến độ dự án"
+
+msgid "Delete Work Plan"
+msgstr "Xóa kế hoạch"
+
+msgid "tasks"
+msgstr "công việc"
+
+msgid "Work Content"
+msgstr "Nội dung công việc"
+
+msgid "Assigned To"
+msgstr "Người thực hiện"
+
+msgid "Update Work Status"
+msgstr "Cập nhật trạng thái công việc"
+
+msgid "Edit Work Ticket"
+msgstr "Chỉnh sửa công việc"
+
+msgid "Work Code"
+msgstr "Mã công việc"
+
+msgid "Assigned By"
+msgstr "Người giao việc"
+
+msgid "Work Details"
+msgstr "Chi tiết công việc"
+
+msgid "Create Purchase Order from Work Ticket"
+msgstr "Tạo đơn mua từ công việc"
+
+msgid "Create Sales Order from Work Ticket"
+msgstr "Tạo đơn bán từ công việc"
+
+msgid "Create Contract from Work Ticket"
+msgstr "Tạo hợp đồng từ công việc"
+
+msgid "Create Purchase Order"
+msgstr "Tạo đơn mua"
+
+msgid "Create Sales Order"
+msgstr "Tạo đơn bán"
+
+msgid "Create Contract"
+msgstr "Tạo hợp đồng"
+
+msgid "Progress"
+msgstr "Tiến độ"
+msgid "Parent Work Ticket"
+msgstr "Công việc cha"
+
+msgid "Dependencies"
+msgstr "Công việc phụ thuộc"
+
+msgid "Estimated Hours"
+msgstr "Thời lượng dự kiến (giờ)"
+
+msgid "Actual Hours"
+msgstr "Thời lượng thực tế (giờ)"
+
+msgid "Subtasks"
+msgstr "Công việc con"
+
+msgid "Work Attachments"
+msgstr "Tệp công việc"
+msgid "Priority"
+msgstr "Mức ưu tiên"
+
+msgid "Discussion and Notes"
+msgstr "Trao đổi và ghi chú"
+msgid "Update Work Progress"
+msgstr "Cập nhật tiến độ công việc"

@@ -332,7 +332,14 @@ class ContractFilter(FilterSet):
             'purchase_contract',
             'buyer',
             'seller',
+            'work_ticket',
         ]
+
+    work_ticket = rest_filters.ModelChoiceFilter(
+        queryset=common.models.WorkTicket.objects.all(),
+        field_name='work_ticket',
+        label=_('Work Ticket'),
+    )
 
     project_code = rest_filters.ModelChoiceFilter(
         queryset=common.models.ProjectCode.objects.all(),

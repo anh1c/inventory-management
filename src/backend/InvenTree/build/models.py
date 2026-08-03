@@ -436,6 +436,15 @@ class Build(
         help_text=_('Project code for this build order'),
     )
 
+    work_ticket = models.ForeignKey(
+        'common.WorkTicket',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='build_orders',
+        verbose_name=_('Work Ticket'),
+    )
+
     def sub_builds(self, cascade: bool = True) -> QuerySet:
         """Return all Build Order objects under this one."""
         if cascade:

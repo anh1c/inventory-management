@@ -34,6 +34,8 @@ export function ContractTable({
   salesContractId,
   buyerId,
   sellerId,
+  workTicketId,
+  workTicketProjectCodeId,
   onSelectContract,
   selectedContractId
 }: Readonly<{
@@ -42,16 +44,42 @@ export function ContractTable({
   salesContractId?: number;
   buyerId?: number;
   sellerId?: number;
+  workTicketId?: number;
+  workTicketProjectCodeId?: number;
   onSelectContract?: (record: any) => void;
   selectedContractId?: number;
 }>) {
-  const table = useTable(`contract-${contractType ?? 'all'}`);
+  const table = useTable(
+    workTicketId
+      ? `contract-work-ticket-${workTicketId}`
+      : `contract-${contractType ?? 'all'}`
+  );
   const user = useUserState();
   const navigate = useNavigate();
   const api = useApi();
   const [pendingDocuments, setPendingDocuments] = useState<File[]>([]);
 
-  const contractFields = useContractFields({ contractType, salesContract });
+  const baseContractFields = useContractFields({ contractType, salesContract });
+  const contractFields = useMemo(
+    () => ({
+      ...baseContractFields,
+      ...(workTicketId
+        ? {
+            work_ticket: {
+              field_type: 'number' as const,
+              hidden: true,
+              value: workTicketId
+            },
+            project_code: {
+              ...baseContractFields.project_code,
+              value: workTicketProjectCodeId,
+              disabled: true
+            }
+          }
+        : {})
+    }),
+    [baseContractFields, workTicketId, workTicketProjectCodeId]
+  );
 
   const uploadPendingDocuments = useCallback(
     async (contractId: number, files: File[]) => {
@@ -138,7 +166,9 @@ export function ContractTable({
       contract_type: contractType,
       sales_contract: salesContractId,
       buyer: buyerId,
-      seller: sellerId
+      seller: sellerId,
+      work_ticket: workTicketId,
+      project_code: workTicketProjectCodeId
     },
     modelType: ModelType.contract,
     keepOpenOption: true,
@@ -275,6 +305,7 @@ export function ContractTable({
             sales_contract: salesContractId,
             buyer: buyerId,
             seller: sellerId,
+            work_ticket: workTicketId,
             project_code_detail: true,
             sales_contract_detail: true,
             buyer_detail: true,

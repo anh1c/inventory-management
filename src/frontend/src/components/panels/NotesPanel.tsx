@@ -10,11 +10,13 @@ import type { PanelType } from './Panel';
 export default function NotesPanel({
   model_type,
   model_id,
+  label,
   editable,
   has_note
 }: {
   model_type: ModelType;
   model_id: number | undefined;
+  label?: string;
   editable?: boolean;
   has_note?: boolean;
 }): PanelType {
@@ -22,7 +24,7 @@ export default function NotesPanel({
 
   return {
     name: 'notes',
-    label: t`Notes`,
+    label: label ?? t`Notes`,
     icon: <IconNotes />,
     notification_dot: has_note ? 'info' : null,
     content:

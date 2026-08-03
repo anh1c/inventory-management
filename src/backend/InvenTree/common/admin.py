@@ -108,9 +108,26 @@ class ProjectCodeAdmin(admin.ModelAdmin):
 class WorkTicketAdmin(admin.ModelAdmin):
     """Admin interface for work tickets."""
 
-    list_display = ('title', 'project_code', 'assigned_to', 'assigned_by', 'status')
-    list_filter = ('status', 'project_code')
+    list_display = (
+        'title',
+        'project_code',
+        'assigned_to',
+        'assigned_by',
+        'priority',
+        'status',
+    )
+    list_filter = ('status', 'priority', 'project_code')
     search_fields = ('title', 'description')
+    readonly_fields = ('code',)
+
+
+@admin.register(common.models.WorkPlan)
+class WorkPlanAdmin(admin.ModelAdmin):
+    """Admin interface for work plans."""
+
+    list_display = ('code', 'name', 'project_code', 'manager', 'status', 'priority')
+    list_filter = ('status', 'priority', 'project_code')
+    search_fields = ('code', 'name', 'description')
     readonly_fields = ('code',)
 
 
