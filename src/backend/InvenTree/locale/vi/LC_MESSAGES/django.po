@@ -9126,7 +9126,7 @@ msgstr "trước số serial"
 
 #: stock/status_codes.py:11
 msgid "OK"
-msgstr "Đồng ý"
+msgstr "Khả dụng"
 
 #: stock/status_codes.py:12
 msgid "Attention needed"
@@ -9146,7 +9146,7 @@ msgstr "Đã từ chối"
 
 #: stock/status_codes.py:19
 msgid "Quarantined"
-msgstr "Đã cách ly"
+msgstr "Tạm giữ"
 
 #: stock/status_codes.py:44
 msgid "Legacy stock tracking entry"

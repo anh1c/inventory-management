@@ -819,10 +819,13 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
 function scheduledStockTransferFields(items: any[]): ApiFormFieldSet {
   const transferFields = stockTransferFields(items);
   const locationField = transferFields.location;
+  const lineItemsField = transferFields.items;
 
   delete transferFields.location;
+  delete transferFields.items;
 
   return {
+    lines: lineItemsField,
     ...transferFields,
     destination_location: {
       ...locationField,

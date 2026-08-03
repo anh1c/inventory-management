@@ -9128,7 +9128,7 @@ msgstr "Số lượng tồn kho"
 #: src/pages/stock/StockDetail.tsx:402
 #: src/tables/stock/StockItemTable.tsx:125
 msgid "Stock Value"
-msgstr "tồn kho giá trị"
+msgstr "Giá trị tồn kho"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:201
 msgid "Generate Stocktake Entry"
