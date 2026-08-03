@@ -9809,3 +9809,27 @@ msgstr "Chỉ có thể thêm công việc vào kế hoạch nháp hoặc đang 
 
 msgid "A work plan containing work tickets cannot be deleted"
 msgstr "Không thể xóa kế hoạch đang chứa công việc"
+
+msgid "Primary legal representative for this company"
+msgstr "Người đại diện theo pháp luật chính của công ty"
+
+msgid "Position or title of the primary legal representative"
+msgstr "Chức danh hoặc chức vụ của người đại diện theo pháp luật chính"
+
+msgid "Is internal company"
+msgstr "Là công ty nội bộ"
+
+msgid "Is this company part of the owning company group?"
+msgstr "Công ty này có thuộc tập đoàn sở hữu hệ thống không?"
+
+msgid "Parent Company"
+msgstr "Công ty mẹ"
+
+msgid "Parent company for subsidiary companies"
+msgstr "Công ty mẹ quản lý các công ty con"
+
+msgid "A company cannot be its own parent"
+msgstr "Một công ty không thể là công ty mẹ của chính mình"
+
+msgid "Parent company must be an internal company"
+msgstr "Công ty mẹ phải là công ty nội bộ"

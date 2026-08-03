@@ -120,7 +120,7 @@ export function companyFields(): ApiFormFieldSet {
       description: t`Short company description`
     },
     website: {
-      label: 'Website',
+      label: t`Website`,
       description: t`Company website`,
       icon: <IconGlobe />
     },
@@ -135,7 +135,7 @@ export function companyFields(): ApiFormFieldSet {
       icon: <IconPhone />
     },
     email: {
-      label: 'Email',
+      label: t`Email`,
       description: t`Contact email address`,
       icon: <IconAt />
     },
@@ -189,7 +189,7 @@ export function internalCompanyFields(): ApiFormFieldSet {
       description: t`Short internal company description`
     },
     website: {
-      label: 'Website',
+      label: t`Website`,
       description: t`Company website`,
       icon: <IconGlobe />
     },
@@ -204,7 +204,7 @@ export function internalCompanyFields(): ApiFormFieldSet {
       icon: <IconPhone />
     },
     email: {
-      label: 'Email',
+      label: t`Email`,
       description: t`Contact email address`,
       icon: <IconAt />
     },

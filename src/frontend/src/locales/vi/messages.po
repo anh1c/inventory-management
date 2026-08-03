@@ -2425,7 +2425,7 @@ msgstr "Đã chọn"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:113
 msgid "DTWare Version"
-msgstr "DTWare Version"
+msgstr "Phiên bản DTWare"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:113
 #~ msgid "InvenTree Version"
@@ -2522,7 +2522,7 @@ msgstr "Sao chép thông tin hệ thống"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:209
 msgid "Demo Build"
-msgstr "Demo Build"
+msgstr "Bản dựng demo"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:210
 #~ msgid "Development Version"
@@ -4541,7 +4541,7 @@ msgstr "Mở không gian làm việc DTWare"
 
 #: src/defaults/links.tsx:118
 msgid "API Reference"
-msgstr "API Reference"
+msgstr "Tài liệu tham khảo API"
 
 #: src/defaults/links.tsx:121
 msgid "Review API capabilities"
@@ -4927,33 +4927,33 @@ msgstr "Chọn mã dự án cho dòng hàng này"
 
 #: src/forms/CompanyForms.tsx:77
 msgid "Preferred"
-msgstr "Preferred"
+msgstr "Ưu tiên"
 
 #: src/forms/CompanyForms.tsx:78
 msgid "Mark this supplier part as preferred for the linked part"
-msgstr "Mark this supplier part as preferred for the linked part"
+msgstr "Đánh dấu vật tư nhà cung cấp này là lựa chọn ưu tiên cho vật tư được liên kết"
 
 #: src/forms/CompanyForms.tsx:82
 msgid "This supplier part is active for use"
-msgstr "This supplier part is active for use"
+msgstr "Vật tư nhà cung cấp này đang hoạt động và có thể sử dụng"
 
 #: src/forms/CompanyForms.tsx:115
 #: src/forms/CompanyForms.tsx:184
 msgid "Company Name"
-msgstr "Company Name"
+msgstr "Tên công ty"
 
 #: src/forms/CompanyForms.tsx:116
 msgid "Business or partner name"
-msgstr "Business or partner name"
+msgstr "Tên doanh nghiệp hoặc đối tác"
 
 #: src/forms/CompanyForms.tsx:120
 msgid "Short company description"
-msgstr "Short company description"
+msgstr "Mô tả ngắn về công ty"
 
 #: src/forms/CompanyForms.tsx:124
 #: src/forms/CompanyForms.tsx:193
 msgid "Company website"
-msgstr "Company website"
+msgstr "Trang web của công ty"
 
 #: src/forms/CompanyForms.tsx:128
 #: src/forms/CompanyForms.tsx:197
@@ -4966,7 +4966,7 @@ msgstr "Tiền tệ"
 
 #: src/forms/CompanyForms.tsx:129
 msgid "Default currency for transactions with this company"
-msgstr "Default currency for transactions with this company"
+msgstr "Tiền tệ mặc định dùng trong giao dịch với công ty này"
 
 #: src/forms/CompanyForms.tsx:133
 #: src/forms/CompanyForms.tsx:202
@@ -4977,22 +4977,22 @@ msgstr "Số điện thoại"
 #: src/forms/CompanyForms.tsx:134
 #: src/forms/CompanyForms.tsx:203
 msgid "Contact phone number"
-msgstr "Contact phone number"
+msgstr "Số điện thoại liên hệ"
 
 #: src/forms/CompanyForms.tsx:139
 #: src/forms/CompanyForms.tsx:208
 msgid "Contact email address"
-msgstr "Contact email address"
+msgstr "Địa chỉ email liên hệ"
 
 #: src/forms/CompanyForms.tsx:143
 #: src/forms/CompanyForms.tsx:212
 msgid "Tax Code"
-msgstr "Tax Code"
+msgstr "Mã số thuế"
 
 #: src/forms/CompanyForms.tsx:144
 #: src/forms/CompanyForms.tsx:213
 msgid "Company tax code"
-msgstr "Company tax code"
+msgstr "Mã số thuế của công ty"
 
 #: src/forms/CompanyForms.tsx:147
 #: src/forms/CompanyForms.tsx:216
@@ -5004,7 +5004,7 @@ msgstr "Người đại diện"
 #: src/forms/CompanyForms.tsx:148
 #: src/forms/CompanyForms.tsx:217
 msgid "Legal representative of the company"
-msgstr "Legal representative of the company"
+msgstr "Người đại diện theo pháp luật của công ty"
 
 #: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
@@ -5019,47 +5019,47 @@ msgstr "Chức vụ người đại diện"
 #: src/forms/CompanyForms.tsx:152
 #: src/forms/CompanyForms.tsx:221
 msgid "Title or position of the legal representative"
-msgstr "Title or position of the legal representative"
+msgstr "Chức danh hoặc chức vụ của người đại diện theo pháp luật"
 
 #: src/forms/CompanyForms.tsx:155
 #: src/forms/CompanyForms.tsx:224
 msgid "Is Supplier"
-msgstr "Is Supplier"
+msgstr "Là nhà cung cấp"
 
 #: src/forms/CompanyForms.tsx:156
 #: src/forms/CompanyForms.tsx:225
 msgid "Does this company provide goods or services to inventory?"
-msgstr "Does this company provide goods or services to inventory?"
+msgstr "Công ty này có cung cấp hàng hóa hoặc dịch vụ cho hệ thống không?"
 
 #: src/forms/CompanyForms.tsx:159
 #: src/forms/CompanyForms.tsx:229
 msgid "Is Manufacturer"
-msgstr "Is Manufacturer"
+msgstr "Là nhà sản xuất"
 
 #: src/forms/CompanyForms.tsx:160
 #: src/forms/CompanyForms.tsx:230
 msgid "Does this company manufacture goods or components?"
-msgstr "Does this company manufacture goods or components?"
+msgstr "Công ty này có sản xuất hàng hóa hoặc linh kiện không?"
 
 #: src/forms/CompanyForms.tsx:163
 #: src/forms/CompanyForms.tsx:233
 msgid "Is Customer"
-msgstr "Is Customer"
+msgstr "Là khách hàng"
 
 #: src/forms/CompanyForms.tsx:164
 #: src/forms/CompanyForms.tsx:234
 msgid "Does this company buy from the system?"
-msgstr "Does this company buy from the system?"
+msgstr "Công ty này có mua hàng từ hệ thống không?"
 
 #: src/forms/CompanyForms.tsx:167
 #: src/forms/CompanyForms.tsx:237
 msgid "Is Internal Company"
-msgstr "Is Internal Company"
+msgstr "Là công ty nội bộ"
 
 #: src/forms/CompanyForms.tsx:168
 #: src/forms/CompanyForms.tsx:238
 msgid "Does this company belong to the group that owns the system?"
-msgstr "Does this company belong to the group that owns the system?"
+msgstr "Công ty này có thuộc tập đoàn sở hữu hệ thống không?"
 
 #: src/forms/CompanyForms.tsx:171
 #: src/forms/CompanyForms.tsx:243
@@ -5071,24 +5071,24 @@ msgstr "Công ty mẹ"
 #: src/forms/CompanyForms.tsx:172
 #: src/forms/CompanyForms.tsx:244
 msgid "Parent company managing subsidiaries"
-msgstr "Parent company managing subsidiaries"
+msgstr "Công ty mẹ quản lý các công ty con"
 
 #: src/forms/CompanyForms.tsx:176
 #: src/forms/CompanyForms.tsx:248
 msgid "This company is active in the system"
-msgstr "This company is active in the system"
+msgstr "Công ty này đang hoạt động trong hệ thống"
 
 #: src/forms/CompanyForms.tsx:185
 msgid "Internal company name"
-msgstr "Internal company name"
+msgstr "Tên công ty nội bộ"
 
 #: src/forms/CompanyForms.tsx:189
 msgid "Short internal company description"
-msgstr "Short internal company description"
+msgstr "Mô tả ngắn về công ty nội bộ"
 
 #: src/forms/CompanyForms.tsx:198
 msgid "Default currency of the internal company"
-msgstr "Default currency of the internal company"
+msgstr "Tiền tệ mặc định của công ty nội bộ"
 
 #: src/forms/ContractForms.tsx:45
 #~ msgid "Ngày hiệu lực phải sau ngày ký hợp đồng"
@@ -5216,11 +5216,11 @@ msgstr "Hợp đồng bán làm nguồn cho hợp đồng mua này"
 #: src/forms/ContractForms.tsx:101
 #: src/tables/contract/ContractTable.tsx:222
 msgid "Buyer"
-msgstr "Buyer"
+msgstr "Bên mua"
 
 #: src/forms/ContractForms.tsx:102
 msgid "Company or customer buying under this contract"
-msgstr "Company or customer buying under this contract"
+msgstr "Công ty hoặc khách hàng mua hàng theo hợp đồng này"
 
 #: src/forms/ContractForms.tsx:103
 #: src/pages/contracts/ContractDetail.tsx:192
@@ -5251,7 +5251,7 @@ msgstr "Company or customer buying under this contract"
 #: src/forms/ContractForms.tsx:113
 #: src/tables/contract/ContractTable.tsx:228
 msgid "Seller"
-msgstr "Seller"
+msgstr "Bên bán"
 
 #: src/forms/ContractForms.tsx:113
 #: src/pages/contracts/ContractDetail.tsx:204
@@ -5260,7 +5260,7 @@ msgstr "Seller"
 
 #: src/forms/ContractForms.tsx:114
 msgid "Company or supplier selling under this contract"
-msgstr "Company or supplier selling under this contract"
+msgstr "Công ty hoặc nhà cung cấp bán hàng theo hợp đồng này"
 
 #: src/forms/ContractForms.tsx:114
 #~ msgid "Tên pháp nhân hoặc tổ chức của Bên B"
@@ -5302,7 +5302,7 @@ msgstr "Đại diện Bên A"
 
 #: src/forms/ContractForms.tsx:126
 msgid "Select Party A representative from the seller contacts"
-msgstr "Select Party A representative from the seller contacts"
+msgstr "Chọn người đại diện Bên A từ danh sách liên hệ của bên bán"
 
 #: src/forms/ContractForms.tsx:129
 #: src/pages/contracts/ContractDetail.tsx:222
@@ -5333,7 +5333,7 @@ msgstr "Đại diện Bên B"
 
 #: src/forms/ContractForms.tsx:138
 msgid "Select Party B representative from the buyer contacts"
-msgstr "Select Party B representative from the buyer contacts"
+msgstr "Chọn người đại diện Bên B từ danh sách liên hệ của bên mua"
 
 #: src/forms/ContractForms.tsx:141
 #: src/pages/contracts/ContractDetail.tsx:270
@@ -5551,19 +5551,19 @@ msgstr "Theo dõi thông báo cho danh mục này"
 
 #: src/forms/PurchaseOrderForms.tsx:140
 msgid "Sales Order Line"
-msgstr "Sales Order Line"
+msgstr "Dòng đơn bán"
 
 #: src/forms/PurchaseOrderForms.tsx:141
 msgid "Select a line from the linked sales order to purchase"
-msgstr "Select a line from the linked sales order to purchase"
+msgstr "Chọn một dòng từ đơn bán liên kết để đặt mua"
 
 #: src/forms/PurchaseOrderForms.tsx:163
 msgid "Build Order Line"
-msgstr "Build Order Line"
+msgstr "Dòng lệnh sản xuất"
 
 #: src/forms/PurchaseOrderForms.tsx:164
 msgid "Select a line from the linked build order to purchase"
-msgstr "Select a line from the linked build order to purchase"
+msgstr "Chọn một dòng từ lệnh sản xuất liên kết để đặt mua"
 
 #: src/forms/PurchaseOrderForms.tsx:252
 #~ msgid "Liên kết đơn mua hàng này với hợp đồng hoặc đơn bán hàng nguồn. Mã dự án mặc định được xử lý bởi hệ thống backend."
@@ -5590,18 +5590,18 @@ msgstr "Tạo lệnh sản xuất"
 #: src/forms/SalesOrderForms.tsx:60
 #: src/forms/SalesOrderForms.tsx:64
 msgid "Start date must be within the selected contract period"
-msgstr "Start date must be within the selected contract period"
+msgstr "Ngày bắt đầu phải nằm trong thời hạn của hợp đồng đã chọn"
 
 #: src/forms/PurchaseOrderForms.tsx:392
 #: src/forms/PurchaseOrderForms.tsx:396
 #: src/forms/SalesOrderForms.tsx:68
 #: src/forms/SalesOrderForms.tsx:72
 msgid "Target date must be within the selected contract period"
-msgstr "Target date must be within the selected contract period"
+msgstr "Ngày dự kiến phải nằm trong thời hạn của hợp đồng đã chọn"
 
 #: src/forms/PurchaseOrderForms.tsx:418
 msgid "Workshop Location"
-msgstr "Workshop Location"
+msgstr "Địa điểm xưởng"
 
 #: src/forms/PurchaseOrderForms.tsx:421
 #~ msgid "Assign Batch Code{0}"
@@ -5609,7 +5609,7 @@ msgstr "Workshop Location"
 
 #: src/forms/PurchaseOrderForms.tsx:422
 msgid "Construction Site Location"
-msgstr "Construction Site Location"
+msgstr "Địa điểm công trường"
 
 #: src/forms/PurchaseOrderForms.tsx:425
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:232
@@ -5628,11 +5628,11 @@ msgstr "Đích đến"
 
 #: src/forms/PurchaseOrderForms.tsx:449
 msgid "Select the purchase contract linked to this purchase order"
-msgstr "Select the purchase contract linked to this purchase order"
+msgstr "Chọn hợp đồng mua liên kết với đơn mua này"
 
 #: src/forms/PurchaseOrderForms.tsx:459
 msgid "Purchase Order Number"
-msgstr "Purchase Order Number"
+msgstr "Số đơn mua"
 
 #: src/forms/PurchaseOrderForms.tsx:484
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:167
@@ -5641,46 +5641,46 @@ msgstr "Tham chiếu nhà cung cấp"
 
 #: src/forms/PurchaseOrderForms.tsx:489
 msgid "Output Use"
-msgstr "Output Use"
+msgstr "Mục đích sử dụng"
 
 #: src/forms/PurchaseOrderForms.tsx:490
 msgid "Choose the purchase order output: Default, Workshop, Construction Site, or Commercial"
-msgstr "Choose the purchase order output: Default, Workshop, Construction Site, or Commercial"
+msgstr "Chọn mục đích sử dụng của đơn mua: Mặc định, Xưởng, Công trường hoặc Thương mại"
 
 #: src/forms/PurchaseOrderForms.tsx:492
 msgid "Default"
-msgstr "Default"
+msgstr "Mặc định"
 
 #: src/forms/PurchaseOrderForms.tsx:493
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:53
 msgid "Workshop"
-msgstr "Workshop"
+msgstr "Xưởng"
 
 #: src/forms/PurchaseOrderForms.tsx:494
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:57
 msgid "Construction Site"
-msgstr "Construction Site"
+msgstr "Công trường"
 
 #: src/forms/PurchaseOrderForms.tsx:495
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:61
 msgid "Commercial"
-msgstr "Commercial"
+msgstr "Thương mại"
 
 #: src/forms/PurchaseOrderForms.tsx:511
 msgid "Linked Build Order"
-msgstr "Linked Build Order"
+msgstr "Lệnh sản xuất liên kết"
 
 #: src/forms/PurchaseOrderForms.tsx:512
 msgid "Link this purchase order to an outstanding build order"
-msgstr "Link this purchase order to an outstanding build order"
+msgstr "Liên kết đơn mua này với một lệnh sản xuất đang chờ xử lý"
 
 #: src/forms/PurchaseOrderForms.tsx:546
 msgid "Linked Sales Order"
-msgstr "Linked Sales Order"
+msgstr "Đơn bán liên kết"
 
 #: src/forms/PurchaseOrderForms.tsx:547
 msgid "Link this purchase order to the source sales order. Default project code is handled by the backend."
-msgstr "Link this purchase order to the source sales order. Default project code is handled by the backend."
+msgstr "Liên kết đơn mua này với đơn bán nguồn. Mã dự án mặc định được hệ thống tự động xử lý."
 
 #: src/forms/PurchaseOrderForms.tsx:547
 #~ msgid "Liên kết đơn mua hàng này với đơn bán hàng nguồn. Mã dự án mặc định được xử lý bởi hệ thống backend."
@@ -5891,11 +5891,11 @@ msgstr "mục đã nhận into tồn kho"
 
 #: src/forms/SalesOrderForms.tsx:94
 msgid "Select the sales contract linked to this sales order"
-msgstr "Select the sales contract linked to this sales order"
+msgstr "Chọn hợp đồng bán liên kết với đơn bán này"
 
 #: src/forms/SalesOrderForms.tsx:109
 msgid "Sales Order Number"
-msgstr "Sales Order Number"
+msgstr "Số đơn bán"
 
 #: src/forms/SalesOrderForms.tsx:122
 #: src/pages/company/CompanyDetail.tsx:166
@@ -8440,15 +8440,15 @@ msgstr "Parametric xem"
 
 #: src/pages/company/CompaniesIndex.tsx:26
 msgid "Internal Companies"
-msgstr "Internal Companies"
+msgstr "Công ty nội bộ"
 
 #: src/pages/company/CompaniesIndex.tsx:27
 msgid "Manage DTI subsidiaries and internal business units"
-msgstr "Manage DTI subsidiaries and internal business units"
+msgstr "Quản lý các công ty thành viên và đơn vị nội bộ của DTI"
 
 #: src/pages/company/CompaniesIndex.tsx:32
 msgid "Create and update internal companies with representatives, positions, and parent companies. Select a row to open the existing company detail page."
-msgstr "Create and update internal companies with representatives, positions, and parent companies. Select a row to open the existing company detail page."
+msgstr "Tạo và cập nhật công ty nội bộ, người đại diện, chức vụ và công ty mẹ. Chọn một dòng để mở trang chi tiết công ty."
 
 #: src/pages/company/CompanyDetail.tsx:118
 msgid "Email Address"
@@ -8487,7 +8487,7 @@ msgstr "Công ty nội bộ"
 
 #: src/pages/company/CompanyDetail.tsx:211
 msgid "Company Details"
-msgstr "công ty chi tiết"
+msgstr "Thông tin công ty"
 
 #: src/pages/company/CompanyDetail.tsx:217
 msgid "Supplied Parts"
@@ -8495,11 +8495,11 @@ msgstr "Vật tư cung ứng"
 
 #: src/pages/company/CompanyDetail.tsx:224
 msgid "Sales Contracts"
-msgstr "Sales Contracts"
+msgstr "Hợp đồng bán"
 
 #: src/pages/company/CompanyDetail.tsx:233
 msgid "Purchase Contracts"
-msgstr "Purchase Contracts"
+msgstr "Hợp đồng mua"
 
 #: src/pages/company/CompanyDetail.tsx:242
 msgid "Manufactured Parts"
@@ -8512,15 +8512,15 @@ msgstr "Kho đã được giao"
 #: src/pages/company/CompanyDetail.tsx:346
 #: src/tables/company/CompanyTable.tsx:143
 msgid "Edit Company"
-msgstr "Sửa doanh nghiệp"
+msgstr "Sửa công ty"
 
 #: src/pages/company/CompanyDetail.tsx:354
 msgid "Delete Company"
-msgstr "Xóa doanh nghiệp"
+msgstr "Xóa công ty"
 
 #: src/pages/company/CompanyDetail.tsx:369
 msgid "Company Actions"
-msgstr "Chức năng doanh nghiệp"
+msgstr "Thao tác công ty"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:77
 #: src/pages/company/SupplierPartDetail.tsx:90
@@ -11570,48 +11570,52 @@ msgstr "Bạn có chắc muốn xóa địa chỉ này không?"
 
 #: src/tables/company/CompanyTable.tsx:101
 msgid "Internal"
-msgstr "Internal"
+msgstr "Nội bộ"
 
 #: src/tables/company/CompanyTable.tsx:130
 msgid "Add Internal Company"
-msgstr "Add Internal Company"
+msgstr "Thêm công ty nội bộ"
+
+#: src/tables/company/CompanyTable.tsx:143
+msgid "Edit Internal Company"
+msgstr "Sửa công ty nội bộ"
 
 #: src/tables/company/CompanyTable.tsx:130
 #: src/tables/company/CompanyTable.tsx:181
 msgid "Add Company"
-msgstr "thêm công ty"
+msgstr "Thêm công ty"
 
 #: src/tables/company/CompanyTable.tsx:153
 msgid "Show active companies"
-msgstr "hiển thị đang hoạt động companies"
+msgstr "Chỉ hiển thị các công ty đang hoạt động"
 
 #: src/tables/company/CompanyTable.tsx:158
 msgid "Show companies which are suppliers"
-msgstr "hiển thị companies suppliers"
+msgstr "Chỉ hiển thị các công ty là nhà cung cấp"
 
 #: src/tables/company/CompanyTable.tsx:163
 msgid "Show companies which are manufacturers"
-msgstr "hiển thị companies manufacturers"
+msgstr "Chỉ hiển thị các công ty là nhà sản xuất"
 
 #: src/tables/company/CompanyTable.tsx:168
 msgid "Show companies which are customers"
-msgstr "hiển thị companies customers"
+msgstr "Chỉ hiển thị các công ty là khách hàng"
 
 #: src/tables/company/ContactTable.tsx:99
 msgid "Edit Contact"
-msgstr "sửa Contact"
+msgstr "Sửa liên hệ"
 
 #: src/tables/company/ContactTable.tsx:106
 msgid "Add Contact"
-msgstr "thêm Contact"
+msgstr "Thêm liên hệ"
 
 #: src/tables/company/ContactTable.tsx:117
 msgid "Delete Contact"
-msgstr "xóa Contact"
+msgstr "Xóa liên hệ"
 
 #: src/tables/company/ContactTable.tsx:158
 msgid "Add contact"
-msgstr "thêm contact"
+msgstr "Thêm liên hệ"
 
 #: src/tables/contract/ContractTable.tsx:81
 #~ msgid "Chọn tài liệu để upload sau khi hợp đồng được tạo thành công."
@@ -12132,7 +12136,7 @@ msgstr "máy Type thông tin"
 #: src/tables/machine/MachineTypeTable.tsx:154
 #: src/tables/machine/MachineTypeTable.tsx:253
 msgid "Slug"
-msgstr "Slug"
+msgstr "Định danh URL"
 
 #: src/tables/machine/MachineTypeTable.tsx:165
 #: src/tables/machine/MachineTypeTable.tsx:274
@@ -13391,7 +13395,7 @@ msgstr "Đi"
 
 #: src/tables/settings/ErrorTable.tsx:67
 msgid "Traceback"
-msgstr "Traceback"
+msgstr "Dấu vết lỗi"
 
 #: src/tables/settings/ErrorTable.tsx:103
 msgid "When"

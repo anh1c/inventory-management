@@ -140,8 +140,8 @@ export function CompanyTable({
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
     pk: selectedCompany,
-    title: t`Edit Company`,
-    fields: companyFields(),
+    title: showInternalColumns ? t`Edit Internal Company` : t`Edit Company`,
+    fields: showInternalColumns ? internalCompanyFields() : companyFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
@@ -178,7 +178,9 @@ export function CompanyTable({
     return [
       <AddItemButton
         key='add-company'
-        tooltip={t`Add Company`}
+        tooltip={
+          showInternalColumns ? t`Add Internal Company` : t`Add Company`
+        }
         onClick={() => newCompany.open()}
         hidden={!can_add}
       />
