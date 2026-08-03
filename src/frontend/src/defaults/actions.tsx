@@ -140,7 +140,8 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconBarcode size='1.2rem' />
       });
 
-    user?.hasViewRole(UserRoles.build) &&
+    !globalSettings.isSet('BUILDORDER_DISABLED', true) &&
+      user?.hasViewRole(UserRoles.build) &&
       _actions.push({
         id: 'builds',
         label: t`Build Orders`,

@@ -80,10 +80,17 @@ class ScheduledStockTransferTest(StockTestBase):
             stock_item=self.item,
             quantity=4,
         )
+        self.transfer.reserve()
 
     def test_reserve_depart_and_complete(self):
         """Reserved stock is unavailable, then moves through transit to destination."""
+        self.item.refresh_from_db()
+        reserved_item = self.transfer.lines.get().stock_item
+
+        self.assertEqual(self.item.quantity, 6)
         self.assertEqual(self.item.unallocated_quantity(), 6)
+        self.assertEqual(reserved_item.status, StockStatus.QUARANTINED.value)
+        self.assertEqual(reserved_item.unallocated_quantity(), 0)
 
         self.assertTrue(self.transfer.depart())
         self.transfer.refresh_from_db()
@@ -109,11 +116,13 @@ class ScheduledStockTransferTest(StockTestBase):
 
     def test_cancel_releases_reservation(self):
         """Cancelling a scheduled transfer releases its reserved quantity."""
-        self.assertEqual(self.item.unallocated_quantity(), 6)
+        reserved_item = self.transfer.lines.get().stock_item
+        self.assertEqual(reserved_item.status, StockStatus.QUARANTINED.value)
         self.assertTrue(self.transfer.cancel())
-        self.item.refresh_from_db()
+        reserved_item.refresh_from_db()
         self.assertEqual(self.transfer.status, StockTransferOrder.Status.CANCELLED)
-        self.assertEqual(self.item.unallocated_quantity(), 10)
+        self.assertEqual(reserved_item.status, StockStatus.OK.value)
+        self.assertEqual(reserved_item.unallocated_quantity(), 4)
 
 
 class StockTest(StockTestBase):

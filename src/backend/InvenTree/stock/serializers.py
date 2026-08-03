@@ -2031,6 +2031,8 @@ class StockTransferOrderSerializer(InvenTree.serializers.InvenTreeModelSerialize
         for line in lines:
             StockTransferLine.objects.create(transfer=transfer, **line)
 
+        transfer.reserve(user=getattr(request, 'user', None))
+
         return transfer
 
     @transaction.atomic

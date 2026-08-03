@@ -61,6 +61,8 @@ export function SalesOrderTable({
   contractId,
   contractBuyerId,
   contractSellerId,
+  workTicketId,
+  workTicketProjectCodeId,
   defaultOutstanding = true,
   hasProjectCode,
   onSelectSalesOrder,
@@ -71,6 +73,8 @@ export function SalesOrderTable({
   contractId?: number;
   contractBuyerId?: number;
   contractSellerId?: number;
+  workTicketId?: number;
+  workTicketProjectCodeId?: number;
   defaultOutstanding?: boolean;
   hasProjectCode?: boolean;
   onSelectSalesOrder?: (record: any) => void;
@@ -134,15 +138,25 @@ export function SalesOrderTable({
     return filters;
   }, [partId]);
 
-  const salesOrderFields = useSalesOrderFields({ create: true });
+  const salesOrderFields = useSalesOrderFields({
+    create: true,
+    projectCodeId: workTicketProjectCodeId
+  });
 
   const newSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
     title: t`Add Sales Order`,
-    fields: salesOrderFields,
+    fields: {
+      ...salesOrderFields,
+      ...(workTicketId
+        ? { work_ticket: { field_type: 'number' as const, hidden: true, value: workTicketId } }
+        : {})
+    },
     initialData: {
       customer: customerId,
-      contract: contractId
+      contract: contractId,
+      work_ticket: workTicketId,
+      project_code: workTicketProjectCodeId
     },
     follow: true,
     modelType: ModelType.salesorder,
@@ -197,6 +211,11 @@ export function SalesOrderTable({
       ProjectCodeColumn({
         defaultVisible: false
       }),
+      {
+        accessor: 'work_ticket_detail.code',
+        title: 'Mã công việc',
+        render: (record: any) => record.work_ticket_detail?.code ?? '-'
+      },
       CreationDateColumn({
         defaultVisible: false
       }),
@@ -241,6 +260,7 @@ export function SalesOrderTable({
             contract: contractId,
             contract_buyer: contractBuyerId,
             contract_seller: contractSellerId,
+            work_ticket: workTicketId,
             has_project_code: hasProjectCode
           },
           tableFilters: tableFilters,

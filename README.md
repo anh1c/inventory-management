@@ -17,6 +17,20 @@
 
 DTWare provides inventory, stock, purchasing, sales, manufacturing, reporting, barcode and operations management features. The backend is built on Python/Django and exposes a REST API for external integrations.
 
+### Temporary manufacturing feature flag
+
+Manufacturing and build-order features are temporarily disabled by default with the global setting `BUILDORDER_DISABLED=true`.
+
+While this setting is disabled, the UI hides manufacturing/build-order entry points and purchase orders using output `Xưởng` must select a destination stock location of type `Xưởng`; they cannot be linked to a build order. Backend validation also rejects direct API payloads that try to link purchase orders or purchase-order lines to build orders.
+
+To restore manufacturing/build-order functionality, set `BUILDORDER_DISABLED=false` in global settings. For environment-based deployments, override the global setting, for example:
+
+```bash
+INVENTREE_GLOBAL_SETTINGS='{"BUILDORDER_DISABLED": false}'
+```
+
+After enabling the setting, restart the backend/frontend service as required by the deployment so the web client reloads the updated global settings.
+
 <!-- Roadmap -->
 ### :compass: Roadmap
 

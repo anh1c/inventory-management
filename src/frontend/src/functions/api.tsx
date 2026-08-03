@@ -20,7 +20,7 @@ export function extractErrorMessage({
   let message = '';
 
   if (error_data) {
-    message = error_data[field ?? 'error'] ?? error_data['non_field_errors'];
+    message = error_data[field ?? 'error'] ?? error_data['non_field_errors'] ?? error_data['detail'];
   }
 
   // No message? Look at the response status codes

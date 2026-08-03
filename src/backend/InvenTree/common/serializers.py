@@ -1,8 +1,9 @@
 """JSON serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Count, OuterRef, Subquery
+from django.db.models import BooleanField, Case, Count, OuterRef, Subquery, Value, When
 from django.urls import reverse
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 import django_q.models
@@ -411,6 +412,63 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
     responsible_detail = OwnerSerializer(
         source='responsible', read_only=True, allow_null=True
     )
+
+
+class WorkTicketSerializer(InvenTreeModelSerializer):
+    """Serializer enforcing the manager-assignee work ticket workflow."""
+
+    assigned_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    assigned_by_detail = UserSerializer(source='assigned_by', read_only=True)
+    assigned_to_detail = UserSerializer(source='assigned_to', read_only=True)
+    code = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = common_models.WorkTicket
+        fields = ['pk', 'code', 'title', 'description', 'project_code', 'assigned_to', 'assigned_to_detail', 'assigned_by', 'assigned_by_detail', 'status', 'target_date', 'completion_date', 'overdue', 'created', 'updated']
+        read_only_fields = ['code', 'completion_date', 'overdue', 'created', 'updated']
+
+    overdue = serializers.BooleanField(read_only=True, default=False)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        return queryset.annotate(
+            overdue=Case(
+                When(common_models.WorkTicket.get_overdue_filter(), then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField(),
+            )
+        )
+
+    def validate(self, attrs):
+        """Allow only the assignee and manager to advance their respective steps."""
+        request = self.context.get('request')
+        if not self.instance:
+            return attrs
+
+        if any(field != 'status' for field in attrs):
+            if request and request.user.pk == self.instance.assigned_by_id:
+                return attrs
+            raise PermissionDenied(_('Only the assigning manager can edit this ticket'))
+
+        if 'status' not in attrs or attrs['status'] == self.instance.status:
+            return attrs
+
+        current, target = self.instance.status, attrs['status']
+        assignee_transition = (current, target) in {
+            (common_models.WorkTicket.Status.OPEN, common_models.WorkTicket.Status.PROCESSING),
+            (common_models.WorkTicket.Status.PROCESSING, common_models.WorkTicket.Status.REVIEW),
+        }
+        manager_transition = (current, target) == (
+            common_models.WorkTicket.Status.REVIEW,
+            common_models.WorkTicket.Status.DONE,
+        )
+
+        if assignee_transition and request and request.user.pk == self.instance.assigned_to_id:
+            return attrs
+        if manager_transition and request and request.user.pk == self.instance.assigned_by_id:
+            attrs['completion_date'] = now()
+            return attrs
+        raise PermissionDenied(_('Bạn không có quyền chuyển trạng thái công việc.'))
 
 
 @register_importer()

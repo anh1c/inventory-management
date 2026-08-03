@@ -65,6 +65,7 @@ export enum ApiEndpoints {
   icons = 'icons/',
   selectionlist_list = 'selection/',
   selectionentry_list = 'selection/:id/entry/',
+  work_ticket_list = 'work-ticket/',
 
   // Barcode API endpoints
   barcode = 'barcode/',

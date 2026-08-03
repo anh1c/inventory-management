@@ -162,7 +162,10 @@ export function usePurchaseOrderLineItemFields({
         api_url: apiUrl(ApiEndpoints.build_line_list),
         label: t`Build Order Line`,
         description: t`Select a line from the linked build order to purchase`,
-        hidden: order?.output_type !== 'workshop' || !order?.build_order,
+        hidden:
+          order?.output_type !== 'workshop' ||
+          !order?.build_order ||
+          globalSettings.isSet('BUILDORDER_DISABLED', true),
         filters: {
           build: order?.build_order,
           allocated: false,
@@ -256,7 +259,10 @@ export function usePurchaseOrderLineItemFields({
       }
     };
 
-    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', false)) {
+    if (
+      globalSettings.isSet('BUILDORDER_DISABLED', true) ||
+      !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', false)
+    ) {
       delete fields.build_order;
     }
 
@@ -289,12 +295,14 @@ export function usePurchaseOrderFields({
   supplierId,
   duplicateOrderId,
   create,
-  initialOutputType
+  initialOutputType,
+  projectCodeId
 }: {
   supplierId?: number;
   duplicateOrderId?: number;
   create?: boolean;
   initialOutputType?: string;
+  projectCodeId?: number;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
   const [selectedContract, setSelectedContract] = useState<any>(undefined);
@@ -306,11 +314,12 @@ export function usePurchaseOrderFields({
   const [selectedOutputType, setSelectedOutputType] = useState<string | undefined>(
     initialOutputType
   );
-  const [selectedProjectCodeId, setSelectedProjectCodeId] = useState<number | undefined>();
+  const [selectedProjectCodeId, setSelectedProjectCodeId] = useState<number | undefined>(projectCodeId);
   const [selectedSalesOrderId, setSelectedSalesOrderId] = useState<number | undefined>();
   const [selectedDestination, setSelectedDestination] = useState<number | undefined>();
   const [selectedBuildOrder, setSelectedBuildOrder] = useState<number | undefined>();
   const linkedSalesContractId = selectedContract?.sales_contract ?? undefined;
+  const buildOrdersEnabled = !globalSettings.isSet('BUILDORDER_DISABLED', true);
   const salesOrderFields = useSalesOrderFields({
     create: true,
     linkedPurchaseContractId: selectedContract?.pk,
@@ -346,6 +355,10 @@ export function usePurchaseOrderFields({
   useEffect(() => {
     setSelectedOutputType(initialOutputType);
   }, [initialOutputType]);
+
+  useEffect(() => {
+    setSelectedProjectCodeId(projectCodeId);
+  }, [projectCodeId]);
 
   const onOutputTypeChange = (value: any) => {
     const outputType = value || undefined;
@@ -401,7 +414,7 @@ export function usePurchaseOrderFields({
 
   const setContract = (record?: any) => {
     setSelectedContract(record);
-    setSelectedProjectCodeId(record?.project_code ?? undefined);
+    setSelectedProjectCodeId(record?.project_code ?? projectCodeId);
     setSelectedSalesOrderId(undefined);
 
     if (!supplierId) {
@@ -448,7 +461,8 @@ export function usePurchaseOrderFields({
           label: t`Purchase Contract`,
           description: t`Select the purchase contract linked to this purchase order`,
           filters: {
-            contract_type: 'purchase'
+            contract_type: 'purchase',
+            ...(projectCodeId ? { project_code: projectCodeId } : {})
           },
           onValueChange: (_value: any, record?: any) => setContract(record)
         }
@@ -464,8 +478,8 @@ export function usePurchaseOrderFields({
         label: t`Project Code`,
         icon: <IconList />,
         required: true,
-        value: selectedProjectCodeId,
-        disabled: !!selectedContract?.project_code,
+        value: projectCodeId ?? selectedProjectCodeId,
+        disabled: !!projectCodeId || !!selectedContract?.project_code,
         onValueChange: (value: any) => setSelectedProjectCodeId(value)
       },
       description: {
@@ -511,7 +525,7 @@ export function usePurchaseOrderFields({
         label: t`Linked Build Order`,
         description: t`Link this purchase order to an outstanding build order`,
         value: selectedBuildOrder,
-        hidden: selectedOutputType !== 'workshop',
+        hidden: selectedOutputType !== 'workshop' || !buildOrdersEnabled,
         disabled: !!selectedDestination || !selectedProjectCodeId,
         filters: {
           outstanding: true,
@@ -522,14 +536,24 @@ export function usePurchaseOrderFields({
         leftSection: (
           <ActionButton
             color='green'
-            disabled={!!selectedDestination || !!selectedBuildOrder || !selectedProjectCodeId}
+            disabled={
+              !!selectedDestination ||
+              !!selectedBuildOrder ||
+              !selectedProjectCodeId ||
+              !buildOrdersEnabled
+            }
             icon={<IconPlus />}
             size='lg'
             tooltip={t`Add Build Order`}
             onClick={(event: any) => {
               event?.preventDefault?.();
               event?.stopPropagation?.();
-              if (selectedDestination || selectedBuildOrder || !selectedProjectCodeId) {
+              if (
+                selectedDestination ||
+                selectedBuildOrder ||
+                !selectedProjectCodeId ||
+                !buildOrdersEnabled
+              ) {
                 return;
               }
               newBuildOrder.open();
@@ -644,6 +668,7 @@ export function usePurchaseOrderFields({
     destinationFilters,
     destinationLabel,
     duplicateOrderId,
+    projectCodeId,
     supplierId,
     selectedSupplierId,
     selectedContract,
@@ -653,6 +678,7 @@ export function usePurchaseOrderFields({
     selectedSalesOrderId,
     selectedDestination,
     selectedBuildOrder,
+    buildOrdersEnabled,
     globalSettings,
     contractDateError,
     newSalesOrder,
@@ -666,11 +692,13 @@ export function usePurchaseOrderFields({
 function LineItemFormRow({
   props,
   record,
-  statuses
+  statuses,
+  directAllocationOrder = false
 }: Readonly<{
   props: TableFieldRowProps;
   record: any;
   statuses: any;
+  directAllocationOrder?: boolean;
 }>) {
   // Barcode Modal state
   const [opened, { open, close }] = useDisclosure(false, {
@@ -915,15 +943,17 @@ function LineItemFormRow({
         </Table.Td>
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
           <Flex gap='1px'>
-            <ActionButton
-              size='sm'
-              onClick={() => locationHandlers.toggle()}
-              icon={<InvenTreeIcon icon='location' />}
-              tooltip={t`Set Location`}
-              tooltipAlignment='top'
-              variant={locationOpen ? 'outline' : 'transparent'}
-              disabled={virtual}
-            />
+            {!directAllocationOrder && (
+              <ActionButton
+                size='sm'
+                onClick={() => locationHandlers.toggle()}
+                icon={<InvenTreeIcon icon='location' />}
+                tooltip={t`Set Location`}
+                tooltipAlignment='top'
+                variant={locationOpen ? 'outline' : 'transparent'}
+                disabled={virtual}
+              />
+            )}
             <ActionButton
               size='sm'
               onClick={() => batchHandlers.toggle()}
@@ -1007,7 +1037,7 @@ function LineItemFormRow({
           <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
         </Table.Td>
       </Table.Tr>
-      {locationOpen && (
+      {locationOpen && !directAllocationOrder && (
         <Table.Tr>
           <Table.Td colSpan={10}>
             <Group grow preventGrowOverflow={false} justify='flex-apart' p='xs'>
@@ -1179,6 +1209,7 @@ type LineItemsForm = {
   items: any[];
   orderPk: number;
   destinationPk?: number;
+  directAllocationOrder?: boolean;
   formProps?: LineFormHandlers;
 };
 
@@ -1207,7 +1238,9 @@ export function useReceiveLineItems(props: LineItemsForm) {
         value: filteredItems.map((elem, idx) => {
           return {
             line_item: elem.pk,
-            location: elem.destination ?? elem.destination_detail?.pk ?? null,
+            location: props.directAllocationOrder
+              ? null
+              : (elem.destination ?? elem.destination_detail?.pk ?? null),
             quantity: elem.quantity - elem.received,
             expiry_date: null,
             batch_code: '',
@@ -1228,6 +1261,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
               props={row}
               record={record}
               statuses={stockStatusCodes}
+              directAllocationOrder={props.directAllocationOrder}
               key={record.pk}
             />
           );
@@ -1242,6 +1276,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
         ]
       },
       location: {
+        hidden: props.directAllocationOrder,
         filters: {
           structural: false
         }

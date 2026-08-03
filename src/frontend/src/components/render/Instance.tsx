@@ -79,6 +79,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.partcategory]: RenderPartCategory,
   [ModelType.parttesttemplate]: RenderPartTestTemplate,
   [ModelType.projectcode]: RenderProjectCode,
+  [ModelType.workticket]: ({ instance }) => <Text>{instance?.title}</Text>,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
   [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,

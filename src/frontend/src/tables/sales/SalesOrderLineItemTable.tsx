@@ -42,6 +42,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
@@ -74,6 +75,7 @@ export default function SalesOrderLineItemTable({
 }>) {
   const navigate = useNavigate();
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
   const table = useTable('sales-order-line-item');
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -189,6 +191,7 @@ export default function SalesOrderLineItemTable({
       },
       {
         accessor: 'allocated',
+        title: 'Phân bổ',
         sortable: true,
         render: (record: any) => {
           if (record.part_detail?.virtual) {
@@ -349,6 +352,11 @@ export default function SalesOrderLineItemTable({
   }, []);
 
   const tableActions = useMemo(() => {
+    const selectableRecords = table.selectedRecords ?? [];
+    const selectedOpenRecords = selectableRecords.filter((record: any) => {
+      return (record?.allocated ?? 0) < (record?.quantity ?? 0);
+    });
+
     return [
       <AddItemButton
         key='add-line-item'
@@ -364,25 +372,23 @@ export default function SalesOrderLineItemTable({
       <ActionButton
         key='order-parts'
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
-        disabled={!table.hasSelectedRecords}
-        tooltip={t`Order Parts`}
+        disabled={selectedOpenRecords.length === 0}
+        tooltip='Mua hàng'
         icon={<IconShoppingCart />}
         color='blue'
         onClick={() => {
-          setPartsToOrder(table.selectedRecords.map((r) => r.part_detail));
+          setPartsToOrder(selectedOpenRecords.map((r) => r.part_detail));
           orderPartsWizard.openWizard();
         }}
       />,
       <ActionButton
         key='allocate-stock'
-        tooltip={t`Allocate Stock`}
+        tooltip='Phân kho'
         icon={<IconArrowRight />}
-        disabled={!table.hasSelectedRecords}
+        disabled={selectedOpenRecords.length === 0}
         color='green'
         onClick={() => {
-          setSelectedItems(
-            table.selectedRecords.filter((r) => r.allocated < r.quantity)
-          );
+          setSelectedItems(selectedOpenRecords);
           allocateStock.open();
         }}
       />
@@ -391,17 +397,19 @@ export default function SalesOrderLineItemTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
+      const allocated = (record?.allocated ?? 0) >= (record?.quantity ?? 0);
+      const shipped = (record?.shipped ?? 0) >= (record?.quantity ?? 0);
+      const fulfilled = allocated || shipped;
       const virtual = record?.part_detail?.virtual ?? false;
 
       return [
         {
           hidden:
-            allocated ||
+            fulfilled ||
             virtual ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
-          title: t`Allocate Stock`,
+          title: 'Phân kho',
           icon: <IconSquareArrowRight />,
           color: 'green',
           onClick: () => {
@@ -412,7 +420,7 @@ export default function SalesOrderLineItemTable({
         {
           hidden:
             !record?.part_detail?.trackable ||
-            allocated ||
+            fulfilled ||
             virtual ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
@@ -430,11 +438,12 @@ export default function SalesOrderLineItemTable({
         },
         {
           hidden:
-            allocated ||
+            fulfilled ||
             virtual ||
+            globalSettings.isSet('BUILDORDER_DISABLED', true) ||
             !user.hasAddRole(UserRoles.build) ||
             !record?.part_detail?.assembly,
-          title: t`Build stock`,
+          title: 'Sản xuất',
           icon: <IconTools />,
           color: 'blue',
           onClick: () => {
@@ -448,11 +457,11 @@ export default function SalesOrderLineItemTable({
         },
         {
           hidden:
-            allocated ||
+            fulfilled ||
             virtual ||
             !user.hasAddRole(UserRoles.purchase_order) ||
             !record?.part_detail?.purchaseable,
-          title: t`Order stock`,
+          title: 'Mua hàng',
           icon: <IconShoppingCart />,
           color: 'blue',
           onClick: () => {
@@ -490,7 +499,7 @@ export default function SalesOrderLineItemTable({
         })
       ];
     },
-    [navigate, user, editable]
+    [navigate, user, globalSettings, editable]
   );
 
   // Control row expansion

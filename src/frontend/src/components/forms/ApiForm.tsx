@@ -30,8 +30,10 @@ import {
   mapFields
 } from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { extractErrorMessage } from '../../functions/api';
 import {
   invalidResponse,
+  permissionDenied,
   showTimeoutNotification
 } from '@lib/functions/Notification';
 import type {
@@ -571,6 +573,11 @@ export function ApiForm({
 
               break;
             default:
+              if (error.response.status === 403) {
+                permissionDenied(extractErrorMessage({ error }));
+                props.onFormError?.(error, form);
+                break;
+              }
               // Unexpected state on form error
               invalidResponse(error.response.status);
               props.onFormError?.(error, form);

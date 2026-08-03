@@ -6,14 +6,17 @@ import { UserRoles } from '@lib/enums/Roles';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { GlobalSettingList } from '../../components/settings/SettingList';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import ProjectCodeTable from '../../tables/settings/ProjectCodeTable';
 
 export default function ProjectsIndex() {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
   const canViewProjects =
     user.isStaff() ||
-    user.hasViewRole(UserRoles.build) ||
+    (!globalSettings.isSet('BUILDORDER_DISABLED', true) &&
+      user.hasViewRole(UserRoles.build)) ||
     user.hasViewRole(UserRoles.purchase_order) ||
     user.hasViewRole(UserRoles.sales_order);
 

@@ -59,6 +59,8 @@ export function PurchaseOrderTable({
   supplierId,
   supplierPartId,
   externalBuildId,
+  workTicketId,
+  workTicketProjectCodeId,
   salesOrderId,
   contractId,
   contractBuyerId,
@@ -70,6 +72,8 @@ export function PurchaseOrderTable({
   supplierId?: number;
   supplierPartId?: number;
   externalBuildId?: number;
+  workTicketId?: number;
+  workTicketProjectCodeId?: number;
   salesOrderId?: number;
   contractId?: number;
   contractBuyerId?: number;
@@ -150,6 +154,11 @@ export function PurchaseOrderTable({
       ProjectCodeColumn({
         defaultVisible: false
       }),
+      {
+        accessor: 'work_ticket_detail.code',
+        title: 'Mã công việc',
+        render: (record: any) => record.work_ticket_detail?.code ?? '-'
+      },
       CreationDateColumn({
         defaultVisible: false
       }),
@@ -181,16 +190,26 @@ export function PurchaseOrderTable({
     ];
   }, []);
 
-  const purchaseOrderFields = usePurchaseOrderFields({ create: true });
+  const purchaseOrderFields = usePurchaseOrderFields({
+    create: true,
+    projectCodeId: workTicketProjectCodeId
+  });
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
-    fields: purchaseOrderFields,
+    fields: {
+      ...purchaseOrderFields,
+      ...(workTicketId
+        ? { work_ticket: { field_type: 'number' as const, hidden: true, value: workTicketId } }
+        : {})
+    },
     initialData: {
       supplier: supplierId,
       sales_order: salesOrderId,
-      contract: contractId
+      contract: contractId,
+      work_ticket: workTicketId,
+      project_code: workTicketProjectCodeId
     },
     follow: true,
     modelType: ModelType.purchaseorder,
@@ -221,6 +240,7 @@ export function PurchaseOrderTable({
             supplier: supplierId,
             supplier_part: supplierPartId,
             external_build: externalBuildId,
+            work_ticket: workTicketId,
             sales_order: salesOrderId,
             contract: contractId,
             contract_buyer: contractBuyerId,

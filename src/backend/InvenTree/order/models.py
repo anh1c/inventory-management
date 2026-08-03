@@ -365,6 +365,15 @@ class Order(
         """Custom clean method for the generic order class."""
         super().clean()
 
+        if (
+            getattr(self, 'work_ticket_id', None)
+            and self.project_code_id
+            and self.project_code_id != self.work_ticket.project_code_id
+        ):
+            raise ValidationError({
+                'work_ticket': _('Work ticket must use the same project code')
+            })
+
         # Check if a responsible owner is required for this order type
         if self.REQUIRE_RESPONSIBLE_SETTING:
             if get_global_setting(self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False):
@@ -615,6 +624,11 @@ class Contract(
         """Validate contract relationships."""
         super().clean()
 
+        if self.work_ticket_id and self.project_code_id != self.work_ticket.project_code_id:
+            raise ValidationError({
+                'work_ticket': _('Work ticket must use the same project code')
+            })
+
         if self.sales_contract and self.sales_contract.contract_type != self.ContractType.SALES:
             raise ValidationError({
                 'sales_contract': _('Linked sales contract must be a sales contract')
@@ -663,6 +677,15 @@ class Contract(
         blank=False,
         verbose_name=_('Reference'),
         help_text=_('Contract reference'),
+    )
+
+    work_ticket = models.ForeignKey(
+        'common.WorkTicket',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='contracts',
+        verbose_name=_('Work Ticket'),
     )
 
     contract_type = models.CharField(
@@ -900,6 +923,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
     STATUS_CLASS = PurchaseOrderStatus
     UNLOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
 
+    work_ticket = models.ForeignKey(
+        'common.WorkTicket',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='purchase_orders',
+        verbose_name=_('Work Ticket'),
+    )
+
     class OutputType(models.TextChoices):
         WORKSHOP = 'workshop', _('Xưởng')
         CONSTRUCTION_SITE = 'construction_site', _('Công trường')
@@ -907,6 +939,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     WORKSHOP_LOCATION_TYPE = 'Xưởng'
     CONSTRUCTION_SITE_LOCATION_TYPE = 'Công trường'
+
+    @staticmethod
+    def build_orders_enabled():
+        """Return True if build order functionality is enabled."""
+        return not get_global_setting('BUILDORDER_DISABLED', backup_value=True)
 
     class Meta:
         """Model meta options."""
@@ -977,6 +1014,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
         else:
             if self.output_type == self.OutputType.WORKSHOP:
+                if not self.build_orders_enabled() and self.build_order:
+                    errors['build_order'] = _(
+                        'Build order functionality is currently disabled'
+                    )
                 if self.destination and self.build_order:
                     errors['destination'] = _(
                         'Destination is not allowed when purchase order is linked to a build order'
@@ -1024,6 +1065,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def clean_line_item(self, line):
         """Clean a line item for this PurchaseOrder."""
         super().clean_line_item(line)
+
+        if not self.build_orders_enabled():
+            line.build_order = None
+            line.build_line = None
 
         if getattr(line, 'destination', None):
             self.validate_output_destination(line.destination)
@@ -1311,18 +1356,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
             trigger_event(PurchaseOrderEvents.COMPLETED, id=self.pk)
 
     def sync_sales_order_lines(self):
-        """Update linked sales order lines from completed commercial purchase lines."""
-        for line in self.lines.all().select_related('sales_order_line'):
-            sales_order_line = line.sales_order_line
-
-            if sales_order_line is None:
-                continue
-
-            sales_order_line.shipped = min(
-                sales_order_line.quantity,
-                sales_order_line.shipped + line.received,
-            )
-            sales_order_line.save(update_fields=['shipped'])
+        """Refresh linked sales order lines after commercial purchase receipts."""
+        return
 
     @transaction.atomic
     def issue_order(self):
@@ -1495,6 +1530,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Stock items to allocate to build lines after receipt
         pending_build_allocations = []
 
+        # Stock items to allocate to sales order lines after receipt
+        pending_sales_allocations = []
+
+        next_tree_id = stock.models.StockItem.getNextTreeID()
+
         convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
         default_currency = currency_code_default()
 
@@ -1654,16 +1694,20 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     if line.build_line:
                         pending_build_allocations.append((item, line.build_line))
 
+                    if line.sales_order_line:
+                        pending_sales_allocations.append((item, line.sales_order_line))
+
             else:
                 new_item = stock.models.StockItem(
                     **stock_data,
                     serial='',
-                    tree_id=stock.models.StockItem.getNextTreeID(),
+                    tree_id=next_tree_id,
                     parent=None,
                     level=0,
                     lft=1,
                     rght=2,
                 )
+                next_tree_id += 1
 
                 new_item.set_status(status, custom_values=custom_stock_status_values)
 
@@ -1675,23 +1719,27 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 if line.build_line:
                     pending_build_allocations.append((new_item, line.build_line))
 
+                if line.sales_order_line:
+                    pending_sales_allocations.append((new_item, line.sales_order_line))
+
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
-            stock.models.StockItem.objects.bulk_create(bulk_create_items)
+            created_items = stock.models.StockItem.objects.bulk_create(bulk_create_items)
 
-            # Fetch them back again
-            tree_ids = [item.tree_id for item in bulk_create_items]
-
-            created_items = stock.models.StockItem.objects.filter(
-                tree_id__in=tree_ids, level=0, lft=1, rght=2, purchase_order=self
-            ).prefetch_related('location')
+            item_id_map = {
+                id(original): created
+                for original, created in zip(bulk_create_items, created_items)
+            }
 
             stock_items.extend(created_items)
 
-            created_item_map = {item.tree_id: item for item in created_items}
             pending_build_allocations = [
-                (created_item_map.get(item.tree_id, item), build_line)
+                (item_id_map.get(id(item), item), build_line)
                 for item, build_line in pending_build_allocations
+            ]
+            pending_sales_allocations = [
+                (item_id_map.get(id(item), item), sales_order_line)
+                for item, sales_order_line in pending_sales_allocations
             ]
 
         if pending_build_allocations:
@@ -1704,6 +1752,20 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     quantity=item.quantity,
                 )
                 for item, build_line in pending_build_allocations
+                if item.pk
+            ])
+
+        if pending_sales_allocations:
+            SalesOrderAllocation.objects.bulk_create([
+                SalesOrderAllocation(
+                    line=sales_order_line,
+                    item=item,
+                    quantity=item.quantity,
+                    shipment=sales_order_line.order.shipments.filter(
+                        shipment_date__isnull=True
+                    ).first(),
+                )
+                for item, sales_order_line in pending_sales_allocations
                 if item.pk
             ])
 
@@ -1804,6 +1866,15 @@ class SalesOrder(TotalPriceMixin, Order):
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = SalesOrderStatus
     UNLOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
+
+    work_ticket = models.ForeignKey(
+        'common.WorkTicket',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='sales_orders',
+        verbose_name=_('Work Ticket'),
+    )
 
     class Meta:
         """Model meta options."""
@@ -2493,6 +2564,11 @@ class PurchaseOrderLineItem(OrderLineItem):
                 raise ValidationError({'part': _('Supplier part must match supplier')})
 
         if self.build_order:
+            if not PurchaseOrder.build_orders_enabled():
+                raise ValidationError({
+                    'build_order': _('Build order functionality is currently disabled')
+                })
+
             if not self.build_order.external:
                 raise ValidationError({
                     'build_order': _('Build order must be marked as external')
@@ -2538,6 +2614,11 @@ class PurchaseOrderLineItem(OrderLineItem):
             })
 
         if self.order.output_type == PurchaseOrder.OutputType.WORKSHOP:
+            if not PurchaseOrder.build_orders_enabled() and self.build_line:
+                raise ValidationError({
+                    'build_line': _('Build order functionality is currently disabled')
+                })
+
             if self.order.build_order:
                 if self.build_line is None:
                     raise ValidationError({

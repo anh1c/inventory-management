@@ -104,6 +104,16 @@ class ProjectCodeAdmin(admin.ModelAdmin):
     search_fields = ('code', 'description')
 
 
+@admin.register(common.models.WorkTicket)
+class WorkTicketAdmin(admin.ModelAdmin):
+    """Admin interface for work tickets."""
+
+    list_display = ('title', 'project_code', 'assigned_to', 'assigned_by', 'status')
+    list_filter = ('status', 'project_code')
+    search_fields = ('title', 'description')
+    readonly_fields = ('code',)
+
+
 @admin.register(common.models.InvenTreeSetting)
 class SettingsAdmin(admin.ModelAdmin):
     """Admin settings for InvenTreeSetting."""

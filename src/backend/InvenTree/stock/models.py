@@ -3017,6 +3017,35 @@ class StockTransferOrder(InvenTree.models.InvenTreeModel):
             raise ValidationError(errors)
 
     @transaction.atomic
+    def reserve(self, user=None):
+        """Set the planned stock aside so it cannot be used elsewhere."""
+        if self.status != self.Status.SCHEDULED:
+            return False
+
+        transfer = StockTransferOrder.objects.select_for_update().get(pk=self.pk)
+        actor = user or transfer.created_by
+
+        for line in transfer.lines.select_related('stock_item').select_for_update():
+            item = StockItem.objects.select_for_update().get(pk=line.stock_item_id)
+
+            if line.quantity < item.quantity:
+                item = item.splitStock(
+                    line.quantity,
+                    location=transfer.source_location,
+                    user=actor,
+                    notes=str(_('Split for scheduled stock transfer')),
+                    allow_production=True,
+                )
+                line.stock_item = item
+
+            line.original_status = item.status
+            line.save(update_fields=['stock_item', 'original_status'])
+            item.set_status(StockStatus.QUARANTINED.value)
+            item.save()
+
+        return True
+
+    @transaction.atomic
     def depart(self, user=None):
         """Move reserved stock out of its source location."""
         if self.status != self.Status.SCHEDULED:
@@ -3051,8 +3080,9 @@ class StockTransferOrder(InvenTree.models.InvenTreeModel):
                 line.stock_item = item
                 line.save(update_fields=['stock_item'])
 
-            line.original_status = item.status
-            line.save(update_fields=['original_status'])
+            if line.original_status is None:
+                line.original_status = item.status
+                line.save(update_fields=['original_status'])
 
             item.location = None
             item.set_status(StockStatus.QUARANTINED.value)
@@ -3119,11 +3149,12 @@ class StockTransferOrder(InvenTree.models.InvenTreeModel):
 
         transfer = StockTransferOrder.objects.select_for_update().get(pk=self.pk)
 
-        if transfer.departed_at is not None:
-            actor = user or transfer.created_by
+        actor = user or transfer.created_by
 
-            for line in transfer.lines.select_related('stock_item').select_for_update():
-                item = StockItem.objects.select_for_update().get(pk=line.stock_item_id)
+        for line in transfer.lines.select_related('stock_item').select_for_update():
+            item = StockItem.objects.select_for_update().get(pk=line.stock_item_id)
+
+            if transfer.departed_at is not None:
                 item.move(
                     transfer.source_location,
                     str(_('Scheduled stock transfer cancelled')),
@@ -3131,6 +3162,9 @@ class StockTransferOrder(InvenTree.models.InvenTreeModel):
                     quantity=item.quantity,
                     status=line.original_status or StockStatus.OK.value,
                 )
+            else:
+                item.set_status(line.original_status or StockStatus.OK.value)
+                item.save()
 
         transfer.status = self.Status.CANCELLED
         transfer.save(update_fields=['status', 'updated_at'])

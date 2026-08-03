@@ -504,6 +504,64 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
 
 
+class WorkTicketFilter(FilterSet):
+    """Filters for work-ticket table and calendar views."""
+
+    overdue = rest_filters.BooleanFilter(method='filter_overdue')
+    min_date = rest_filters.DateFilter(method='filter_min_date')
+    max_date = rest_filters.DateFilter(method='filter_max_date')
+
+    class Meta:
+        model = common.models.WorkTicket
+        fields = ['status', 'project_code', 'assigned_to', 'assigned_by']
+
+    def filter_overdue(self, queryset, name, value):
+        return queryset.filter(common.models.WorkTicket.get_overdue_filter()) if value else queryset.exclude(common.models.WorkTicket.get_overdue_filter())
+
+    def filter_min_date(self, queryset, name, value):
+        return queryset.filter(Q(created__date__gte=value) | Q(target_date__gte=value))
+
+    def filter_max_date(self, queryset, name, value):
+        return queryset.filter(Q(created__date__lte=value) | Q(target_date__lte=value))
+
+
+class WorkTicketList(ListCreateAPI):
+    """List and create work tickets."""
+
+    queryset = common.models.WorkTicket.objects.select_related(
+        'project_code', 'assigned_to', 'assigned_by'
+    )
+    serializer_class = common.serializers.WorkTicketSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = SEARCH_ORDER_FILTER
+    filterset_class = WorkTicketFilter
+    ordering_fields = ['created', 'updated', 'status', 'title']
+    search_fields = ['title', 'description', 'project_code__code']
+
+    def get_queryset(self):
+        return common.serializers.WorkTicketSerializer.annotate_queryset(
+            super().get_queryset()
+        )
+
+    def perform_create(self, serializer):
+        """Record the assigning manager from the authenticated user."""
+        serializer.save(assigned_by=self.request.user)
+
+
+class WorkTicketDetail(RetrieveUpdateDestroyAPI):
+    """Retrieve, update, or delete a work ticket."""
+
+    queryset = WorkTicketList.queryset
+    serializer_class = common.serializers.WorkTicketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        """Only the assigning manager can remove a ticket."""
+        if self.request.user.pk != instance.assigned_by_id:
+            raise PermissionDenied(_('Only the assigning manager can delete this ticket'))
+        instance.delete()
+
+
 class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
     """List view for custom units."""
 
@@ -1512,6 +1570,13 @@ common_api_urls = [
                 ]),
             ),
             path('', ProjectCodeList.as_view(), name='api-project-code-list'),
+        ]),
+    ),
+    path(
+        'work-ticket/',
+        include([
+            path('<int:pk>/', WorkTicketDetail.as_view(), name='api-work-ticket-detail'),
+            path('', WorkTicketList.as_view(), name='api-work-ticket-list'),
         ]),
     ),
     # Flags

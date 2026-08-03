@@ -14,6 +14,7 @@ import {
   IconPackages,
   IconReceipt,
   IconShoppingCart,
+  IconTicket,
 } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
@@ -28,7 +29,10 @@ type NavTab = {
   staff?: boolean;
 };
 
-export function getNavTabs(user: UserStateProps): NavTab[] {
+export function getNavTabs(
+  user: UserStateProps,
+  settings?: SettingsStateProps
+): NavTab[] {
   const navTabs: NavTab[] = [
     {
       name: 'home',
@@ -78,6 +82,11 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       roles: [UserRoles.build, UserRoles.purchase_order, UserRoles.sales_order]
     },
     {
+      name: 'planning',
+      title: 'Kế hoạch',
+      icon: <IconTicket />
+    },
+    {
       name: 'companies',
       title: 'Công ty nội bộ',
       icon: <IconHierarchy />,
@@ -87,6 +96,14 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
   ];
 
   return navTabs.filter((tab) => {
+    if (
+      tab.name === 'manufacturing' &&
+      settings &&
+      settings.isSet('BUILDORDER_DISABLED', true)
+    ) {
+      return false;
+    }
+
     if (tab.staff && user.isStaff()) return true;
     if (tab.roles) return tab.roles.some((role) => user.hasViewRole(role));
     if (!tab.role) return true;

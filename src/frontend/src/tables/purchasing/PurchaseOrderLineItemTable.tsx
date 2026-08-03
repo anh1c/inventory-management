@@ -36,6 +36,7 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useImporterState } from '../../states/ImporterState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
@@ -76,6 +77,7 @@ export function PurchaseOrderLineItemTable({
 
   const navigate = useNavigate();
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
   const openImporter = useImporterState((state) => state.openImporter);
 
   const importSessionFields = useMemo(() => {
@@ -121,6 +123,8 @@ export function PurchaseOrderLineItemTable({
     items: singleRecord ? [singleRecord] : table.selectedRecords,
     orderPk: orderId,
     destinationPk: order.destination,
+    directAllocationOrder:
+      order.output_type === 'commercial' || order.output_type === 'workshop',
     formProps: {
       // Timeout is a small hack to prevent function being called before re-render
       onClose: () => {
@@ -152,6 +156,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'build_order',
         title: t`Build Order`,
         sortable: true,
+        hidden: globalSettings.isSet('BUILDORDER_DISABLED', true),
         defaultVisible: false,
         render: (record: any) => {
           if (record.build_order_detail) {
@@ -272,7 +277,7 @@ export function PurchaseOrderLineItemTable({
       NoteColumn({}),
       LinkColumn({})
     ];
-  }, [orderId, user]);
+  }, [orderId, user, globalSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -380,7 +385,9 @@ export function PurchaseOrderLineItemTable({
           }
         }),
         RowViewAction({
-          hidden: !record.build_order,
+          hidden:
+            !record.build_order ||
+            globalSettings.isSet('BUILDORDER_DISABLED', true),
           title: t`View Build Order`,
           modelType: ModelType.build,
           modelId: record.build_order,
@@ -388,7 +395,7 @@ export function PurchaseOrderLineItemTable({
         })
       ];
     },
-    [orderId, user, editable, orderPlaced]
+    [orderId, user, globalSettings, editable, orderPlaced]
   );
 
   // Custom table actions
