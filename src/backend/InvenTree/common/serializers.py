@@ -839,10 +839,20 @@ class ProcurementSubtaskSerializer(InvenTreeModelSerializer):
         is_staff = request.user.is_staff
         is_assignment_manager = request.user.groups.filter(name='Assignment Manager').exists()
         is_warehouse_manager = request.user.groups.filter(name='Warehouse Manager').exists()
+        assignment_editable_fields = {'handler', 'technical_contact'}
         warehouse_editable_fields = {
             'title', 'item_code', 'manufacturer', 'unit', 'requested_quantity', 'note',
-            'technical_contact',
         }
+        if assignment_editable_fields.intersection(attrs):
+            if not (is_staff or is_assignment_manager):
+                raise PermissionDenied(_('Only an Assignment Manager can edit assignments'))
+            if ticket.status not in {
+                common_models.WorkTicket.Status.PROPOSAL,
+                common_models.WorkTicket.Status.ASSIGNMENT,
+            }:
+                raise serializers.ValidationError({
+                    'detail': _('Assignments can only be edited during proposal or assignment')
+                })
         if warehouse_editable_fields.intersection(attrs):
             if not (is_staff or is_warehouse_manager):
                 raise PermissionDenied(_('Only a Warehouse Manager can edit procurement items'))
@@ -850,9 +860,6 @@ class ProcurementSubtaskSerializer(InvenTreeModelSerializer):
                 raise serializers.ValidationError({
                     'detail': _('Procurement items can only be edited during warehouse review')
                 })
-        if 'handler' in attrs and not (is_staff or is_assignment_manager):
-            raise PermissionDenied(_('Only an Assignment Manager can assign a handler'))
-
         status = attrs.get('status')
         if status is None or status == self.instance.status:
             return attrs

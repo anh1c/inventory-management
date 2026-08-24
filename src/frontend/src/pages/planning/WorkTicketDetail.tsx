@@ -320,7 +320,7 @@ export default function WorkTicketDetail() {
                 key='import-assignments'
                 title={t`Import Assignments`}
                 icon='upload'
-                hidden={!ticket.is_procurement_request || !canEdit}
+                hidden={!ticket.is_procurement_request || !canEdit || !['proposal', 'assignment'].includes(ticket.status)}
                 onClick={importAssignments.open}
               />,
               <PrimaryActionButton

@@ -56,6 +56,38 @@ export default function ProcurementSubtaskDetail() {
     },
     onFormSuccess: refreshInstance
   });
+  const editSubtask = useEditApiFormModal({
+    url: apiUrl(ApiEndpoints.procurement_subtask_detail, ticketId, {
+      subtask_pk: subtaskId ?? ''
+    }),
+    title: 'Chỉnh sửa mục',
+    successMessage: 'Đã cập nhật mục',
+    ignorePermissionCheck: true,
+    fields: ['proposal', 'assignment'].includes(ticket.status)
+      ? {
+          handler: {
+            field_type: 'related field',
+            api_url: apiUrl(ApiEndpoints.user_list),
+            label: 'Người thực hiện mua hàng',
+            filters: { is_active: true }
+          },
+          technical_contact: {
+            field_type: 'related field',
+            api_url: apiUrl(ApiEndpoints.user_list),
+            label: 'Người đề xuất / Liên hệ kỹ thuật',
+            filters: { is_active: true }
+          }
+        }
+      : {
+          title: { field_type: 'string', label: 'Mặt hàng', required: true },
+          item_code: { field_type: 'string', label: 'Mã hàng' },
+          manufacturer: { field_type: 'string', label: 'Hãng/Xuất xứ' },
+          unit: { field_type: 'string', label: 'Đơn vị tính' },
+          requested_quantity: { field_type: 'decimal', label: 'Số lượng cần' },
+          note: { field_type: 'string', label: 'Ghi chú' }
+        },
+    onFormSuccess: refreshInstance
+  });
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) return <Skeleton />;
@@ -143,6 +175,7 @@ export default function ProcurementSubtaskDetail() {
     <InstanceDetail query={instanceQuery}>
       <Stack gap='xs'>
         {updateStatus.modal}
+        {editSubtask.modal}
         <PageDetail
           title={subtask.title || 'Chi tiết mặt hàng'}
           subtitle={subtask.item_code}
@@ -152,6 +185,13 @@ export default function ProcurementSubtaskDetail() {
             { name: ticket.code || 'Công việc cha', url: `/planning/tickets/${ticketId}/` }
           ]}
           actions={[
+            <PrimaryActionButton
+              key='edit-subtask'
+              title='Chỉnh sửa mục'
+              icon='edit'
+              hidden={!['proposal', 'assignment', 'warehouse_review'].includes(ticket.status)}
+              onClick={editSubtask.open}
+            />,
             <PrimaryActionButton
               key='update-subtask-status'
               title={subtask.status === 'waiting_approval' ? 'Duyệt mục' : 'Hoàn thành mục'}

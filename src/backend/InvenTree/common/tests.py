@@ -2172,10 +2172,6 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
         self.assertEqual(first.status, ProcurementSubtask.Status.WAITING_APPROVAL)
         url = reverse('api-work-ticket-detail', kwargs={'pk': ticket.pk})
 
-        self.client.force_authenticate(user=assignment_manager)
-        self.patch(url, {'status': WorkTicket.Status.ASSIGNMENT})
-        self.patch(url, {'status': WorkTicket.Status.WAREHOUSE_REVIEW})
-
         first_url = reverse(
             'api-procurement-subtask-detail',
             kwargs={'pk': ticket.pk, 'subtask_pk': first.pk},
@@ -2184,6 +2180,29 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             'api-procurement-subtask-detail',
             kwargs={'pk': ticket.pk, 'subtask_pk': second.pk},
         )
+
+        self.client.force_authenticate(user=assignment_manager)
+        self.patch(first_url, {
+            'handler': assignment_manager.pk,
+            'technical_contact': assignment_manager.pk,
+        })
+        first.refresh_from_db()
+        self.assertEqual(first.handler, assignment_manager)
+        self.assertEqual(first.technical_contact, assignment_manager)
+        self.client.force_authenticate(user=self.user)
+        self.patch(second_url, {
+            'handler': self.user.pk,
+            'technical_contact': self.user.pk,
+        })
+        self.patch(url, {'status': WorkTicket.Status.ASSIGNMENT})
+        self.client.force_authenticate(user=assignment_manager)
+        self.patch(first_url, {'handler': handler.pk})
+        self.patch(url, {'status': WorkTicket.Status.WAREHOUSE_REVIEW})
+        self.patch(first_url, {'handler': handler.pk}, expected_code=400)
+        self.patch(first_url, {'title': 'Not an assignment edit'}, expected_code=403)
+        self.patch(second_url, {'title': 'Updated by staff during warehouse'})
+        second.refresh_from_db()
+        self.assertEqual(second.title, 'Updated by staff during warehouse')
         self.client.force_authenticate(user=handler)
         self.patch(first_url, {'status': ProcurementSubtask.Status.PENDING}, expected_code=403)
 
@@ -2203,8 +2222,8 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             'unit': 'each',
             'requested_quantity': 2,
             'note': 'Reviewed',
-            'technical_contact': warehouse_manager.pk,
         })
+        self.patch(first_url, {'technical_contact': warehouse_manager.pk}, expected_code=403)
         self.patch(first_url, {'handler': warehouse_manager.pk}, expected_code=403)
         first.refresh_from_db()
         self.assertEqual(first.title, 'Updated by warehouse')

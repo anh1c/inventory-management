@@ -73,20 +73,29 @@ export default function ProcurementSubtaskTable({
     title: 'Chỉnh sửa mục',
     successMessage: 'Đã cập nhật mục',
     ignorePermissionCheck: true,
-    fields: {
-      title: { field_type: 'string', label: 'Mặt hàng', required: true },
-      item_code: { field_type: 'string', label: 'Mã hàng' },
-      manufacturer: { field_type: 'string', label: 'Hãng/Xuất xứ' },
-      unit: { field_type: 'string', label: 'Đơn vị tính' },
-      requested_quantity: { field_type: 'decimal', label: 'Số lượng cần' },
-      note: { field_type: 'string', label: 'Ghi chú' },
-      technical_contact: {
-        field_type: 'related field',
-        api_url: apiUrl(ApiEndpoints.user_list),
-        label: 'Người đề xuất / Liên hệ kỹ thuật',
-        filters: { is_active: true }
-      }
-    },
+    fields: ['proposal', 'assignment'].includes(ticket.status)
+      ? {
+          handler: {
+            field_type: 'related field',
+            api_url: apiUrl(ApiEndpoints.user_list),
+            label: 'Người thực hiện mua hàng',
+            filters: { is_active: true }
+          },
+          technical_contact: {
+            field_type: 'related field',
+            api_url: apiUrl(ApiEndpoints.user_list),
+            label: 'Người đề xuất / Liên hệ kỹ thuật',
+            filters: { is_active: true }
+          }
+        }
+      : {
+          title: { field_type: 'string', label: 'Mặt hàng', required: true },
+          item_code: { field_type: 'string', label: 'Mã hàng' },
+          manufacturer: { field_type: 'string', label: 'Hãng/Xuất xứ' },
+          unit: { field_type: 'string', label: 'Đơn vị tính' },
+          requested_quantity: { field_type: 'decimal', label: 'Số lượng cần' },
+          note: { field_type: 'string', label: 'Ghi chú' }
+        },
     onFormSuccess: refresh
   });
   const newPurchaseOrder = useCreateApiFormModal({
@@ -112,7 +121,7 @@ export default function ProcurementSubtaskTable({
     const canSell = canPurchase && ticket.commercial && user.hasAddRole(UserRoles.sales_order);
     const canComplete = ticket.status === 'purchasing' && record.status === 'pending' && (user.isStaff() || user.userId() === record.handler);
     const canApprove = ticket.status === 'warehouse_review' && record.status === 'waiting_approval';
-    const canEdit = ticket.status === 'warehouse_review';
+    const canEdit = ['proposal', 'assignment', 'warehouse_review'].includes(ticket.status);
     return [
       { title: 'Duyệt mục', hidden: !canApprove, onClick: () => approveSubtask(record) },
       { title: 'Chỉnh sửa mục', icon: <IconEdit />, hidden: !canEdit, onClick: () => { setSelectedSubtask(record); editSubtask.open(); } },
