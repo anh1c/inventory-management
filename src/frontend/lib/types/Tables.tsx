@@ -3,6 +3,7 @@ import type { AxiosInstance } from 'axios';
 import type { ShowContextMenuFunction } from 'mantine-contextmenu';
 import type {
   DataTableCellClickHandler,
+  DataTableRowClickHandler,
   DataTableRowExpansionProps
 } from 'mantine-datatable';
 import type { ReactNode } from 'react';
@@ -162,6 +163,7 @@ export type RowViewProps = RowAction & RowModelProps;
  * @param enableDownload : boolean - Enable download actions
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
+ * @param isRecordSelectable : Callback to determine whether a row can be selected
  * @param enableSearch : boolean - Enable search actions
  * @param enableLabels : boolean - Enable printing of labels against selected items
  * @param enableReports : boolean - Enable printing of reports against selected items
@@ -190,6 +192,7 @@ export type InvenTreeTableProps<T = any> = {
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSelection?: boolean;
+  isRecordSelectable?: (record: T, index: number) => boolean;
   enableSearch?: boolean;
   enablePagination?: boolean;
   enableRefresh?: boolean;
@@ -207,6 +210,7 @@ export type InvenTreeTableProps<T = any> = {
   rowActions?: (record: T) => RowAction[];
   detailAction?: boolean;
   onRowClick?: (record: T, index: number, event: any) => void;
+  onRowDoubleClick?: DataTableRowClickHandler<T>;
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => MantineStyleProp | undefined;

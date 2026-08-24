@@ -67,6 +67,11 @@ export enum ApiEndpoints {
   selectionentry_list = 'selection/:id/entry/',
   work_plan_list = 'work-plan/',
   work_ticket_list = 'work-ticket/',
+  procurement_upload = 'work-ticket/procurement-upload/',
+  procurement_export = 'work-ticket/:id/procurement-export/',
+  procurement_assignment_upload = 'work-ticket/:id/procurement-assignments/',
+  procurement_subtask_detail = 'work-ticket/:id/subtasks/:subtask_pk/',
+  procurement_subtasks_approve = 'work-ticket/:id/subtasks/approve/',
 
   // Barcode API endpoints
   barcode = 'barcode/',

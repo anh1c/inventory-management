@@ -96,6 +96,15 @@ class ContractSerializer(
 
     CONTRACT_ORDER_FIELDS = ('sales_orders', 'purchase_orders')
 
+    def validate(self, data):
+        data = super().validate(data)
+        ticket = data.get('work_ticket', getattr(self.instance, 'work_ticket', None))
+        if ticket and ticket.is_procurement_request:
+            raise ValidationError({
+                'work_ticket': _('Procurement requests only use purchase and sales orders')
+            })
+        return data
+
     project_code_label = common.filters.enable_project_label_filter()
     project_code_detail = common.filters.enable_project_code_filter()
 
@@ -327,7 +336,6 @@ class ContractSerializer(
         request = self.context.get('request')
         if work_ticket:
             allowed_users = {
-                work_ticket.assigned_to_id,
                 work_ticket.assigned_by_id,
             }
             if work_ticket.plan_id:
@@ -341,7 +349,7 @@ class ContractSerializer(
                 and request.user.pk not in allowed_users
             ):
                 raise ValidationError({
-                    'work_ticket': _('Only the ticket assignee or assigner can create linked records')
+                    'work_ticket': _('Only the ticket proposer or plan manager can create linked records')
                 })
             data['project_code'] = work_ticket.project_code
 
@@ -594,7 +602,7 @@ class AbstractOrderSerializer(
     def annotate_queryset(queryset):
         """Add extra information to the queryset."""
         queryset = queryset.annotate(line_items=SubqueryCount('lines'))
-        queryset = queryset.select_related('created_by', 'work_ticket')
+        queryset = queryset.select_related('created_by', 'work_ticket', 'procurement_subtask')
 
         return queryset
 
@@ -614,6 +622,7 @@ class AbstractOrderSerializer(
             'link',
             'project_code',
             'work_ticket',
+            'procurement_subtask',
             'work_ticket_detail',
             'reference',
             'responsible',
@@ -668,13 +677,37 @@ class AbstractOrderSerializer(
         contract = data.get('contract')
 
         work_ticket = data.get('work_ticket', getattr(self.instance, 'work_ticket', None))
+        procurement_subtask = data.get(
+            'procurement_subtask', getattr(self.instance, 'procurement_subtask', None)
+        )
         request = self.context.get('request')
+        if procurement_subtask:
+            if not procurement_subtask.work_ticket.is_procurement_request:
+                raise ValidationError({
+                    'procurement_subtask': _('Procurement subtask must belong to a procurement request')
+                })
+            if work_ticket and work_ticket.pk != procurement_subtask.work_ticket_id:
+                raise ValidationError({
+                    'procurement_subtask': _('Procurement subtask must belong to the selected work ticket')
+                })
+            work_ticket = procurement_subtask.work_ticket
+            data['work_ticket'] = work_ticket
         if work_ticket:
-            allowed_users = {
-                work_ticket.assigned_to_id,
-                work_ticket.assigned_by_id,
-            }
-            if work_ticket.plan_id:
+            if work_ticket.is_procurement_request:
+                if not procurement_subtask:
+                    raise ValidationError({
+                        'procurement_subtask': _('Procurement orders must be linked to an item subtask')
+                    })
+                if work_ticket.status != common.models.WorkTicket.Status.PURCHASING:
+                    raise ValidationError({
+                        'work_ticket': _('Procurement orders can only be changed after warehouse approval')
+                    })
+            allowed_users = set()
+            if procurement_subtask:
+                allowed_users.add(procurement_subtask.handler_id)
+            if not work_ticket.is_procurement_request:
+                allowed_users.add(work_ticket.assigned_by_id)
+            if work_ticket.plan_id and not work_ticket.is_procurement_request:
                 allowed_users.update({
                     work_ticket.plan.manager_id,
                     work_ticket.plan.created_by_id,
@@ -685,7 +718,7 @@ class AbstractOrderSerializer(
                 and request.user.pk not in allowed_users
             ):
                 raise ValidationError({
-                    'work_ticket': _('Only the ticket assignee or assigner can create linked records')
+                    'work_ticket': _('Only the procurement handler, ticket proposer, or plan manager can create linked records')
                 })
             data['project_code'] = work_ticket.project_code
 
@@ -740,6 +773,14 @@ class AbstractOrderSerializer(
                         'sales_order': _(
                             'Commercial purchase orders can only link to pending or in-progress sales orders'
                         )
+                    })
+
+                if work_ticket and work_ticket.is_procurement_request and (
+                    sales_order.work_ticket_id != work_ticket.pk
+                    or sales_order.procurement_subtask_id != procurement_subtask.pk
+                ):
+                    raise ValidationError({
+                        'sales_order': _('Sales order must be linked to the same work ticket')
                     })
 
                 if contract:
@@ -1521,6 +1562,19 @@ class PurchaseOrderLineItemSerializer(
         if not purchase_order:
             raise ValidationError({'order': _('Purchase order must be specified')})
 
+        subtask = purchase_order.procurement_subtask
+        if subtask:
+            quantity = data.get('quantity', getattr(self.instance, 'quantity', Decimal(0)))
+            assigned = order.models.PurchaseOrderLineItem.objects.filter(
+                order__procurement_subtask=subtask
+            )
+            if self.instance:
+                assigned = assigned.exclude(pk=self.instance.pk)
+            if (assigned.aggregate(total=models.Sum('quantity'))['total'] or Decimal(0)) + quantity > subtask.requested_quantity:
+                raise ValidationError({
+                    'quantity': _('Purchase-order quantity exceeds the requested quantity')
+                })
+
         # Check that the supplier part and purchase order match
         if (
             supplier_part is not None
@@ -2233,6 +2287,26 @@ class SalesOrderLineItemSerializer(
     sale_price_currency = InvenTreeCurrencySerializer(
         help_text=_('Sale price currency')
     )
+
+    def validate(self, data):
+        """Keep commercial sales quantities within their procurement request."""
+        data = super().validate(data)
+        sales_order = data.get('order')
+        subtask = sales_order.procurement_subtask if sales_order else None
+
+        if subtask:
+            quantity = data.get('quantity', getattr(self.instance, 'quantity', Decimal(0)))
+            assigned = order.models.SalesOrderLineItem.objects.filter(
+                order__procurement_subtask=subtask
+            )
+            if self.instance:
+                assigned = assigned.exclude(pk=self.instance.pk)
+            if (assigned.aggregate(total=models.Sum('quantity'))['total'] or Decimal(0)) + quantity > subtask.requested_quantity:
+                raise ValidationError({
+                    'quantity': _('Sales-order quantity exceeds the requested quantity')
+                })
+
+        return data
 
 
 @register_importer()

@@ -308,11 +308,15 @@ class WorkTicket(
         OPEN = 'open', _('Open')
         PROCESSING = 'processing', _('Processing')
         REVIEW = 'review', _('Review')
+        PROPOSAL = 'proposal', _('Proposal')
+        ASSIGNMENT = 'assignment', _('Assignment')
+        WAREHOUSE_REVIEW = 'warehouse_review', _('Warehouse Review')
+        PURCHASING = 'purchasing', _('Purchasing')
         DONE = 'done', _('Done')
 
     class Priority(models.TextChoices):
         LOW = 'low', _('Low')
-        NORMAL = 'normal', _('Normal')
+        NORMAL = 'normal', _('Medium')
         HIGH = 'high', _('High')
         URGENT = 'urgent', _('Urgent')
 
@@ -358,6 +362,14 @@ class WorkTicket(
                 errors['parent'] = _('A work ticket cannot be its own parent')
             elif self.project_code_id != self.parent.project_code_id:
                 errors['parent'] = _('Parent work ticket must use the same project code')
+            elif self.parent.parent_id:
+                errors['parent'] = _(
+                    'A child work ticket cannot contain further child work tickets'
+                )
+            elif self.pk and self.subtasks.exists():
+                errors['parent'] = _(
+                    'A work ticket with child work tickets cannot become a child'
+                )
 
         if errors:
             raise ValidationError(errors)
@@ -399,12 +411,6 @@ class WorkTicket(
         related_name='dependent_tickets',
         blank=True,
         verbose_name=_('Dependencies'),
-    )
-    assigned_to = models.ForeignKey(
-        User,
-        on_delete=models.PROTECT,
-        related_name='assigned_work_tickets',
-        verbose_name=_('Assigned To'),
     )
     assigned_by = models.ForeignKey(
         User,
@@ -451,8 +457,95 @@ class WorkTicket(
         validators=[MinValueValidator(0)],
         verbose_name=_('Actual Hours'),
     )
+    is_procurement_request = models.BooleanField(default=False, verbose_name=_('Procurement Request'))
+    commercial = models.BooleanField(
+        default=False,
+        verbose_name=_('Commercial'),
+        help_text=_('Commercial requests require both purchase and sales orders'),
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+
+class ProcurementSubtask(models.Model):
+    """A requested procurement item belonging to one procurement work ticket."""
+
+    class Status(models.TextChoices):
+        WAITING_APPROVAL = 'waiting_approval', _('Waiting Approval')
+        PENDING = 'pending', _('Pending')
+        DONE = 'done', _('Done')
+
+    class Meta:
+        ordering = ['pk']
+        verbose_name = _('Procurement Subtask')
+        verbose_name_plural = _('Procurement Subtasks')
+
+    work_ticket = models.ForeignKey(
+        WorkTicket,
+        on_delete=models.CASCADE,
+        related_name='procurement_subtasks',
+        verbose_name=_('Work Ticket'),
+    )
+    title = models.CharField(max_length=250, verbose_name=_('Item Name'))
+    item_code = models.CharField(max_length=100, blank=True, verbose_name=_('Item Code'))
+    manufacturer = models.CharField(max_length=250, blank=True, verbose_name=_('Manufacturer / Origin'))
+    unit = models.CharField(max_length=50, blank=True, verbose_name=_('Unit'))
+    requested_quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Requested Quantity'),
+    )
+    note = models.CharField(max_length=500, blank=True, verbose_name=_('Item Note'))
+    technical_contact = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='procurement_technical_subtasks',
+        null=True,
+        blank=True,
+        verbose_name=_('Technical Contact'),
+    )
+    handler = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='assigned_procurement_subtasks',
+        null=True,
+        blank=True,
+        verbose_name=_('Handler'),
+    )
+    warehouse_approved_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='approved_procurement_subtasks',
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name=_('Warehouse Approved By'),
+    )
+    warehouse_approved_at = models.DateTimeField(null=True, blank=True, editable=False)
+    status = models.CharField(
+        max_length=16,
+        choices=Status.choices,
+        default=Status.WAITING_APPROVAL,
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def clean(self):
+        super().clean()
+        if not self.work_ticket.is_procurement_request:
+            raise ValidationError({'work_ticket': _('Subtasks require a procurement work ticket')})
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        ticket = self.work_ticket
+        if (
+            ticket.status == WorkTicket.Status.PURCHASING
+            and not ticket.procurement_subtasks.exclude(status=self.Status.DONE).exists()
+        ):
+            WorkTicket.objects.filter(pk=ticket.pk).update(
+                status=WorkTicket.Status.DONE, completion_date=now()
+            )
 
 
 class BaseInvenTreeSetting(models.Model):

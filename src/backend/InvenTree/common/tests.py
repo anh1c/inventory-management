@@ -53,6 +53,7 @@ from .models import (
     WebhookMessage,
     WorkTicket,
     WorkPlan,
+    ProcurementSubtask,
 )
 
 CONTENT_TYPE_JSON = 'application/json'
@@ -1790,29 +1791,25 @@ class ProjectCodesTest(InvenTreeAPITestCase):
 
 
 class WorkTicketAPITest(InvenTreeAPITestCase):
-    """Verify the manager-assignee status workflow."""
+    """Verify the manager-owned work-ticket workflow."""
 
     def test_status_workflow(self):
         project = ProjectCode.objects.create(code='TICKET-001')
-        assignee = get_user_model().objects.create_user(username='ticket-assignee')
+        unrelated = get_user_model().objects.create_user(username='ticket-unrelated')
         ticket = WorkTicket.objects.create(
             title='Prepare quotation',
             project_code=project,
             assigned_by=self.user,
-            assigned_to=assignee,
         )
         self.assertEqual(ticket.code, 'CV-0000001')
         url = reverse('api-work-ticket-detail', kwargs={'pk': ticket.pk})
 
-        self.client.force_authenticate(user=assignee)
-        self.patch(url, {'status': WorkTicket.Status.PROCESSING})
-        self.patch(url, {'status': WorkTicket.Status.REVIEW})
-        response = self.patch(url, {'status': WorkTicket.Status.DONE}, expected_code=403)
-        self.assertEqual(
-            response.data['detail'], 'Bạn không có quyền chuyển trạng thái công việc.'
-        )
+        self.client.force_authenticate(user=unrelated)
+        self.get(url, expected_code=404)
 
         self.client.force_authenticate(user=self.user)
+        self.patch(url, {'status': WorkTicket.Status.PROCESSING})
+        self.patch(url, {'status': WorkTicket.Status.REVIEW})
         self.patch(url, {'status': WorkTicket.Status.DONE})
 
     def test_plan_creation_and_ticket_mapping(self):
@@ -1839,11 +1836,20 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             {
                 'title': 'Prepare materials',
                 'plan': plan_id,
-                'project_code': project.pk,
-                'assigned_to': manager.pk,
             },
         )
         self.assertEqual(ticket_response.data['plan'], plan_id)
+        self.assertEqual(ticket_response.data['project_code'], project.pk)
+        self.assertNotIn('assigned_to', ticket_response.data)
+
+        self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Task without a plan',
+                'project_code': project.pk,
+            },
+            expected_code=400,
+        )
 
         self.post(
             reverse('api-work-ticket-list'),
@@ -1851,7 +1857,6 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
                 'title': 'Invalid project task',
                 'plan': plan_id,
                 'project_code': other_project.pk,
-                'assigned_to': manager.pk,
             },
             expected_code=400,
         )
@@ -1864,7 +1869,7 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
         """Only administrators and related users can access planning records."""
         project = ProjectCode.objects.create(code='ACCESS-001')
         manager = get_user_model().objects.create_user(username='access-manager')
-        assignee = get_user_model().objects.create_user(username='access-assignee')
+        handler = get_user_model().objects.create_user(username='procurement-handler')
         unrelated = get_user_model().objects.create_user(username='access-unrelated')
         plan = WorkPlan.objects.create(
             name='Restricted plan',
@@ -1877,7 +1882,19 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             plan=plan,
             project_code=project,
             assigned_by=self.user,
-            assigned_to=assignee,
+        )
+        procurement_ticket = WorkTicket.objects.create(
+            title='Restricted procurement task',
+            plan=plan,
+            project_code=project,
+            assigned_by=self.user,
+            is_procurement_request=True,
+        )
+        ProcurementSubtask.objects.create(
+            work_ticket=procurement_ticket,
+            title='Restricted procurement item',
+            requested_quantity=1,
+            handler=handler,
         )
 
         plan_url = reverse('api-work-plan-detail', kwargs={'pk': plan.pk})
@@ -1886,6 +1903,7 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
         self.client.force_authenticate(user=manager)
         self.get(plan_url, expected_code=200)
         self.get(ticket_url, expected_code=200)
+        self.patch(ticket_url, {'status': WorkTicket.Status.PROCESSING})
         self.post(
             reverse('api-work-plan-list'),
             {'name': 'Denied plan', 'project_code': project.pk, 'manager': manager.pk},
@@ -1897,14 +1915,17 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
                 'title': 'Manager task',
                 'plan': plan.pk,
                 'project_code': project.pk,
-                'assigned_to': assignee.pk,
             },
             expected_code=201,
         )
 
-        self.client.force_authenticate(user=assignee)
+        self.client.force_authenticate(user=handler)
         self.get(plan_url, expected_code=200)
-        self.get(ticket_url, expected_code=200)
+        self.get(
+            reverse('api-work-ticket-detail', kwargs={'pk': procurement_ticket.pk}),
+            expected_code=200,
+        )
+        self.get(ticket_url, expected_code=404)
 
         self.client.force_authenticate(user=unrelated)
         self.get(plan_url, expected_code=404)
@@ -1920,12 +1941,23 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             manager=self.user,
             created_by=self.user,
         )
+        dependency_plan = WorkPlan.objects.create(
+            name='Dependency plan',
+            project_code=other_project,
+            manager=self.user,
+            created_by=self.user,
+        )
         parent = WorkTicket.objects.create(
             title='Parent task',
             plan=plan,
             project_code=project,
             assigned_by=self.user,
-            assigned_to=self.user,
+        )
+        dependency = WorkTicket.objects.create(
+            title='Cross-plan dependency',
+            plan=dependency_plan,
+            project_code=other_project,
+            assigned_by=self.user,
         )
 
         response = self.post(
@@ -1935,8 +1967,7 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
                 'plan': plan.pk,
                 'project_code': project.pk,
                 'parent': parent.pk,
-                'dependencies': [parent.pk],
-                'assigned_to': self.user.pk,
+                'dependencies': [dependency.pk],
                 'priority': WorkTicket.Priority.HIGH,
                 'start_date': '2026-08-03',
                 'target_date': '2026-08-05',
@@ -1946,8 +1977,24 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             expected_code=201,
         )
         self.assertEqual(response.data['parent'], parent.pk)
-        self.assertEqual(response.data['dependencies'], [parent.pk])
+        self.assertEqual(response.data['dependencies'], [dependency.pk])
         self.assertEqual(response.data['priority'], WorkTicket.Priority.HIGH)
+
+        self.post(
+            reverse('api-work-ticket-list'),
+            {
+                'title': 'Invalid grandchild task',
+                'plan': plan.pk,
+                'project_code': project.pk,
+                'parent': response.data['pk'],
+            },
+            expected_code=400,
+        )
+        self.patch(
+            reverse('api-work-ticket-detail', kwargs={'pk': parent.pk}),
+            {'parent': response.data['pk']},
+            expected_code=400,
+        )
 
         self.post(
             reverse('api-work-ticket-list'),
@@ -1955,7 +2002,6 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
                 'title': 'Invalid date task',
                 'plan': plan.pk,
                 'project_code': project.pk,
-                'assigned_to': self.user.pk,
                 'start_date': '2026-08-05',
                 'target_date': '2026-08-03',
             },
@@ -1966,7 +2012,6 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             title='Other project task',
             project_code=other_project,
             assigned_by=self.user,
-            assigned_to=self.user,
         )
         self.post(
             reverse('api-work-ticket-list'),
@@ -1975,15 +2020,13 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
                 'plan': plan.pk,
                 'project_code': project.pk,
                 'parent': foreign_parent.pk,
-                'assigned_to': self.user.pk,
             },
             expected_code=400,
         )
 
-    def test_ticket_execution_guards_and_assignee_progress(self):
+    def test_ticket_execution_guards_and_manager_progress(self):
         """Dependencies, subtasks and inactive plans guard the current workflow."""
         project = ProjectCode.objects.create(code='WORKFLOW-001')
-        assignee = get_user_model().objects.create_user(username='workflow-assignee')
         plan = WorkPlan.objects.create(
             name='Guarded plan',
             project_code=project,
@@ -1996,30 +2039,22 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             plan=plan,
             project_code=project,
             assigned_by=self.user,
-            assigned_to=self.user,
         )
         ticket = WorkTicket.objects.create(
             title='Dependent task',
             plan=plan,
             project_code=project,
             assigned_by=self.user,
-            assigned_to=assignee,
         )
         ticket.dependencies.add(dependency)
         ticket_url = reverse('api-work-ticket-detail', kwargs={'pk': ticket.pk})
 
-        self.client.force_authenticate(user=assignee)
-        self.patch(
-            ticket_url,
-            {'status': WorkTicket.Status.PROCESSING},
-            expected_code=400,
-        )
-        self.patch(ticket_url, {'actual_hours': '1.50', 'notes': 'Started work'})
-        self.patch(ticket_url, {'title': 'Unauthorized edit'}, expected_code=403)
+        self.patch(ticket_url, {'status': WorkTicket.Status.PROCESSING}, expected_code=400)
 
         dependency.status = WorkTicket.Status.DONE
         dependency.save()
         self.patch(ticket_url, {'status': WorkTicket.Status.PROCESSING})
+        self.patch(ticket_url, {'actual_hours': '1.50', 'notes': 'Started work'})
         self.patch(ticket_url, {'status': WorkTicket.Status.REVIEW})
 
         child = WorkTicket.objects.create(
@@ -2028,7 +2063,6 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             project_code=project,
             parent=ticket,
             assigned_by=self.user,
-            assigned_to=assignee,
         )
         self.client.force_authenticate(user=self.user)
         self.patch(ticket_url, {'status': WorkTicket.Status.DONE}, expected_code=400)
@@ -2044,7 +2078,6 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
                 'title': 'Blocked task',
                 'plan': plan.pk,
                 'project_code': project.pk,
-                'assigned_to': assignee.pk,
             },
             expected_code=400,
         )
@@ -2064,7 +2097,6 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             plan=plan,
             project_code=project,
             assigned_by=self.user,
-            assigned_to=self.user,
         )
         plan_url = reverse('api-work-plan-detail', kwargs={'pk': plan.pk})
 
@@ -2074,6 +2106,151 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
         ticket.status = WorkTicket.Status.DONE
         ticket.save()
         self.patch(plan_url, {'status': WorkPlan.Status.DONE})
+
+    def test_procurement_subtasks_drive_ticket_completion(self):
+        """Only the last completed procurement item completes its parent ticket."""
+        project = ProjectCode.objects.create(code='PROCUREMENT-001')
+        handler = get_user_model().objects.create_user(username='procurement-handler')
+        ticket = WorkTicket.objects.create(
+            title='Procurement request',
+            project_code=project,
+            assigned_by=self.user,
+            is_procurement_request=True,
+            status=WorkTicket.Status.PURCHASING,
+        )
+        first = ProcurementSubtask.objects.create(
+            work_ticket=ticket,
+            title='First item',
+            requested_quantity=1,
+            handler=handler,
+        )
+        second = ProcurementSubtask.objects.create(
+            work_ticket=ticket,
+            title='Second item',
+            requested_quantity=1,
+            handler=handler,
+        )
+
+        first.status = ProcurementSubtask.Status.DONE
+        first.save()
+        ticket.refresh_from_db()
+        self.assertEqual(ticket.status, WorkTicket.Status.PURCHASING)
+
+        second.status = ProcurementSubtask.Status.DONE
+        second.save()
+        ticket.refresh_from_db()
+        self.assertEqual(ticket.status, WorkTicket.Status.DONE)
+        self.assertIsNotNone(ticket.completion_date)
+
+    def test_procurement_workflow_uses_group_roles(self):
+        """Warehouse approval is per item and starts purchasing after the last item."""
+        project = ProjectCode.objects.create(code='PROCUREMENT-ROLE-001')
+        assignment_manager = get_user_model().objects.create_user(username='assignment-manager')
+        warehouse_manager = get_user_model().objects.create_user(username='warehouse-manager')
+        handler = get_user_model().objects.create_user(username='warehouse-handler')
+        assignment_manager.groups.add(Group.objects.get(name='Assignment Manager'))
+        warehouse_manager.groups.add(Group.objects.get(name='Warehouse Manager'))
+        ticket = WorkTicket.objects.create(
+            title='Role guarded procurement',
+            project_code=project,
+            assigned_by=self.user,
+            is_procurement_request=True,
+            status=WorkTicket.Status.PROPOSAL,
+        )
+        first = ProcurementSubtask.objects.create(
+            work_ticket=ticket,
+            title='First approval',
+            requested_quantity=1,
+            handler=handler,
+        )
+        second = ProcurementSubtask.objects.create(
+            work_ticket=ticket,
+            title='Second approval',
+            requested_quantity=1,
+            handler=handler,
+        )
+        self.assertEqual(first.status, ProcurementSubtask.Status.WAITING_APPROVAL)
+        url = reverse('api-work-ticket-detail', kwargs={'pk': ticket.pk})
+
+        self.client.force_authenticate(user=assignment_manager)
+        self.patch(url, {'status': WorkTicket.Status.ASSIGNMENT})
+        self.patch(url, {'status': WorkTicket.Status.WAREHOUSE_REVIEW})
+
+        first_url = reverse(
+            'api-procurement-subtask-detail',
+            kwargs={'pk': ticket.pk, 'subtask_pk': first.pk},
+        )
+        second_url = reverse(
+            'api-procurement-subtask-detail',
+            kwargs={'pk': ticket.pk, 'subtask_pk': second.pk},
+        )
+        self.client.force_authenticate(user=handler)
+        self.patch(first_url, {'status': ProcurementSubtask.Status.PENDING}, expected_code=403)
+
+        self.client.force_authenticate(user=warehouse_manager)
+        self.get(first_url)
+        self.patch(url, {'status': WorkTicket.Status.PURCHASING}, expected_code=400)
+        self.patch(first_url, {'status': ProcurementSubtask.Status.PENDING})
+        first.refresh_from_db()
+        ticket.refresh_from_db()
+        self.assertEqual(first.warehouse_approved_by, warehouse_manager)
+        self.assertIsNotNone(first.warehouse_approved_at)
+        self.assertEqual(ticket.status, WorkTicket.Status.WAREHOUSE_REVIEW)
+        self.patch(first_url, {
+            'title': 'Updated by warehouse',
+            'item_code': 'SKU-001',
+            'manufacturer': 'InvenTree',
+            'unit': 'each',
+            'requested_quantity': 2,
+            'note': 'Reviewed',
+            'technical_contact': warehouse_manager.pk,
+        })
+        self.patch(first_url, {'handler': warehouse_manager.pk}, expected_code=403)
+        first.refresh_from_db()
+        self.assertEqual(first.title, 'Updated by warehouse')
+        self.assertEqual(first.handler, handler)
+        self.patch(first_url, {'status': ProcurementSubtask.Status.DONE}, expected_code=403)
+
+        self.patch(second_url, {'status': ProcurementSubtask.Status.PENDING})
+        ticket.refresh_from_db()
+        self.assertEqual(ticket.status, WorkTicket.Status.PURCHASING)
+        self.patch(second_url, {'title': 'Too late'}, expected_code=400)
+
+    def test_warehouse_manager_bulk_approval(self):
+        """The bulk endpoint approves selected items through the item workflow."""
+        project = ProjectCode.objects.create(code='PROCUREMENT-BULK-001')
+        warehouse_manager = get_user_model().objects.create_user(username='bulk-warehouse-manager')
+        unrelated = get_user_model().objects.create_user(username='bulk-unrelated')
+        warehouse_manager.groups.add(Group.objects.get(name='Warehouse Manager'))
+        ticket = WorkTicket.objects.create(
+            title='Bulk approval request',
+            project_code=project,
+            assigned_by=self.user,
+            is_procurement_request=True,
+            status=WorkTicket.Status.WAREHOUSE_REVIEW,
+        )
+        first = ProcurementSubtask.objects.create(
+            work_ticket=ticket, title='First bulk item', requested_quantity=1
+        )
+        second = ProcurementSubtask.objects.create(
+            work_ticket=ticket, title='Second bulk item', requested_quantity=1
+        )
+        approve_url = reverse('api-procurement-subtask-approve', kwargs={'pk': ticket.pk})
+
+        self.client.force_authenticate(user=unrelated)
+        self.post(approve_url, {'subtasks': [first.pk, second.pk]}, expected_code=403)
+
+        self.client.force_authenticate(user=warehouse_manager)
+        response = self.post(approve_url, {'subtasks': [first.pk, second.pk]}, expected_code=200)
+        self.assertEqual(response.data['approved'], 2)
+        first.refresh_from_db()
+        second.refresh_from_db()
+        ticket.refresh_from_db()
+        self.assertEqual(first.status, ProcurementSubtask.Status.PENDING)
+        self.assertEqual(second.status, ProcurementSubtask.Status.PENDING)
+        self.assertEqual(first.warehouse_approved_by, warehouse_manager)
+        self.assertEqual(second.warehouse_approved_by, warehouse_manager)
+        self.assertEqual(ticket.status, WorkTicket.Status.PURCHASING)
 
 
 class CustomUnitAPITest(InvenTreeAPITestCase):

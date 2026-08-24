@@ -10,9 +10,13 @@ import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
 import useCalendar from '../../hooks/UseCalendar';
 import Calendar from './Calendar';
 
-export default function WorkTicketCalendar() {
+export default function WorkTicketCalendar({ planId }: Readonly<{ planId?: number }>) {
   const navigate = useNavigate();
-  const state = useCalendar({ endpoint: ApiEndpoints.work_ticket_list, name: 'work-tickets' });
+  const state = useCalendar({
+    endpoint: ApiEndpoints.work_ticket_list,
+    name: 'work-tickets',
+    queryParams: { ...(planId ? { plan: planId } : {}), parent_isnull: true }
+  });
 
   const events = useMemo(() => {
     const today = dayjs().startOf('day');

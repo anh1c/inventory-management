@@ -147,7 +147,6 @@ class BuildSerializer(
         if work_ticket:
             request = self.context.get('request')
             allowed_users = {
-                work_ticket.assigned_to_id,
                 work_ticket.assigned_by_id,
             }
             if work_ticket.plan_id:
@@ -162,7 +161,7 @@ class BuildSerializer(
             ):
                 raise ValidationError({
                     'work_ticket': _(
-                        'Only the ticket assignee or assigner can create linked records'
+                        'Only the ticket proposer or plan manager can create linked records'
                     )
                 })
             if project_code.pk != work_ticket.project_code_id:

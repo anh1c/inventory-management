@@ -151,7 +151,9 @@ export function OptionsApiForm({
     <ApiForm
       id={id}
       props={formProps}
-      optionsLoading={optionsQuery.isFetching || !optionsQuery.data}
+      optionsLoading={
+        optionsQuery.isFetching || (!optionsQuery.data && !props.ignorePermissionCheck)
+      }
     />
   );
 }

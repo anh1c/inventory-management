@@ -88,6 +88,10 @@ export const WorkTicketDetail = Loadable(
   lazy(() => import('./pages/planning/WorkTicketDetail'))
 );
 
+export const ProcurementSubtaskDetail = Loadable(
+  lazy(() => import('./pages/planning/ProcurementSubtaskDetail'))
+);
+
 export const WorkPlanDetail = Loadable(
   lazy(() => import('./pages/planning/WorkPlanDetail'))
 );
@@ -229,6 +233,7 @@ export const routes = (
         <Route path='plans/index/*' element={<WorkTicketsIndex />} />
         <Route path='plans/:id/*' element={<WorkPlanDetail />} />
         <Route path='tickets/index/*' element={<WorkTicketsIndex />} />
+        <Route path='tickets/:ticketId/subtasks/:subtaskId/*' element={<ProcurementSubtaskDetail />} />
         <Route path='tickets/:id/*' element={<WorkTicketDetail />} />
         <Route path='tickets/*' element={<Navigate to='index/' replace />} />
       </Route>

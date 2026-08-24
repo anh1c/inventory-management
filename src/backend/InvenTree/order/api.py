@@ -174,6 +174,12 @@ class OrderFilter(FilterSet):
         label=_('Work Ticket'),
     )
 
+    procurement_subtask = rest_filters.ModelChoiceFilter(
+        queryset=common.models.ProcurementSubtask.objects.all(),
+        field_name='procurement_subtask',
+        label=_('Procurement Subtask'),
+    )
+
     contract = rest_filters.ModelChoiceFilter(
         queryset=models.Contract.objects.all(),
         field_name='contracts',

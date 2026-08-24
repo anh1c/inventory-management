@@ -1,10 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { Badge } from '@mantine/core';
-import { IconUserCheck } from '@tabler/icons-react';
+import { IconEdit, IconUserCheck } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import { RowEditAction, type RowAction } from '@lib/components/RowActions';
+import { type RowAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
@@ -31,6 +32,7 @@ export default function ProcurementSubtaskTable({
   refresh?: () => void;
 }>) {
   const api = useApi();
+  const navigate = useNavigate();
   const user = useUserState();
   const table = useTable(`procurement-subtasks-${ticket.pk}`);
   const [selectedSubtask, setSelectedSubtask] = useState<any>();
@@ -48,10 +50,43 @@ export default function ProcurementSubtaskTable({
     table,
     onFormSuccess: refresh
   });
+  const bulkApprove = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.procurement_subtasks_approve, ticket.pk),
+    title: 'Duyệt các mục đã chọn',
+    submitText: 'Duyệt các mục đã chọn',
+    successMessage: 'Đã duyệt các mục đã chọn',
+    ignorePermissionCheck: true,
+    fields: {
+      subtasks: { field_type: 'number', hidden: true, value: table.selectedIds }
+    },
+    table,
+    onFormSuccess: refresh
+  });
   const updateStatus = useEditApiFormModal({
     url: apiUrl(ApiEndpoints.procurement_subtask_detail, ticket.pk, { subtask_pk: selectedSubtask?.pk }),
     title: 'Cập nhật trạng thái mặt hàng',
     fields: { status: { field_type: 'choice', label: 'Trạng thái', choices: [{ value: selectedSubtask?.status, display_name: statusLabels[selectedSubtask?.status] }, { value: 'done', display_name: statusLabels.done }].filter((choice) => choice.value) } },
+    onFormSuccess: refresh
+  });
+  const editSubtask = useEditApiFormModal({
+    url: apiUrl(ApiEndpoints.procurement_subtask_detail, ticket.pk, { subtask_pk: selectedSubtask?.pk }),
+    title: 'Chỉnh sửa mục',
+    successMessage: 'Đã cập nhật mục',
+    ignorePermissionCheck: true,
+    fields: {
+      title: { field_type: 'string', label: 'Mặt hàng', required: true },
+      item_code: { field_type: 'string', label: 'Mã hàng' },
+      manufacturer: { field_type: 'string', label: 'Hãng/Xuất xứ' },
+      unit: { field_type: 'string', label: 'Đơn vị tính' },
+      requested_quantity: { field_type: 'decimal', label: 'Số lượng cần' },
+      note: { field_type: 'string', label: 'Ghi chú' },
+      technical_contact: {
+        field_type: 'related field',
+        api_url: apiUrl(ApiEndpoints.user_list),
+        label: 'Người đề xuất / Liên hệ kỹ thuật',
+        filters: { is_active: true }
+      }
+    },
     onFormSuccess: refresh
   });
   const newPurchaseOrder = useCreateApiFormModal({
@@ -76,17 +111,19 @@ export default function ProcurementSubtaskTable({
     const canPurchase = ticket.status === 'purchasing' && user.hasAddRole(UserRoles.purchase_order);
     const canSell = canPurchase && ticket.commercial && user.hasAddRole(UserRoles.sales_order);
     const canComplete = ticket.status === 'purchasing' && record.status === 'pending' && (user.isStaff() || user.userId() === record.handler);
-    const canApprove = ticket.status === 'warehouse_review' && record.status === 'waiting_approval' && (user.isStaff() || user.hasChangeRole(UserRoles.stock));
+    const canApprove = ticket.status === 'warehouse_review' && record.status === 'waiting_approval';
+    const canEdit = ticket.status === 'warehouse_review';
     return [
       { title: 'Duyệt mục', hidden: !canApprove, onClick: () => approveSubtask(record) },
-      RowEditAction({ hidden: !canComplete, onClick: () => { setSelectedSubtask(record); updateStatus.open(); } }),
+      { title: 'Chỉnh sửa mục', icon: <IconEdit />, hidden: !canEdit, onClick: () => { setSelectedSubtask(record); editSubtask.open(); } },
+      { title: 'Cập nhật trạng thái', icon: <IconEdit />, hidden: !canComplete, onClick: () => { setSelectedSubtask(record); updateStatus.open(); } },
       { title: t`Create Purchase Order`, hidden: !canPurchase, onClick: () => { setSelectedSubtask(record); newPurchaseOrder.open(); } },
       { title: t`Create Sales Order`, hidden: !canSell, onClick: () => { setSelectedSubtask(record); newSalesOrder.open(); } }
     ];
-  }, [approveSubtask, newPurchaseOrder, newSalesOrder, ticket.commercial, ticket.status, updateStatus, user]);
+  }, [approveSubtask, editSubtask, newPurchaseOrder, newSalesOrder, ticket.commercial, ticket.status, updateStatus, user]);
 
   return <>
-    {bulkAssign.modal}{updateStatus.modal}{newPurchaseOrder.modal}{newSalesOrder.modal}
+    {bulkAssign.modal}{bulkApprove.modal}{updateStatus.modal}{editSubtask.modal}{newPurchaseOrder.modal}{newSalesOrder.modal}
     <InvenTreeTable
       tableData={ticket.procurement_subtasks ?? []}
       tableState={table}
@@ -103,10 +140,16 @@ export default function ProcurementSubtaskTable({
       ]}
       props={{
         rowActions,
-        enableSelection: canAssign,
+        enableSelection: canAssign || ticket.status === 'warehouse_review',
+        isRecordSelectable: (record: any) => ticket.status !== 'warehouse_review' || record.status === 'waiting_approval',
         enablePagination: false,
         onRowClick: (record: any) => onSelectSubtask?.(record),
-        tableActions: [<ActionButton key='assign-procurement-items' text='Phân công mục đã chọn' icon={<IconUserCheck />} hidden={!canAssign} disabled={!table.hasSelectedRecords} onClick={bulkAssign.open} />]
+        onRowDoubleClick: ({ record }: any) =>
+          navigate(`/planning/tickets/${ticket.pk}/subtasks/${record.pk}/`),
+        tableActions: [
+          <ActionButton key='assign-procurement-items' text='Phân công mục đã chọn' icon={<IconUserCheck />} hidden={!canAssign} disabled={!table.hasSelectedRecords} onClick={bulkAssign.open} />,
+          <ActionButton key='approve-procurement-items' text='Duyệt các mục đã chọn' icon={<IconUserCheck />} hidden={ticket.status !== 'warehouse_review'} disabled={!table.hasSelectedRecords} onClick={bulkApprove.open} />
+        ]
       }}
     />
   </>;

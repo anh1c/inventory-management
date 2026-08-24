@@ -882,6 +882,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               onSelectedRecordsChange={
                 enableSelection ? onSelectedRecordsChange : undefined
               }
+              isRecordSelectable={tableProps.isRecordSelectable}
               rowExpansion={rowExpansion}
               fetching={isFetching}
               noRecordsText={missingRecordsText}
@@ -889,6 +890,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               storeColumnsKey={cacheKey}
               columns={tableColumns.effectiveColumns}
               onCellClick={supportsCellClick ? handleCellClick : undefined}
+              onRowDoubleClick={tableProps.onRowDoubleClick}
               noHeader={tableProps.noHeader ?? false}
               defaultColumnProps={{
                 textAlign: 'left'

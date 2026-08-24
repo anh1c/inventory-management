@@ -1,15 +1,17 @@
 import { t } from '@lingui/core/macro';
-import { Anchor, Badge } from '@mantine/core';
+import { Badge, Text } from '@mantine/core';
+import { IconUpload } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { ActionButton } from '@lib/components/ActionButton';
 import { RowEditAction, type RowAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -38,7 +40,7 @@ export const ticketFields = ({
     label: t`Priority`,
     choices: [
       { value: 'low', display_name: t`Low` },
-      { value: 'normal', display_name: t`Normal` },
+      { value: 'normal', display_name: t`Medium` },
       { value: 'high', display_name: t`High` },
       { value: 'urgent', display_name: t`Urgent` }
     ]
@@ -47,24 +49,18 @@ export const ticketFields = ({
   target_date: { field_type: 'date', label: t`Target Completion Date` },
   estimated_hours: { field_type: 'number', label: t`Estimated Hours` },
   actual_hours: { field_type: 'number', label: t`Actual Hours` },
-  project_code: {
-    field_type: 'related field',
-    api_url: apiUrl(ApiEndpoints.project_code_list),
-    label: t`Project Code`,
-    required: true,
-    value: projectCodeId,
-    disabled: !!projectCodeId
-  },
   plan: {
     field_type: 'related field',
     api_url: apiUrl(ApiEndpoints.work_plan_list),
     label: t`Work Plan`,
     value: planId,
-    disabled: !!planId
+    disabled: !!planId,
+    required: true
   },
   parent: {
     field_type: 'related field',
     api_url: apiUrl(ApiEndpoints.work_ticket_list),
+    model: ModelType.workticket,
     label: t`Parent Work Ticket`,
     value: parentId,
     disabled: !!parentId,
@@ -76,12 +72,9 @@ export const ticketFields = ({
   dependencies: {
     field_type: 'related field',
     api_url: apiUrl(ApiEndpoints.work_ticket_list),
+    model: ModelType.workticket,
     label: t`Dependencies`,
-    multiple: true,
-    filters: {
-      project_code: projectCodeId,
-      plan: planId
-    }
+    multiple: true
   }
 });
 
@@ -89,7 +82,11 @@ const statusLabels: Record<string, string> = {
   open: t`Open`,
   processing: t`Processing`,
   review: t`Review`,
-  done: t`Done`
+  proposal: 'Đề xuất',
+  assignment: 'Phân công',
+  warehouse_review: 'Duyệt kho',
+  purchasing: 'Mua bán',
+  done: 'Hoàn thành'
 };
 
 export const nextWorkTicketStatus = (
@@ -98,6 +95,12 @@ export const nextWorkTicketStatus = (
   isStaff: boolean
 ) => {
   if (!record) return undefined;
+  if (record.is_procurement_request) {
+    if (record.status === 'proposal' && (isStaff || userId === record.assigned_by)) return 'assignment';
+    if (record.status === 'assignment' && (isStaff || userId === record.assigned_by)) return 'warehouse_review';
+    if (record.status === 'warehouse_review' && isStaff) return 'purchasing';
+    return undefined;
+  }
   if (['on_hold', 'done', 'cancelled'].includes(record.plan_detail?.status)) {
     return undefined;
   }
@@ -147,23 +150,45 @@ export const workTicketStatusFields = (
 
 const priorityLabels: Record<string, string> = {
   low: t`Low`,
-  normal: t`Normal`,
+  normal: t`Medium`,
   high: t`High`,
   urgent: t`Urgent`
+};
+
+const priorityColors: Record<string, string> = {
+  low: 'blue',
+  normal: 'cyan',
+  high: 'orange',
+  urgent: 'red'
 };
 
 const ticketStatusLabels: Record<string, string> = {
   open: t`Open`,
   processing: t`Processing`,
   review: t`Review`,
-  done: t`Done`
+  proposal: 'Đề xuất',
+  assignment: 'Phân công',
+  warehouse_review: 'Duyệt kho',
+  purchasing: 'Mua bán',
+  done: 'Hoàn thành'
+};
+
+const ticketStatusColors: Record<string, string> = {
+  open: 'gray',
+  processing: 'blue',
+  review: 'yellow',
+  proposal: 'gray',
+  assignment: 'blue',
+  warehouse_review: 'yellow',
+  purchasing: 'cyan',
+  done: 'green'
 };
 
 export default function WorkTicketTable({
   planId,
   projectCodeId,
   parentId,
-  canCreate
+  canCreate,
 }: Readonly<{
   planId?: number;
   projectCodeId?: number;
@@ -213,7 +238,32 @@ export default function WorkTicketTable({
       apiUrl: apiUrl(ApiEndpoints.project_code_list)
     },
   ];
-  const newTicket = useCreateApiFormModal({
+  const newProcurementRequest = useCreateApiFormModal({
+    url: ApiEndpoints.procurement_upload,
+    title: 'Nhập yêu cầu mua hàng từ Excel',
+    ignorePermissionCheck: true,
+    fields: {
+      file: {
+        field_type: 'file upload',
+        label: 'Tệp yêu cầu mua hàng (.xlsx)',
+        description: 'Cột bắt buộc: Mô tả hàng hóa/Name Product, Mã sản phẩm/Description, ĐVT, SL cần',
+        accept: '.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        required: true
+      },
+      ...(planId ? {
+        plan: { field_type: 'number' as const, hidden: true, value: planId }
+      } : {}),
+      project_code: {
+        field_type: 'related field', api_url: apiUrl(ApiEndpoints.project_code_list),
+        model: ModelType.projectcode,
+        label: 'Mã dự án', value: projectCodeId, disabled: !!projectCodeId, required: true
+      },
+      commercial: { field_type: 'boolean', label: 'Yêu cầu thương mại' },
+    },
+    initialData: { plan: planId, project_code: projectCodeId },
+    table
+  });
+  const newWorkTicket = useCreateApiFormModal({
     url: ApiEndpoints.work_ticket_list,
     title: t`Add Work Ticket`,
     fields: ticketFields({ planId, projectCodeId, parentId }),
@@ -291,16 +341,7 @@ export default function WorkTicketTable({
         accessor: 'code',
         title: t`Work Code`,
         sortable: true,
-        render: (record: any) => (
-          <Anchor
-            href={getDetailUrl(ModelType.workticket, record.pk, true)}
-            onClick={(event) =>
-              navigateToLink(getDetailUrl(ModelType.workticket, record.pk), navigate, event)
-            }
-          >
-            {record.code}
-          </Anchor>
-        )
+        render: (record: any) => <Text c='blue'>{record.code}</Text>
       },
       { accessor: 'title', title: t`Work Content`, sortable: true },
       {
@@ -318,7 +359,11 @@ export default function WorkTicketTable({
       {
         accessor: 'priority',
         title: t`Priority`,
-        render: (record: any) => priorityLabels[record.priority] ?? record.priority
+        render: (record: any) => (
+          <Badge color={priorityColors[record.priority] ?? 'gray'}>
+            {priorityLabels[record.priority] ?? record.priority}
+          </Badge>
+        )
       },
       { accessor: 'start_date', title: t`Start Date`, sortable: true },
       { accessor: 'target_date', title: t`Target Completion Date`, sortable: true },
@@ -332,7 +377,9 @@ export default function WorkTicketTable({
         accessor: 'status',
         title: t`Status`,
         render: (record: any) => (
-          <Badge color={record.overdue ? 'red' : undefined}>
+          <Badge
+            color={record.overdue ? 'red' : (ticketStatusColors[record.status] ?? 'gray')}
+          >
             {record.overdue ? t`Overdue` : (ticketStatusLabels[record.status] ?? record.status)}
           </Badge>
         )
@@ -364,7 +411,7 @@ export default function WorkTicketTable({
       }),
       {
         title: t`Create Purchase Order`,
-        hidden: !canLink || !canCreatePurchaseOrder,
+        hidden: !canLink || !canCreatePurchaseOrder || record.is_procurement_request,
         onClick: () => {
           setSelectedTicket(record);
           newPurchaseOrder.open();
@@ -372,7 +419,7 @@ export default function WorkTicketTable({
       },
       {
         title: t`Create Sales Order`,
-        hidden: !canLink || !canCreateSalesOrder,
+        hidden: !canLink || !canCreateSalesOrder || record.is_procurement_request,
         onClick: () => {
           setSelectedTicket(record);
           newSalesOrder.open();
@@ -380,7 +427,7 @@ export default function WorkTicketTable({
       },
       {
         title: t`Create Contract`,
-        hidden: !canLink || !canCreateContract,
+        hidden: !canLink || !canCreateContract || record.is_procurement_request,
         onClick: () => {
           setSelectedTicket(record);
           newContract.open();
@@ -388,7 +435,7 @@ export default function WorkTicketTable({
       },
       {
         title: t`Add Build Order`,
-        hidden: !canLink || !canCreateBuildOrder,
+        hidden: !canLink || !canCreateBuildOrder || record.is_procurement_request,
         onClick: () => {
           setSelectedTicket(record);
           newBuildOrder.open();
@@ -401,7 +448,8 @@ export default function WorkTicketTable({
 
   return (
     <>
-      {newTicket.modal}
+      {newProcurementRequest.modal}
+      {newWorkTicket.modal}
       {updateStatus.modal}
       {newPurchaseOrder.modal}
       {newSalesOrder.modal}
@@ -413,15 +461,28 @@ export default function WorkTicketTable({
         columns={columns}
         props={{
           rowActions,
-          params: { plan: planId, parent: parentId },
+          params: {
+            plan: planId,
+            parent: parentId,
+            parent_isnull: parentId ? undefined : true
+          },
+          onRowDoubleClick: ({ record }: any) =>
+            navigate(getDetailUrl(ModelType.workticket, record.pk)),
           tableFilters,
           enableDownload: true,
           tableActions: [
             <AddItemButton
-              key='add-ticket'
+              key='add-work-ticket'
               tooltip={t`Add Work Ticket`}
               hidden={canCreate === false || (canCreate === undefined && !user.isStaff())}
-              onClick={() => newTicket.open()}
+              onClick={newWorkTicket.open}
+            />,
+            <ActionButton
+              key='add-procurement-request'
+              tooltip='Nhập yêu cầu mua hàng từ Excel'
+              icon={<IconUpload />}
+              hidden={!!parentId || canCreate === false}
+              onClick={() => newProcurementRequest.open()}
             />
           ]
         }}

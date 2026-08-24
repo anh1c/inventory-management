@@ -399,8 +399,12 @@ export function RelatedModelField({
         return <definition.modelRenderer instance={data} />;
       }
 
+      if (!definition.model) {
+        return data.code ?? data.name ?? data.username ?? String(data.pk ?? '');
+      }
+
       return (
-        <RenderInstance instance={data} model={definition.model ?? undefined} />
+        <RenderInstance instance={data} model={definition.model} />
       );
     },
     [definition.model, definition.modelRenderer]
@@ -409,9 +413,14 @@ export function RelatedModelField({
   // Update form values when the selected value changes
   const onChange = useCallback(
     (value: any) => {
+      const selected = definition.multiple
+        ? Array.from(
+            new Map((value ?? []).map((item: any) => [item.value, item])).values()
+          )
+        : value;
       const _pk = definition.multiple
-        ? (value ?? []).map((item: any) => item.value)
-        : (value?.value ?? null);
+        ? selected.map((item: any) => item.value)
+        : (selected?.value ?? null);
       field.onChange(_pk);
 
       setPk(_pk);
@@ -419,7 +428,7 @@ export function RelatedModelField({
       // Run custom callback for this field (if provided)
       definition.onValueChange?.(
         _pk,
-        definition.multiple ? (value ?? []).map((item: any) => item.data) : (value?.data ?? {})
+        definition.multiple ? selected.map((item: any) => item.data) : (selected?.data ?? {})
       );
     },
     [field.onChange, definition]
@@ -456,7 +465,8 @@ export function RelatedModelField({
 
     if (definition.multiple) {
       const pks = Array.isArray(pk) ? pk : [pk];
-      return _data.filter((item) => pks.includes(item.value));
+      const options = new Map(_data.map((item) => [item.value, item]));
+      return pks.map((itemPk) => options.get(itemPk)).filter(Boolean);
     }
 
     return _data.find((item) => item.value === pk);

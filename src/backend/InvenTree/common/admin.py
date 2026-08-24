@@ -111,7 +111,6 @@ class WorkTicketAdmin(admin.ModelAdmin):
     list_display = (
         'title',
         'project_code',
-        'assigned_to',
         'assigned_by',
         'priority',
         'status',

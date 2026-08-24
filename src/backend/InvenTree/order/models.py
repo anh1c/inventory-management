@@ -931,6 +931,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
         related_name='purchase_orders',
         verbose_name=_('Work Ticket'),
     )
+    procurement_subtask = models.ForeignKey(
+        'common.ProcurementSubtask',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='purchase_orders',
+        verbose_name=_('Procurement Subtask'),
+    )
 
     class OutputType(models.TextChoices):
         WORKSHOP = 'workshop', _('Xưởng')
@@ -1874,6 +1882,14 @@ class SalesOrder(TotalPriceMixin, Order):
         blank=True,
         related_name='sales_orders',
         verbose_name=_('Work Ticket'),
+    )
+    procurement_subtask = models.ForeignKey(
+        'common.ProcurementSubtask',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='sales_orders',
+        verbose_name=_('Procurement Subtask'),
     )
 
     class Meta:

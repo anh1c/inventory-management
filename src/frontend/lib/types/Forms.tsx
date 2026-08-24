@@ -55,6 +55,7 @@ export type ApiFormFieldHeader = {
  * @param error : Optional error message to display
  * @param exclude : Whether to exclude the field from the submitted data
  * @param placeholder : The placeholder text to display
+ * @param accept : Allowed MIME types and file extensions for file uploads
  * @param placeholderAutofill: Whether to allow auto-filling of the placeholder value
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
@@ -112,6 +113,7 @@ export type ApiFormFieldType = {
   exclude?: boolean;
   read_only?: boolean;
   placeholder?: string;
+  accept?: string;
   placeholderAutofill?: boolean;
   placeholderWarningCompare?: string | number;
   placeholderWarning?: string;

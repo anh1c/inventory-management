@@ -203,6 +203,7 @@ export function ApiFormField({
           <FileInput
             {...reducedDefinition}
             clearable={!definition.required}
+            accept={definition.accept}
             aria-label={`file-field-${fieldName}`}
             placeholder={definition.placeholder ?? t`Select file to upload`}
             leftSection={<IconFileUpload />}

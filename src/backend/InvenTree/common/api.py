@@ -2,10 +2,14 @@
 
 import json
 import json.decoder
+from decimal import Decimal, InvalidOperation
+from io import BytesIO
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldDoesNotExist, ValidationError
+from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.http.response import HttpResponse
@@ -36,11 +40,14 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from sql_util.utils import SubqueryCount
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, PatternFill
 
 import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 from common.icons import get_icon_packs
@@ -532,8 +539,8 @@ class WorkPlanList(ListCreateAPI):
             queryset = queryset.filter(
                 Q(created_by=user)
                 | Q(manager=user)
-                | Q(tickets__assigned_to=user)
                 | Q(tickets__assigned_by=user)
+                | Q(tickets__procurement_subtasks__handler=user)
             ).distinct()
         return common.serializers.WorkPlanSerializer.annotate_queryset(queryset)
 
@@ -557,8 +564,8 @@ class WorkPlanDetail(RetrieveUpdateDestroyAPI):
             queryset = queryset.filter(
                 Q(created_by=user)
                 | Q(manager=user)
-                | Q(tickets__assigned_to=user)
                 | Q(tickets__assigned_by=user)
+                | Q(tickets__procurement_subtasks__handler=user)
             ).distinct()
         return common.serializers.WorkPlanSerializer.annotate_queryset(queryset)
 
@@ -579,6 +586,7 @@ class WorkTicketFilter(FilterSet):
     """Filters for work-ticket table and calendar views."""
 
     overdue = rest_filters.BooleanFilter(method='filter_overdue')
+    parent_isnull = rest_filters.BooleanFilter(field_name='parent', lookup_expr='isnull')
     min_date = rest_filters.DateFilter(method='filter_min_date')
     max_date = rest_filters.DateFilter(method='filter_max_date')
 
@@ -586,7 +594,8 @@ class WorkTicketFilter(FilterSet):
         model = common.models.WorkTicket
         fields = [
             'plan', 'parent', 'priority', 'status', 'project_code',
-            'assigned_to', 'assigned_by',
+            'assigned_by',
+            'is_procurement_request', 'commercial',
         ]
 
     def filter_overdue(self, queryset, name, value):
@@ -603,7 +612,7 @@ class WorkTicketList(ListCreateAPI):
     """List and create work tickets."""
 
     queryset = common.models.WorkTicket.objects.select_related(
-        'plan', 'project_code', 'parent', 'assigned_to', 'assigned_by'
+        'plan', 'project_code', 'parent', 'assigned_by'
     ).prefetch_related('dependencies')
     serializer_class = common.serializers.WorkTicketSerializer
     permission_classes = [IsAuthenticated]
@@ -626,12 +635,27 @@ class WorkTicketList(ListCreateAPI):
         queryset = super().get_queryset()
         user = self.request.user
         if not user.is_staff:
-            queryset = queryset.filter(
-                Q(assigned_to=user)
-                | Q(assigned_by=user)
+            access_filter = (
+                Q(assigned_by=user)
                 | Q(plan__manager=user)
                 | Q(plan__created_by=user)
-            ).distinct()
+                | Q(procurement_subtasks__handler=user)
+                | Q(procurement_subtasks__technical_contact=user)
+            )
+            if user.groups.filter(name='Warehouse Manager').exists():
+                access_filter |= Q(
+                    is_procurement_request=True,
+                    status=common.models.WorkTicket.Status.WAREHOUSE_REVIEW,
+                )
+            if user.groups.filter(name='Assignment Manager').exists():
+                access_filter |= Q(
+                    is_procurement_request=True,
+                    status__in=[
+                        common.models.WorkTicket.Status.PROPOSAL,
+                        common.models.WorkTicket.Status.ASSIGNMENT,
+                    ],
+                )
+            queryset = queryset.filter(access_filter).distinct()
         return common.serializers.WorkTicketSerializer.annotate_queryset(queryset)
 
     def perform_create(self, serializer):
@@ -665,12 +689,27 @@ class WorkTicketDetail(RetrieveUpdateDestroyAPI):
         queryset = super().get_queryset()
         user = self.request.user
         if not user.is_staff:
-            queryset = queryset.filter(
-                Q(assigned_to=user)
-                | Q(assigned_by=user)
+            access_filter = (
+                Q(assigned_by=user)
                 | Q(plan__manager=user)
                 | Q(plan__created_by=user)
-            ).distinct()
+                | Q(procurement_subtasks__handler=user)
+                | Q(procurement_subtasks__technical_contact=user)
+            )
+            if user.groups.filter(name='Warehouse Manager').exists():
+                access_filter |= Q(
+                    is_procurement_request=True,
+                    status=common.models.WorkTicket.Status.WAREHOUSE_REVIEW,
+                )
+            if user.groups.filter(name='Assignment Manager').exists():
+                access_filter |= Q(
+                    is_procurement_request=True,
+                    status__in=[
+                        common.models.WorkTicket.Status.PROPOSAL,
+                        common.models.WorkTicket.Status.ASSIGNMENT,
+                    ],
+                )
+            queryset = queryset.filter(access_filter).distinct()
         return common.serializers.WorkTicketSerializer.annotate_queryset(queryset)
 
     def perform_destroy(self, instance):
@@ -686,6 +725,305 @@ class WorkTicketDetail(RetrieveUpdateDestroyAPI):
         }:
             raise PermissionDenied(_('Only the assigning manager can delete this ticket'))
         instance.delete()
+
+
+class ProcurementRequestUpload(APIView):
+    """Create one procurement request and one item subtask for each Excel row."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        spreadsheet = request.FILES.get('file')
+        if not spreadsheet or not spreadsheet.name.lower().endswith('.xlsx'):
+            raise serializers.ValidationError({'file': _('A .xlsx file is required')})
+        try:
+            project = common.models.ProjectCode.objects.get(pk=request.data['project_code'])
+            plan = None
+            if request.data.get('plan'):
+                plan = common.models.WorkPlan.objects.get(pk=request.data['plan'])
+                if plan.project_code_id != project.pk:
+                    raise serializers.ValidationError({
+                        'project_code': _('Project code must match the selected work plan')
+                    })
+                if plan.status not in {
+                    common.models.WorkPlan.Status.DRAFT,
+                    common.models.WorkPlan.Status.ACTIVE,
+                }:
+                    raise serializers.ValidationError({
+                        'plan': _('Procurement requests can only be added to draft or active plans')
+                    })
+            workbook = load_workbook(spreadsheet, read_only=True, data_only=True)
+            if len(workbook.worksheets) != 1:
+                raise serializers.ValidationError({
+                    'file': _('The purchase request file must contain exactly one worksheet')
+                })
+            rows = list(workbook.active.values)
+        except (KeyError, common.models.ProjectCode.DoesNotExist):
+            raise serializers.ValidationError({'detail': _('Project code is required')})
+        except serializers.ValidationError:
+            raise
+        except Exception as error:
+            raise serializers.ValidationError({'file': _('Unable to read the Excel file')}) from error
+        headers = [str(value).strip() if value is not None else '' for value in rows[0]] if rows else []
+        while headers and not headers[-1]:
+            headers.pop()
+        template_headers = [
+            'Mô tả hàng hóa/Name Product',
+            'Mã sản phẩm/Description',
+            'Hãng/Xuất xứ',
+            'ĐVT',
+            'SL cần',
+            'Người xử lý',
+            'Note',
+        ]
+        technical_contact_header = 'Người đề xuất/Người giải pháp kỹ thuật'
+        expected_headers = template_headers + [technical_contact_header]
+        if headers != expected_headers:
+            missing = [column for column in template_headers if column not in headers]
+            message = (
+                _('The Excel columns must match the purchase-request template')
+                + ': '
+                + ', '.join(template_headers)
+            )
+            if missing:
+                message += '. ' + _('Missing columns') + ': ' + ', '.join(missing)
+            raise serializers.ValidationError({'file': message})
+        index = {header: headers.index(header) for header in headers}
+
+        def value(row, column):
+            if column not in index:
+                return ''
+            return str(row[index[column]]).strip() if row[index[column]] is not None else ''
+
+        items = []
+        for number, row in enumerate(rows[1:], 2):
+            if not any(value is not None and str(value).strip() for value in row):
+                continue
+            for column in template_headers[:2] + ['ĐVT', technical_contact_header]:
+                if not value(row, column):
+                    raise serializers.ValidationError({
+                        'file': _('Missing value for ') + column + _(' on row ') + str(number)
+                    })
+            try:
+                quantity = Decimal(str(row[index['SL cần']]))
+            except (InvalidOperation, TypeError, ValueError) as error:
+                raise serializers.ValidationError({'file': _('Invalid quantity on row ') + str(number)}) from error
+            if quantity <= 0:
+                raise serializers.ValidationError({'file': _('Quantity must be greater than zero on row ') + str(number)})
+            items.append((row, quantity))
+        if not items:
+            raise serializers.ValidationError({'file': _('The Excel file has no item rows')})
+        commercial = str(request.data.get('commercial', '')).lower() in {'true', '1', 'yes'}
+        contacts = {}
+        for row, _quantity in items:
+            username = value(row, technical_contact_header)
+            try:
+                contacts[id(row)] = User.objects.get(username=username)
+            except User.DoesNotExist as error:
+                raise serializers.ValidationError({
+                    'file': _('Unknown technical contact: ') + username
+                }) from error
+        with transaction.atomic():
+            parent = common.models.WorkTicket.objects.create(
+                title=spreadsheet.name.rsplit('.', 1)[0], description=_('Procurement request imported from Excel'),
+                project_code=project, plan=plan, assigned_by=request.user,
+                is_procurement_request=True, commercial=commercial,
+                status=common.models.WorkTicket.Status.PROPOSAL,
+            )
+            common.models.ProcurementSubtask.objects.bulk_create([
+                common.models.ProcurementSubtask(
+                    work_ticket=parent,
+                    title=value(row, 'Mô tả hàng hóa/Name Product'),
+                    item_code=value(row, 'Mã sản phẩm/Description'),
+                    manufacturer=value(row, 'Hãng/Xuất xứ'), unit=value(row, 'ĐVT'),
+                    requested_quantity=quantity, note=value(row, 'Note'),
+                    technical_contact=contacts[id(row)],
+                ) for row, quantity in items
+            ])
+        return Response(common.serializers.WorkTicketSerializer(parent, context={'request': request}).data, status=201)
+
+
+class ProcurementAssignmentUpload(APIView):
+    """Assign procurement item handlers from an exported workbook."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        parent = common.models.WorkTicket.objects.get(pk=pk, is_procurement_request=True)
+        if not request.user.is_staff and not request.user.groups.filter(
+            name='Assignment Manager'
+        ).exists():
+            raise PermissionDenied(_('Only the assigning manager can upload assignments'))
+        if parent.status not in {
+            common.models.WorkTicket.Status.PROPOSAL,
+            common.models.WorkTicket.Status.ASSIGNMENT,
+        }:
+            raise serializers.ValidationError({'status': _('Assignments are closed after warehouse review starts')})
+        spreadsheet = request.FILES.get('file')
+        updates = []
+
+        if spreadsheet:
+            try:
+                rows = list(load_workbook(spreadsheet, read_only=True, data_only=True).active.values)
+            except Exception as error:
+                raise serializers.ValidationError({'file': _('Unable to read the Excel file')}) from error
+            headers = [str(value).strip() if value is not None else '' for value in rows[0]] if rows else []
+            if not {'Mã mục', 'Người thực hiện mua hàng'}.issubset(headers):
+                raise serializers.ValidationError({
+                    'file': _('The file must include Mã mục and Người thực hiện mua hàng')
+                })
+            index = {header: headers.index(header) for header in headers}
+            for row in rows[1:]:
+                subtask_id, username = (
+                    str(row[index[name]] or '').strip()
+                    for name in ('Mã mục', 'Người thực hiện mua hàng')
+                )
+                if not subtask_id or not username:
+                    continue
+                try:
+                    subtask = parent.procurement_subtasks.get(pk=subtask_id)
+                    user = User.objects.get(username=username)
+                except (common.models.ProcurementSubtask.DoesNotExist, User.DoesNotExist) as error:
+                    raise serializers.ValidationError({'file': _('Unknown item or handler: ') + subtask_id}) from error
+                subtask.handler = user
+                updates.append(subtask)
+        else:
+            ticket_ids = request.data.get('subtasks', [])
+            if isinstance(ticket_ids, str):
+                ticket_ids = [value for value in ticket_ids.split(',') if value]
+            try:
+                user = User.objects.get(pk=request.data['handler'])
+            except (KeyError, User.DoesNotExist) as error:
+                raise serializers.ValidationError({'handler': _('A handler is required')}) from error
+            subtasks = list(parent.procurement_subtasks.filter(pk__in=ticket_ids))
+            if not subtasks or len(subtasks) != len(ticket_ids):
+                raise serializers.ValidationError({'subtasks': _('Select valid procurement items')})
+            for subtask in subtasks:
+                subtask.handler = user
+                updates.append(subtask)
+
+        if any(subtask.status != common.models.ProcurementSubtask.Status.WAITING_APPROVAL for subtask in updates):
+            raise serializers.ValidationError({
+                'detail': _('Only unapproved procurement items can be assigned')
+            })
+        common.models.ProcurementSubtask.objects.bulk_update(updates, ['handler'])
+        if parent.status == common.models.WorkTicket.Status.PROPOSAL:
+            parent.status = common.models.WorkTicket.Status.ASSIGNMENT
+            parent.save(update_fields=['status', 'updated'])
+        return Response({'updated': len(updates)})
+
+
+class ProcurementSubtaskApproval(APIView):
+    """Approve selected procurement items through the existing item workflow."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        """Approve the requested procurement subtask IDs atomically."""
+        if not request.user.is_staff and not request.user.groups.filter(
+            name='Warehouse Manager'
+        ).exists():
+            raise PermissionDenied(_('Only a Warehouse Manager can approve procurement items'))
+
+        subtask_ids = request.data.get('subtasks', [])
+        if not isinstance(subtask_ids, list) or not subtask_ids:
+            raise serializers.ValidationError({'subtasks': _('Select procurement items to approve')})
+
+        with transaction.atomic():
+            try:
+                parent = common.models.WorkTicket.objects.select_for_update().get(
+                    pk=pk, is_procurement_request=True
+                )
+            except common.models.WorkTicket.DoesNotExist as error:
+                raise NotFound(_('Procurement request not found')) from error
+
+            if parent.status != common.models.WorkTicket.Status.WAREHOUSE_REVIEW:
+                raise serializers.ValidationError({
+                    'status': _('Items can only be approved during warehouse review')
+                })
+
+            subtasks = list(parent.procurement_subtasks.select_for_update().filter(pk__in=subtask_ids))
+            if len(subtasks) != len(subtask_ids):
+                raise serializers.ValidationError({'subtasks': _('Select valid procurement items')})
+            if any(
+                subtask.status != common.models.ProcurementSubtask.Status.WAITING_APPROVAL
+                for subtask in subtasks
+            ):
+                raise serializers.ValidationError({
+                    'subtasks': _('Only waiting procurement items can be approved')
+                })
+
+            approvals = [
+                common.serializers.ProcurementSubtaskSerializer(
+                    subtask,
+                    data={'status': common.models.ProcurementSubtask.Status.PENDING},
+                    partial=True,
+                    context={'request': request},
+                )
+                for subtask in subtasks
+            ]
+            for approval in approvals:
+                approval.is_valid(raise_exception=True)
+            for approval in approvals:
+                approval.save()
+
+        return Response({'approved': len(approvals)})
+
+
+class ProcurementExport(APIView):
+    """Export current procurement data for shared review or assignment."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        parent = common.models.WorkTicket.objects.get(pk=pk, is_procurement_request=True)
+        allowed = {
+            parent.assigned_by_id,
+        }
+        if not request.user.is_staff and request.user.pk not in allowed and not parent.procurement_subtasks.filter(
+            Q(handler=request.user) | Q(technical_contact=request.user)
+        ).exists():
+            raise PermissionDenied(_('You do not have access to this procurement request'))
+        workbook, sheet = Workbook(), None
+        sheet = workbook.active
+        sheet.title = 'Dat hang'
+        sheet.append(['Mã mục', 'Mô tả hàng hóa/Name Product', 'Mã sản phẩm/Description', 'Hãng/Xuất xứ', 'ĐVT', 'SL cần', 'Người thực hiện mua hàng', 'Người đề xuất/Người giải pháp kỹ thuật', 'Trạng thái', 'Duyệt kho', 'Note'])
+        for cell in sheet[1]:
+            cell.fill = PatternFill('solid', fgColor='FF0000')
+            cell.font = Font(bold=True, color='000000')
+        status_labels = {
+            common.models.ProcurementSubtask.Status.WAITING_APPROVAL: 'Chờ duyệt',
+            common.models.ProcurementSubtask.Status.PENDING: 'Chưa thực hiện',
+            common.models.ProcurementSubtask.Status.DONE: 'Hoàn thành',
+        }
+        for subtask in parent.procurement_subtasks.select_related('handler', 'technical_contact', 'warehouse_approved_by'):
+            sheet.append([subtask.pk, subtask.title, subtask.item_code, subtask.manufacturer, subtask.unit, subtask.requested_quantity, subtask.handler.username if subtask.handler else '', subtask.technical_contact.username if subtask.technical_contact else '', status_labels[subtask.status], subtask.warehouse_approved_by.username if subtask.warehouse_approved_by else 'Chưa duyệt', subtask.note])
+        output = BytesIO()
+        workbook.save(output)
+        return InvenTree.helpers.DownloadFile(output.getvalue(), f'{parent.code}-dat-hang.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+
+class ProcurementSubtaskDetail(RetrieveUpdateAPI):
+    """Retrieve and update a procurement item through its parent ticket."""
+
+    serializer_class = common.serializers.ProcurementSubtaskSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = 'subtask_pk'
+
+    def get_queryset(self):
+        queryset = common.models.ProcurementSubtask.objects.filter(
+            work_ticket_id=self.kwargs['pk'],
+            work_ticket__is_procurement_request=True,
+        )
+        user = self.request.user
+        if user.is_staff or user.groups.filter(name='Assignment Manager').exists():
+            return queryset
+        access_filter = Q(handler=user) | Q(technical_contact=user)
+        if user.groups.filter(name='Warehouse Manager').exists():
+            access_filter |= Q(
+                work_ticket__status=common.models.WorkTicket.Status.WAREHOUSE_REVIEW,
+            )
+        return queryset.filter(access_filter)
 
 
 class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
@@ -1708,7 +2046,12 @@ common_api_urls = [
     path(
         'work-ticket/',
         include([
+            path('<int:pk>/procurement-export/', ProcurementExport.as_view(), name='api-procurement-export'),
+            path('<int:pk>/procurement-assignments/', ProcurementAssignmentUpload.as_view(), name='api-procurement-assignment-upload'),
+            path('<int:pk>/subtasks/approve/', ProcurementSubtaskApproval.as_view(), name='api-procurement-subtask-approve'),
+            path('<int:pk>/subtasks/<int:subtask_pk>/', ProcurementSubtaskDetail.as_view(), name='api-procurement-subtask-detail'),
             path('<int:pk>/', WorkTicketDetail.as_view(), name='api-work-ticket-detail'),
+            path('procurement-upload/', ProcurementRequestUpload.as_view(), name='api-procurement-upload'),
             path('', WorkTicketList.as_view(), name='api-work-ticket-list'),
         ]),
     ),

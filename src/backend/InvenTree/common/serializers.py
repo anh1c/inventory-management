@@ -1,7 +1,8 @@
 """JSON serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import BooleanField, Case, Count, OuterRef, Q, Subquery, Value, When
+from django.db import transaction
+from django.db.models import BooleanField, Case, Count, OuterRef, Q, Subquery, Sum, Value, When
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -513,13 +514,15 @@ class WorkTicketReferenceSerializer(InvenTreeModelSerializer):
 
 
 class WorkTicketSerializer(InvenTreeModelSerializer):
-    """Serializer enforcing the manager-assignee work ticket workflow."""
+    """Serializer enforcing the manager-owned work ticket workflow."""
 
     MANY_TO_MANY_FIELDS = ('dependencies',)
 
     assigned_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    plan = serializers.PrimaryKeyRelatedField(
+        queryset=common_models.WorkPlan.objects.all(), required=True
+    )
     assigned_by_detail = UserSerializer(source='assigned_by', read_only=True)
-    assigned_to_detail = UserSerializer(source='assigned_to', read_only=True)
     plan_detail = WorkPlanSerializer(source='plan', read_only=True)
     project_code_detail = ProjectCodeSerializer(
         source='project_code', read_only=True
@@ -529,6 +532,7 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
         source='dependencies', many=True, read_only=True
     )
     open_subtask_count = serializers.IntegerField(read_only=True, default=0)
+    procurement_subtasks = serializers.SerializerMethodField(read_only=True)
     code = serializers.CharField(read_only=True)
 
     class Meta:
@@ -536,15 +540,25 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
         fields = [
             'pk', 'code', 'title', 'description', 'notes', 'plan', 'plan_detail',
             'project_code', 'project_code_detail', 'parent', 'parent_detail', 'dependencies',
-            'dependency_details', 'assigned_to', 'assigned_to_detail',
-            'assigned_by', 'assigned_by_detail', 'status', 'priority',
+            'dependency_details', 'assigned_by', 'assigned_by_detail', 'status', 'priority',
             'start_date', 'target_date', 'completion_date', 'estimated_hours',
             'actual_hours', 'overdue', 'created', 'updated',
-            'open_subtask_count',
+            'open_subtask_count', 'procurement_subtasks', 'is_procurement_request', 'commercial',
         ]
-        read_only_fields = ['code', 'completion_date', 'overdue', 'created', 'updated']
+        read_only_fields = [
+            'code', 'completion_date', 'overdue', 'created', 'updated',
+        ]
+        extra_kwargs = {'project_code': {'required': False}}
 
     overdue = serializers.BooleanField(read_only=True, default=False)
+
+    def get_procurement_subtasks(self, instance):
+        """Embed Excel item rows on procurement work-ticket detail responses."""
+        if not instance.is_procurement_request:
+            return []
+        return ProcurementSubtaskSerializer(
+            instance.procurement_subtasks.all(), many=True, context=self.context
+        ).data
 
     def skip_create_fields(self):
         """Skip many-to-many fields when building the validation model."""
@@ -558,6 +572,15 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
         initial_data = data.copy()
         dependency_data = initial_data.pop('dependencies', serializers.empty)
         validated_data = super().run_validation(initial_data)
+        plan = validated_data.get('plan', self.instance.plan)
+        project_code = validated_data.get('project_code')
+
+        if plan:
+            if project_code and project_code.pk != plan.project_code_id:
+                raise serializers.ValidationError({
+                    'project_code': _('Work ticket must use the same project code as its plan')
+                })
+            validated_data['project_code'] = plan.project_code
 
         if dependency_data is not serializers.empty:
             validated_data['dependencies'] = self.fields[
@@ -598,28 +621,15 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
         )
 
     def _validate_dependencies(self, attrs):
-        """Ensure dependency links stay within the same plan and project."""
+        """Ensure dependency links do not create circular relationships."""
         dependencies = attrs.get('dependencies')
         if dependencies is None:
             return
-
-        plan = attrs.get('plan', getattr(self.instance, 'plan', None))
-        project_code = attrs.get(
-            'project_code', getattr(self.instance, 'project_code', None)
-        )
 
         for dependency in dependencies:
             if self.instance and dependency.pk == self.instance.pk:
                 raise serializers.ValidationError({
                     'dependencies': _('A work ticket cannot depend on itself')
-                })
-            if project_code and dependency.project_code_id != project_code.pk:
-                raise serializers.ValidationError({
-                    'dependencies': _('Dependencies must use the same project code')
-                })
-            if dependency.plan_id != (plan.pk if plan else None):
-                raise serializers.ValidationError({
-                    'dependencies': _('Dependencies must belong to the same plan')
                 })
             if self.instance:
                 pending = [dependency]
@@ -638,16 +648,19 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
                     pending.extend(candidate.dependencies.all())
 
     def validate(self, attrs):
-        """Allow only the assignee and manager to advance their respective steps."""
+        """Allow the ticket proposer or plan manager to update generic tickets."""
         request = self.context.get('request')
         plan = attrs.get('plan', getattr(self.instance, 'plan', None))
+        if plan:
+            project_code = attrs.get('project_code')
+            if project_code and project_code.pk != plan.project_code_id:
+                raise serializers.ValidationError({
+                    'project_code': _('Work ticket must use the same project code as its plan')
+                })
+            attrs['project_code'] = plan.project_code
         project_code = attrs.get(
             'project_code', getattr(self.instance, 'project_code', None)
         )
-        if plan and project_code and plan.project_code_id != project_code.pk:
-            raise serializers.ValidationError({
-                'project_code': _('Work ticket must use the same project code as its plan')
-            })
         start_date = attrs.get(
             'start_date', getattr(self.instance, 'start_date', None)
         )
@@ -666,6 +679,18 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
             if self.instance and parent.pk == self.instance.pk:
                 raise serializers.ValidationError({
                     'parent': _('A work ticket cannot be its own parent')
+                })
+            if parent.parent_id:
+                raise serializers.ValidationError({
+                    'parent': _(
+                        'A child work ticket cannot contain further child work tickets'
+                    )
+                })
+            if self.instance and self.instance.subtasks.exists():
+                raise serializers.ValidationError({
+                    'parent': _(
+                        'A work ticket with child work tickets cannot become a child'
+                    )
                 })
             if project_code and parent.project_code_id != project_code.pk:
                 raise serializers.ValidationError({
@@ -689,6 +714,9 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
         if not self.instance:
             return attrs
 
+        if self.instance.is_procurement_request:
+            return self._validate_procurement_request(attrs, request)
+
         non_status_fields = set(attrs) - {'status'}
         can_manage = bool(
             request
@@ -705,13 +733,7 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
                 )
             )
         )
-        assignee_editable_fields = {'actual_hours', 'notes'}
-        can_update_progress = bool(
-            request
-            and request.user.pk == self.instance.assigned_to_id
-            and non_status_fields.issubset(assignee_editable_fields)
-        )
-        if non_status_fields and not can_manage and not can_update_progress:
+        if non_status_fields and not can_manage:
             raise PermissionDenied(_('Only the assigning manager can edit this ticket'))
 
         if 'status' not in attrs or attrs['status'] == self.instance.status:
@@ -749,35 +771,152 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
                 'status': _('Complete all subtasks before completing this work ticket')
             })
 
-        assignee_transition = (current, target) in {
-            (common_models.WorkTicket.Status.OPEN, common_models.WorkTicket.Status.PROCESSING),
-            (common_models.WorkTicket.Status.PROCESSING, common_models.WorkTicket.Status.REVIEW),
-        }
-        manager_transition = (current, target) == (
-            common_models.WorkTicket.Status.REVIEW,
-            common_models.WorkTicket.Status.DONE,
-        )
-
-        if assignee_transition and request and (
-            request.user.is_staff
-            or request.user.pk == self.instance.assigned_to_id
-        ):
-            return attrs
-        if manager_transition and request and (
-            request.user.is_staff
-            or request.user.pk == self.instance.assigned_by_id
-            or (
-                self.instance.plan_id
-                and request.user.pk
-                in {
-                    self.instance.plan.manager_id,
-                    self.instance.plan.created_by_id,
-                }
-            )
-        ):
-            attrs['completion_date'] = now()
+        if can_manage:
+            if target == common_models.WorkTicket.Status.DONE:
+                attrs['completion_date'] = now()
             return attrs
         raise PermissionDenied(_('Bạn không có quyền chuyển trạng thái công việc.'))
+
+    def _validate_procurement_request(self, attrs, request):
+        """Apply the procurement ticket lifecycle and role checks."""
+        if self.instance.status == common_models.WorkTicket.Status.DONE:
+            raise serializers.ValidationError({'status': _('Completed work tickets cannot be edited')})
+
+        status = attrs.get('status', self.instance.status)
+
+        if status == self.instance.status:
+            return attrs
+
+        transitions = {
+            common_models.WorkTicket.Status.PROPOSAL: common_models.WorkTicket.Status.ASSIGNMENT,
+            common_models.WorkTicket.Status.ASSIGNMENT: common_models.WorkTicket.Status.WAREHOUSE_REVIEW,
+        }
+        if transitions.get(self.instance.status) != status:
+            raise serializers.ValidationError({'status': _('Invalid procurement workflow transition')})
+
+        if not request:
+            return attrs
+        is_assignment_manager = request.user.is_staff or request.user.groups.filter(
+            name='Assignment Manager'
+        ).exists()
+        if not is_assignment_manager:
+            raise PermissionDenied(_('You do not have the required procurement role'))
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        """Update a procurement ticket without bulk-approving its items."""
+        dependencies = validated_data.pop('dependencies', None)
+        instance = super().update(instance, validated_data)
+        if dependencies is not None:
+            instance.dependencies.set(dependencies)
+        return instance
+
+
+class ProcurementSubtaskSerializer(InvenTreeModelSerializer):
+    """Serializer for the per-item data and completion state of a procurement request."""
+
+    handler_detail = UserSerializer(source='handler', read_only=True)
+    technical_contact_detail = UserSerializer(source='technical_contact', read_only=True)
+    warehouse_approved_by_detail = UserSerializer(source='warehouse_approved_by', read_only=True)
+
+    class Meta:
+        model = common_models.ProcurementSubtask
+        fields = [
+            'pk', 'work_ticket', 'title', 'item_code', 'manufacturer', 'unit',
+            'requested_quantity', 'note', 'technical_contact', 'technical_contact_detail',
+            'handler', 'handler_detail', 'warehouse_approved_by',
+            'warehouse_approved_by_detail', 'warehouse_approved_at', 'status',
+            'created', 'updated',
+        ]
+        read_only_fields = ['work_ticket', 'warehouse_approved_by', 'warehouse_approved_at', 'created', 'updated']
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        if not self.instance or not request:
+            return attrs
+        ticket = self.instance.work_ticket
+        is_staff = request.user.is_staff
+        is_assignment_manager = request.user.groups.filter(name='Assignment Manager').exists()
+        is_warehouse_manager = request.user.groups.filter(name='Warehouse Manager').exists()
+        warehouse_editable_fields = {
+            'title', 'item_code', 'manufacturer', 'unit', 'requested_quantity', 'note',
+            'technical_contact',
+        }
+        if warehouse_editable_fields.intersection(attrs):
+            if not (is_staff or is_warehouse_manager):
+                raise PermissionDenied(_('Only a Warehouse Manager can edit procurement items'))
+            if ticket.status != common_models.WorkTicket.Status.WAREHOUSE_REVIEW:
+                raise serializers.ValidationError({
+                    'detail': _('Procurement items can only be edited during warehouse review')
+                })
+        if 'handler' in attrs and not (is_staff or is_assignment_manager):
+            raise PermissionDenied(_('Only an Assignment Manager can assign a handler'))
+
+        status = attrs.get('status')
+        if status is None or status == self.instance.status:
+            return attrs
+
+        if (
+            self.instance.status
+            == common_models.ProcurementSubtask.Status.WAITING_APPROVAL
+        ):
+            if status != common_models.ProcurementSubtask.Status.PENDING:
+                raise serializers.ValidationError({'status': _('Invalid procurement item transition')})
+            if ticket.status != common_models.WorkTicket.Status.WAREHOUSE_REVIEW:
+                raise serializers.ValidationError({'status': _('Items can only be approved during warehouse review')})
+            if not (is_staff or is_warehouse_manager):
+                raise PermissionDenied(_('Only a Warehouse Manager can approve this item'))
+        elif self.instance.status == common_models.ProcurementSubtask.Status.PENDING:
+            if status != common_models.ProcurementSubtask.Status.DONE:
+                raise serializers.ValidationError({'status': _('Invalid procurement item transition')})
+            if request.user.pk != self.instance.handler_id:
+                raise PermissionDenied(_('Only the assigned handler can complete this item'))
+            if ticket.status != common_models.WorkTicket.Status.PURCHASING:
+                raise serializers.ValidationError({'status': _('Items can only be completed during purchasing')})
+            purchase_quantity = self.instance.purchase_orders.aggregate(
+                quantity=Sum('lines__quantity')
+            )['quantity'] or 0
+            if purchase_quantity != self.instance.requested_quantity:
+                raise serializers.ValidationError({
+                    'status': _('Purchase-order quantity must match the requested quantity')
+                })
+            if ticket.commercial:
+                sales_quantity = self.instance.sales_orders.aggregate(
+                    quantity=Sum('lines__quantity')
+                )['quantity'] or 0
+                if sales_quantity != self.instance.requested_quantity:
+                    raise serializers.ValidationError({
+                        'status': _('Sales-order quantity must match the requested quantity')
+                    })
+        else:
+            raise serializers.ValidationError({'status': _('Invalid procurement item transition')})
+        return attrs
+
+    def update(self, instance, validated_data):
+        """Record individual warehouse approval and start purchasing after the last one."""
+        with transaction.atomic():
+            ticket = common_models.WorkTicket.objects.select_for_update().get(
+                pk=instance.work_ticket_id
+            )
+            is_approval = (
+                ticket.status == common_models.WorkTicket.Status.WAREHOUSE_REVIEW
+                and validated_data.get('status') == common_models.ProcurementSubtask.Status.PENDING
+            )
+            if is_approval:
+                # Persist approval metadata with the status transition.
+                validated_data['warehouse_approved_by'] = self.context['request'].user
+                validated_data['warehouse_approved_at'] = now()
+            instance = super().update(instance, validated_data)
+
+            if is_approval:
+                if not ticket.procurement_subtasks.filter(
+                    status=common_models.ProcurementSubtask.Status.WAITING_APPROVAL
+                ).exists():
+                    ticket.status = common_models.WorkTicket.Status.PURCHASING
+                    ticket.save(update_fields=['status', 'updated'])
+
+        return instance
 
 
 @register_importer()

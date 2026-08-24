@@ -60,6 +60,7 @@ export function PurchaseOrderTable({
   supplierPartId,
   externalBuildId,
   workTicketId,
+  procurementSubtaskId,
   workTicketProjectCodeId,
   salesOrderId,
   contractId,
@@ -73,6 +74,7 @@ export function PurchaseOrderTable({
   supplierPartId?: number;
   externalBuildId?: number;
   workTicketId?: number;
+  procurementSubtaskId?: number;
   workTicketProjectCodeId?: number;
   salesOrderId?: number;
   contractId?: number;
@@ -200,8 +202,11 @@ export function PurchaseOrderTable({
     title: t`Add Purchase Order`,
     fields: {
       ...purchaseOrderFields,
-      ...(workTicketId
-        ? { work_ticket: { field_type: 'number' as const, hidden: true, value: workTicketId } }
+      ...(workTicketId || procurementSubtaskId
+        ? {
+            ...(workTicketId ? { work_ticket: { field_type: 'number' as const, hidden: true, value: workTicketId } } : {}),
+            ...(procurementSubtaskId ? { procurement_subtask: { field_type: 'number' as const, hidden: true, value: procurementSubtaskId } } : {})
+          }
         : {})
     },
     initialData: {
@@ -209,6 +214,7 @@ export function PurchaseOrderTable({
       sales_order: salesOrderId,
       contract: contractId,
       work_ticket: workTicketId,
+      procurement_subtask: procurementSubtaskId,
       project_code: workTicketProjectCodeId
     },
     follow: true,
@@ -241,6 +247,7 @@ export function PurchaseOrderTable({
             supplier_part: supplierPartId,
             external_build: externalBuildId,
             work_ticket: workTicketId,
+            procurement_subtask: procurementSubtaskId,
             sales_order: salesOrderId,
             contract: contractId,
             contract_buyer: contractBuyerId,

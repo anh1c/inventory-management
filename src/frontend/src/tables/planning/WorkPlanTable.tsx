@@ -73,7 +73,11 @@ const statusLabels: Record<string, string> = {
   cancelled: t`Cancelled`
 };
 
-export default function WorkPlanTable() {
+export default function WorkPlanTable({
+  onSelectPlan
+}: Readonly<{
+  onSelectPlan?: (plan: any) => void;
+}>) {
   const navigate = useNavigate();
   const user = useUserState();
   const table = useTable('work-plans');
@@ -194,6 +198,9 @@ export default function WorkPlanTable() {
         tableState={table}
         columns={columns}
         props={{
+          onRowClick: onSelectPlan
+            ? (record: any) => onSelectPlan(record)
+            : undefined,
           rowActions,
           tableFilters: [
             {

@@ -118,6 +118,12 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         icon: 'tasks'
       },
       {
+        id: 'work-tickets',
+        title: t`Quản lý công việc`,
+        link: '/planning/tickets/index/',
+        icon: 'tasks'
+      },
+      {
         id: 'users',
         title: t`Users`,
         link: '/core/index/users',

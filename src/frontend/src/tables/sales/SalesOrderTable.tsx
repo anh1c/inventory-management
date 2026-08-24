@@ -62,6 +62,7 @@ export function SalesOrderTable({
   contractBuyerId,
   contractSellerId,
   workTicketId,
+  procurementSubtaskId,
   workTicketProjectCodeId,
   defaultOutstanding = true,
   hasProjectCode,
@@ -74,6 +75,7 @@ export function SalesOrderTable({
   contractBuyerId?: number;
   contractSellerId?: number;
   workTicketId?: number;
+  procurementSubtaskId?: number;
   workTicketProjectCodeId?: number;
   defaultOutstanding?: boolean;
   hasProjectCode?: boolean;
@@ -148,14 +150,18 @@ export function SalesOrderTable({
     title: t`Add Sales Order`,
     fields: {
       ...salesOrderFields,
-      ...(workTicketId
-        ? { work_ticket: { field_type: 'number' as const, hidden: true, value: workTicketId } }
+      ...(workTicketId || procurementSubtaskId
+        ? {
+            ...(workTicketId ? { work_ticket: { field_type: 'number' as const, hidden: true, value: workTicketId } } : {}),
+            ...(procurementSubtaskId ? { procurement_subtask: { field_type: 'number' as const, hidden: true, value: procurementSubtaskId } } : {})
+          }
         : {})
     },
     initialData: {
       customer: customerId,
       contract: contractId,
       work_ticket: workTicketId,
+      procurement_subtask: procurementSubtaskId,
       project_code: workTicketProjectCodeId
     },
     follow: true,
@@ -261,6 +267,7 @@ export function SalesOrderTable({
             contract_buyer: contractBuyerId,
             contract_seller: contractSellerId,
             work_ticket: workTicketId,
+            procurement_subtask: procurementSubtaskId,
             has_project_code: hasProjectCode
           },
           tableFilters: tableFilters,
