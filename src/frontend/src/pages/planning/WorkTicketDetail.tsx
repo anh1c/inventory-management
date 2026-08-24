@@ -89,7 +89,11 @@ export default function WorkTicketDetail() {
   const canAdvance = Boolean(
     nextWorkTicketStatus(ticket, user.userId(), user.isStaff())
   );
-  const canUpdateProgress = user.userId() === ticket.assigned_to_detail?.pk;
+  const canUpdateProgress = !ticket.is_procurement_request && (
+    user.userId() === ticket.assigned_by_detail?.pk ||
+    user.userId() === ticket.plan_detail?.manager_detail?.pk ||
+    user.userId() === ticket.plan_detail?.created_by_detail?.pk
+  );
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) return <Skeleton />;
@@ -131,7 +135,6 @@ export default function WorkTicketDetail() {
         value_formatter: () =>
           ticket.dependency_details?.map((item: any) => item.code).join(', ') || '-'
       },
-      { type: 'text', name: 'assigned_to_detail.username', label: t`Assigned To`, icon: 'user' },
       { type: 'text', name: 'assigned_by_detail.username', label: t`Assigned By`, icon: 'user' },
       {
         type: 'text',

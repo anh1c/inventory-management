@@ -82,12 +82,6 @@ export const ticketFields = ({
       project_code: projectCodeId,
       plan: planId
     }
-  },
-  assigned_to: {
-    field_type: 'related field',
-    api_url: apiUrl(ApiEndpoints.user_list),
-    label: t`Assigned To`,
-    required: true
   }
 });
 
@@ -115,11 +109,11 @@ export const nextWorkTicketStatus = (
   if (
     record.status === 'open' &&
     dependenciesComplete &&
-    (isStaff || userId === record.assigned_to)
+    (isStaff || managesPlan || userId === record.assigned_by)
   ) {
     return 'processing';
   }
-  if (record.status === 'processing' && (isStaff || userId === record.assigned_to)) {
+  if (record.status === 'processing' && (isStaff || managesPlan || userId === record.assigned_by)) {
     return 'review';
   }
   if (
@@ -218,12 +212,6 @@ export default function WorkTicketTable({
       type: 'api',
       apiUrl: apiUrl(ApiEndpoints.project_code_list)
     },
-    {
-      name: 'assigned_to',
-      label: t`Assigned To`,
-      type: 'api',
-      apiUrl: apiUrl(ApiEndpoints.user_list)
-    }
   ];
   const newTicket = useCreateApiFormModal({
     url: ApiEndpoints.work_ticket_list,
@@ -336,11 +324,6 @@ export default function WorkTicketTable({
       { accessor: 'target_date', title: t`Target Completion Date`, sortable: true },
       { accessor: 'completion_date', title: t`Completion Date`, sortable: true },
       {
-        accessor: 'assigned_to__username',
-        title: t`Assigned To`,
-        render: (record: any) => record.assigned_to_detail?.username
-      },
-      {
         accessor: 'assigned_by__username',
         title: t`Assigned By`,
         render: (record: any) => record.assigned_by_detail?.username
@@ -364,7 +347,6 @@ export default function WorkTicketTable({
       const isStaff = user.isStaff();
       const canLink =
         isStaff ||
-        uid === record.assigned_to ||
         uid === record.assigned_by ||
         uid === record.plan_detail?.manager_detail?.pk ||
         uid === record.plan_detail?.created_by_detail?.pk;
