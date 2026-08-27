@@ -3489,14 +3489,6 @@ msgstr "No settings specified"
 #~ msgid "Required Part"
 #~ msgstr "Required Part"
 
-#: src/components/tables/build/BuildOrderTable.tsx:52
-#~ msgid "Progress"
-#~ msgstr "Progress"
-
-#: src/components/tables/build/BuildOrderTable.tsx:65
-#~ msgid "Priority"
-#~ msgstr "Priority"
-
 #: src/components/tables/company/AddressTable.tsx:68
 #~ msgid "Postal Code"
 #~ msgstr "Postal Code"
@@ -14235,6 +14227,9 @@ msgstr "Work Plan"
 msgid "Work Plans"
 msgstr "Work Plans"
 
+msgid "Work Management"
+msgstr "Work Management"
+
 msgid "On Hold"
 msgstr "On Hold"
 
@@ -14288,6 +14283,9 @@ msgstr "Low"
 
 msgid "Normal"
 msgstr "Normal"
+
+msgid "Medium"
+msgstr "Medium"
 
 msgid "High"
 msgstr "High"
@@ -14375,3 +14373,111 @@ msgid "Discussion and Notes"
 msgstr "Discussion and Notes"
 msgid "Update Work Progress"
 msgstr "Update Work Progress"
+
+msgid "Add Subtask"
+msgstr "Add Subtask"
+
+msgid "Approve Item"
+msgstr "Approve Item"
+
+msgid "Approve Selected Items"
+msgstr "Approve Selected Items"
+
+msgid "Assign Selected Items"
+msgstr "Assign Selected Items"
+
+msgid "Assignment"
+msgstr "Assignment"
+
+msgid "Assignment Excel"
+msgstr "Assignment Excel"
+
+msgid "Commercial Request"
+msgstr "Commercial Request"
+
+msgid "Complete Item"
+msgstr "Complete Item"
+
+msgid "Download Excel"
+msgstr "Download Excel"
+
+msgid "Edit Procurement Item"
+msgstr "Edit Procurement Item"
+
+msgid "Import Assignments"
+msgstr "Import Assignments"
+
+msgid "Import Procurement Request"
+msgstr "Import Procurement Request"
+
+msgid "Item Code"
+msgstr "Item Code"
+
+msgid "Item Details"
+msgstr "Item Details"
+
+msgid "Item ID"
+msgstr "Item ID"
+
+msgid "Manufacturer / Origin"
+msgstr "Manufacturer / Origin"
+
+msgid "Not Started"
+msgstr "Not Started"
+
+msgid "Procurement Handler"
+msgstr "Procurement Handler"
+
+msgid "Procurement Items"
+msgstr "Procurement Items"
+
+msgid "Procurement Request File (.xlsx)"
+msgstr "Procurement Request File (.xlsx)"
+
+msgid "Procurement Workflow"
+msgstr "Procurement Workflow"
+
+msgid "Procurement item updated"
+msgstr "Procurement item updated"
+
+msgid "Proposal"
+msgstr "Proposal"
+
+msgid "Purchasing and Sales"
+msgstr "Purchasing and Sales"
+
+msgid "Requested Quantity"
+msgstr "Requested Quantity"
+
+msgid "Requester / Technical Contact"
+msgstr "Requester / Technical Contact"
+
+msgid "Required columns: Mô tả hàng hóa/Name Product, Mã sản phẩm/Description, Hãng/Xuất xứ, ĐVT, SL cần, Người xử lý, Note, Người đề xuất/Người giải pháp kỹ thuật"
+msgstr "Required columns: Mô tả hàng hóa/Name Product, Mã sản phẩm/Description, Hãng/Xuất xứ, ĐVT, SL cần, Người xử lý, Note, Người đề xuất/Người giải pháp kỹ thuật"
+
+msgid "Selected items approved"
+msgstr "Selected items approved"
+
+msgid "Selected items assigned"
+msgstr "Selected items assigned"
+
+msgid "Unable to approve item"
+msgstr "Unable to approve item"
+
+msgid "Unit"
+msgstr "Unit"
+
+msgid "Update Item Status"
+msgstr "Update Item Status"
+
+msgid "Waiting Approval"
+msgstr "Waiting Approval"
+
+msgid "Warehouse Approval Time"
+msgstr "Warehouse Approval Time"
+
+msgid "Warehouse Approver"
+msgstr "Warehouse Approver"
+
+msgid "Warehouse Review"
+msgstr "Warehouse Review"

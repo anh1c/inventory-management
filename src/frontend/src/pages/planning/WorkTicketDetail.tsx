@@ -36,16 +36,17 @@ import WorkTicketTable, {
   workTicketStatusFields
 } from '../../tables/planning/WorkTicketTable';
 import ProcurementSubtaskTable from '../../tables/planning/ProcurementSubtaskTable';
+import { ProcurementWorkflowProgress } from '../../components/planning/ProcurementWorkflowProgress';
 
 const statusLabels: Record<string, string> = {
   open: t`Open`,
   processing: t`Processing`,
   review: t`Review`,
-  proposal: 'Đề xuất',
-  assignment: 'Phân công',
-  warehouse_review: 'Duyệt kho',
-  purchasing: 'Mua bán',
-  done: 'Hoàn thành'
+  proposal: t`Proposal`,
+  assignment: t`Assignment`,
+  warehouse_review: t`Warehouse Review`,
+  purchasing: t`Purchasing and Sales`,
+  done: t`Completed`
 };
 
 const priorityLabels: Record<string, string> = {
@@ -64,11 +65,17 @@ export default function WorkTicketDetail() {
     pk: id,
     refetchOnMount: true
   });
+  const isAssignmentManager = user.hasGroup('Assignment Manager');
   const updateStatus = useEditApiFormModal({
     url: ApiEndpoints.work_ticket_list,
     pk: id,
     title: t`Update Work Status`,
-    fields: workTicketStatusFields(ticket, user.userId(), user.isStaff()),
+    fields: workTicketStatusFields(
+      ticket,
+      user.userId(),
+      user.isStaff(),
+      isAssignmentManager
+    ),
     onFormSuccess: refreshInstance
   });
   const editTicket = useEditApiFormModal({
@@ -122,14 +129,20 @@ export default function WorkTicketDetail() {
     user.userId() === ticket.assigned_by_detail?.pk ||
     user.userId() === ticket.plan_detail?.manager_detail?.pk ||
     user.userId() === ticket.plan_detail?.created_by_detail?.pk;
-  const canEdit =
-    user.isStaff() ||
-    managesTicket ||
-    (ticket.is_procurement_request && user.userId() === ticket.warehouse_manager_detail?.pk);
+  const canEditTicket = user.isStaff() || managesTicket;
   const canAdvance = Boolean(
-    nextWorkTicketStatus(ticket, user.userId(), user.isStaff())
+    nextWorkTicketStatus(
+      ticket,
+      user.userId(),
+      user.isStaff(),
+      isAssignmentManager
+    )
   );
   const canUpdateProgress = !ticket.is_procurement_request && managesTicket;
+  const canImportAssignments =
+    ticket.is_procurement_request &&
+    (user.isStaff() || isAssignmentManager) &&
+    ['proposal', 'assignment'].includes(ticket.status);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) return <Skeleton />;
@@ -207,12 +220,11 @@ export default function WorkTicketDetail() {
       { name: 'detail', label: t`Work Details`, icon: <IconInfoCircle />, content: detailsPanel },
       {
         name: 'subtasks',
-        label: ticket.is_procurement_request ? 'Mặt hàng cần mua' : t`Subtasks`,
+        label: ticket.is_procurement_request ? t`Procurement Items` : t`Subtasks`,
         icon: <IconHierarchy2 />,
         content: ticket.is_procurement_request ? (
           <ProcurementSubtaskTable
             ticket={ticket}
-            canBulkAssign={user.isStaff() || user.userId() === ticket.assigned_by}
             onSelectSubtask={setSelectedProcurementSubtask}
             refresh={refreshInstance}
           />
@@ -221,7 +233,7 @@ export default function WorkTicketDetail() {
             planId={ticket.plan}
             projectCodeId={ticket.project_code}
             parentId={ticket.pk}
-            canCreate={canEdit}
+            canCreate={canEditTicket}
           />
         )
       },
@@ -272,11 +284,11 @@ export default function WorkTicketDetail() {
         model_type: ModelType.workticket,
         model_id: ticket.pk,
         label: t`Discussion and Notes`,
-        editable: canEdit,
+        editable: canEditTicket,
         has_note: !!ticket.notes
       })
     ],
-    [canEdit, detailsPanel, selectedProcurementSubtask, ticket, user]
+    [canEditTicket, detailsPanel, selectedProcurementSubtask, ticket]
   );
 
   return (
@@ -297,20 +309,21 @@ export default function WorkTicketDetail() {
                 key='edit-ticket'
                 title={t`Edit Work Ticket`}
                 icon='edit'
-                hidden={!canEdit}
+                hidden={!canEditTicket}
                 onClick={editTicket.open}
               />,
               <PrimaryActionButton
                 key='add-subtask'
                 title={t`Add Subtask`}
                 icon='add'
-                hidden={!canEdit || ticket.is_procurement_request}
+                hidden={!canEditTicket || ticket.is_procurement_request}
                 onClick={addSubtask.open}
               />,
               <PrimaryActionButton
                 key='download-procurement'
                 title={t`Download Excel`}
                 icon='download'
+                color='blue'
                 hidden={!ticket.is_procurement_request}
                 onClick={() => {
                   window.location.href = apiUrl(ApiEndpoints.procurement_export, ticket.pk);
@@ -320,13 +333,16 @@ export default function WorkTicketDetail() {
                 key='import-assignments'
                 title={t`Import Assignments`}
                 icon='upload'
-                hidden={!ticket.is_procurement_request || !canEdit || !['proposal', 'assignment'].includes(ticket.status)}
+                color='blue'
+                hidden={!canImportAssignments}
                 onClick={importAssignments.open}
               />,
               <PrimaryActionButton
                 key='change-status'
                 title={t`Update Work Status`}
                 icon='status'
+                color='green'
+                variant='filled'
                 hidden={!canAdvance}
                 onClick={updateStatus.open}
               />,
@@ -340,6 +356,9 @@ export default function WorkTicketDetail() {
             ]}
             breadcrumbs={[{ name: t`Work Tickets`, url: '/planning/tickets/index/' }]}
           />
+          {ticket.is_procurement_request && (
+            <ProcurementWorkflowProgress ticket={ticket} />
+          )}
           <PanelGroup
             pageKey='work-ticket'
             panels={panels}

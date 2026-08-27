@@ -361,7 +361,7 @@ export default function PurchaseOrderDetail() {
             src={order.supplier_detail?.image}
             pk={order.supplier}
           />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
+          <Grid.Col span={{ base: 12, md: 8 }}>
             <DetailsTable fields={tl} item={order} />
           </Grid.Col>
         </Grid>

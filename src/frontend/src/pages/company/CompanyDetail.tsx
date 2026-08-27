@@ -195,7 +195,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
               deleteFile: true
             }}
           />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
+          <Grid.Col span={{ base: 12, md: 8 }}>
             <DetailsTable item={company} fields={tl} />
           </Grid.Col>
         </Grid>

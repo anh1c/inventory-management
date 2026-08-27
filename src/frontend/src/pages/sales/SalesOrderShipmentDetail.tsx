@@ -233,7 +233,7 @@ export default function SalesOrderShipmentDetail() {
                 deleteFile: false
               }}
             />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
+            <Grid.Col span={{ base: 12, md: 8 }}>
               <DetailsTable fields={tl} item={data} />
             </Grid.Col>
           </Grid>

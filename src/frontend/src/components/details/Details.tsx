@@ -3,6 +3,7 @@ import {
   Anchor,
   Avatar,
   Badge,
+  Box,
   Group,
   HoverCard,
   type MantineColor,
@@ -499,26 +500,48 @@ export function DetailsTableField({
   );
 
   return (
-    <Table.Tr style={{ verticalAlign: 'top' }}>
-      <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
-        <Group gap='xs' wrap='nowrap'>
-          <InvenTreeIcon
-            icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
-          />
-          <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
+    <Table.Tr style={{ verticalAlign: 'middle' }}>
+      <Table.Td style={{ verticalAlign: 'middle' }}>
+        <Group gap='xs' wrap='nowrap' align='center'>
+          <Box
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+              flex: '0 0 24px',
+              justifyContent: 'center',
+              width: 24
+            }}
+          >
+            <InvenTreeIcon
+              icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
+            />
+          </Box>
+          <Text
+            size='sm'
+            fw={500}
+            style={{ lineHeight: 1.35, overflowWrap: 'break-word' }}
+          >
+            {field.label}
+          </Text>
         </Group>
       </Table.Td>
       <Table.Td
         style={{
-          lineBreak: 'anywhere',
-          minWidth: 100,
-          flex: 10,
-          display: 'inline-block'
+          lineHeight: 1.35,
+          overflowWrap: 'anywhere',
+          verticalAlign: 'middle'
         }}
       >
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
-      <Table.Td style={{ width: '50' }}>
+      <Table.Td
+        style={{
+          paddingLeft: 4,
+          paddingRight: 4,
+          textAlign: 'center',
+          verticalAlign: 'middle'
+        }}
+      >
         {field.copy && <CopyField value={fieldValue} />}
       </Table.Td>
     </Table.Tr>
@@ -550,7 +573,17 @@ export function DetailsTable({
     >
       <Stack gap='xs'>
         {title && <StylishText size='lg'>{title}</StylishText>}
-        <Table striped verticalSpacing={5} horizontalSpacing='sm'>
+        <Table
+          striped
+          verticalSpacing='sm'
+          horizontalSpacing='sm'
+          style={{ tableLayout: 'fixed', width: '100%' }}
+        >
+          <colgroup>
+            <col style={{ width: 'clamp(9rem, 42%, 15rem)' }} />
+            <col />
+            <col style={{ width: 40 }} />
+          </colgroup>
           <Table.Tbody>
             {visibleFields.map((field: DetailsField, index: number) => (
               <DetailsTableField field={field} item={item} key={index} />

@@ -3494,14 +3494,6 @@ msgstr "Không có cấu hình cụ thể"
 #~ msgid "Required Part"
 #~ msgstr "Required Part"
 
-#: src/components/tables/build/BuildOrderTable.tsx:52
-#~ msgid "Progress"
-#~ msgstr "Progress"
-
-#: src/components/tables/build/BuildOrderTable.tsx:65
-#~ msgid "Priority"
-#~ msgstr "Priority"
-
 #: src/components/tables/company/AddressTable.tsx:68
 #~ msgid "Postal Code"
 #~ msgstr "Postal Code"
@@ -9769,7 +9761,7 @@ msgstr "Tổng chi phí"
 #: src/pages/sales/ReturnOrderDetail.tsx:216
 #: src/pages/sales/SalesOrderDetail.tsx:209
 msgid "Contact Email"
-msgstr "Contact email"
+msgstr "Email liên hệ"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:281
 #: src/pages/sales/ReturnOrderDetail.tsx:224
@@ -14252,6 +14244,9 @@ msgstr "Kế hoạch công việc"
 msgid "Work Plans"
 msgstr "Kế hoạch"
 
+msgid "Work Management"
+msgstr "Quản lý công việc"
+
 msgid "On Hold"
 msgstr "Tạm dừng"
 
@@ -14305,6 +14300,9 @@ msgstr "Thấp"
 
 msgid "Normal"
 msgstr "Bình thường"
+
+msgid "Medium"
+msgstr "Trung bình"
 
 msgid "High"
 msgstr "Cao"
@@ -14392,3 +14390,111 @@ msgid "Discussion and Notes"
 msgstr "Trao đổi và ghi chú"
 msgid "Update Work Progress"
 msgstr "Cập nhật tiến độ công việc"
+
+msgid "Add Subtask"
+msgstr "Thêm công việc con"
+
+msgid "Approve Item"
+msgstr "Duyệt mặt hàng"
+
+msgid "Approve Selected Items"
+msgstr "Duyệt các mặt hàng đã chọn"
+
+msgid "Assign Selected Items"
+msgstr "Phân công các mặt hàng đã chọn"
+
+msgid "Assignment"
+msgstr "Phân công"
+
+msgid "Assignment Excel"
+msgstr "Tệp Excel phân công"
+
+msgid "Commercial Request"
+msgstr "Yêu cầu thương mại"
+
+msgid "Complete Item"
+msgstr "Hoàn thành mặt hàng"
+
+msgid "Download Excel"
+msgstr "Tải xuống Excel"
+
+msgid "Edit Procurement Item"
+msgstr "Chỉnh sửa mặt hàng mua"
+
+msgid "Import Assignments"
+msgstr "Nhập phân công"
+
+msgid "Import Procurement Request"
+msgstr "Nhập đề xuất mua hàng"
+
+msgid "Item Code"
+msgstr "Mã hàng"
+
+msgid "Item Details"
+msgstr "Chi tiết mặt hàng"
+
+msgid "Item ID"
+msgstr "Mã mục"
+
+msgid "Manufacturer / Origin"
+msgstr "Hãng / Xuất xứ"
+
+msgid "Not Started"
+msgstr "Chưa thực hiện"
+
+msgid "Procurement Handler"
+msgstr "Người thực hiện mua hàng"
+
+msgid "Procurement Items"
+msgstr "Mặt hàng mua"
+
+msgid "Procurement Request File (.xlsx)"
+msgstr "Tệp đề xuất mua hàng (.xlsx)"
+
+msgid "Procurement Workflow"
+msgstr "Luồng công việc mua hàng"
+
+msgid "Procurement item updated"
+msgstr "Đã cập nhật mặt hàng mua"
+
+msgid "Proposal"
+msgstr "Đề xuất"
+
+msgid "Purchasing and Sales"
+msgstr "Mua bán"
+
+msgid "Requested Quantity"
+msgstr "Số lượng yêu cầu"
+
+msgid "Requester / Technical Contact"
+msgstr "Người đề xuất / Liên hệ kỹ thuật"
+
+msgid "Required columns: Mô tả hàng hóa/Name Product, Mã sản phẩm/Description, Hãng/Xuất xứ, ĐVT, SL cần, Người xử lý, Note, Người đề xuất/Người giải pháp kỹ thuật"
+msgstr "Các cột bắt buộc: Mô tả hàng hóa/Name Product, Mã sản phẩm/Description, Hãng/Xuất xứ, ĐVT, SL cần, Người xử lý, Note, Người đề xuất/Người giải pháp kỹ thuật"
+
+msgid "Selected items approved"
+msgstr "Đã duyệt các mặt hàng đã chọn"
+
+msgid "Selected items assigned"
+msgstr "Đã phân công các mặt hàng đã chọn"
+
+msgid "Unable to approve item"
+msgstr "Không thể duyệt mặt hàng"
+
+msgid "Unit"
+msgstr "Đơn vị tính"
+
+msgid "Update Item Status"
+msgstr "Cập nhật trạng thái mặt hàng"
+
+msgid "Waiting Approval"
+msgstr "Chờ duyệt"
+
+msgid "Warehouse Approval Time"
+msgstr "Thời điểm duyệt kho"
+
+msgid "Warehouse Approver"
+msgstr "Người duyệt kho"
+
+msgid "Warehouse Review"
+msgstr "Duyệt kho"

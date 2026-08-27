@@ -294,7 +294,7 @@ export default function SalesOrderDetail() {
             src={order.customer_detail?.image}
             pk={order.customer}
           />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
+          <Grid.Col span={{ base: 12, md: 8 }}>
             <DetailsTable fields={tl} item={order} />
           </Grid.Col>
         </Grid>

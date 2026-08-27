@@ -144,6 +144,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     const user: UserProps = get().user as UserProps;
     return user?.is_superuser ?? false;
   },
+  hasGroup: (name: string) => {
+    const user: UserProps = get().user as UserProps;
+    return user?.groups?.some((group: any) => group.name === name) ?? false;
+  },
   checkUserRole: (role: UserRoles, permission: UserPermissions) => {
     // Check if the user has the specified permission for the specified role
     const user: UserProps = get().user as UserProps;

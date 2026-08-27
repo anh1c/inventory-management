@@ -39,17 +39,17 @@ export function ActionButton(props: ActionButtonProps) {
         <ActionIcon
           key={`action-icon-${props.tooltip ?? props.text}`}
           disabled={props.disabled}
-          p={17}
+          p={0}
           radius={props.radius ?? 'xs'}
           color={props.color}
-          size={props.size}
+          size={props.size ?? 34}
           aria-label={`action-button-${identifierString(
             props.tooltip ?? props.text ?? ''
           )}`}
           onClick={(event: any) => {
             props.onClick(event);
           }}
-          variant={props.variant ?? 'transparent'}
+          variant={props.variant ?? 'subtle'}
         >
           <Group gap='xs' wrap='nowrap'>
             {props.icon}

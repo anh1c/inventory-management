@@ -19,6 +19,7 @@ from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from openpyxl import Workbook, load_workbook
 from PIL import Image
 
 import common.validators
@@ -1890,7 +1891,7 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             assigned_by=self.user,
             is_procurement_request=True,
         )
-        ProcurementSubtask.objects.create(
+        procurement_subtask = ProcurementSubtask.objects.create(
             work_ticket=procurement_ticket,
             title='Restricted procurement item',
             requested_quantity=1,
@@ -1921,6 +1922,11 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
 
         self.client.force_authenticate(user=handler)
         self.get(plan_url, expected_code=200)
+        response = self.get(
+            reverse('api-procurement-subtask-list'), expected_code=200
+        )
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], procurement_subtask.pk)
         self.get(
             reverse('api-work-ticket-detail', kwargs={'pk': procurement_ticket.pk}),
             expected_code=200,
@@ -1928,6 +1934,10 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
         self.get(ticket_url, expected_code=404)
 
         self.client.force_authenticate(user=unrelated)
+        response = self.get(
+            reverse('api-procurement-subtask-list'), expected_code=200
+        )
+        self.assertEqual(len(response.data), 0)
         self.get(plan_url, expected_code=404)
         self.get(ticket_url, expected_code=404)
 
@@ -2167,7 +2177,6 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             work_ticket=ticket,
             title='Second approval',
             requested_quantity=1,
-            handler=handler,
         )
         self.assertEqual(first.status, ProcurementSubtask.Status.WAITING_APPROVAL)
         url = reverse('api-work-ticket-detail', kwargs={'pk': ticket.pk})
@@ -2182,21 +2191,29 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
         )
 
         self.client.force_authenticate(user=assignment_manager)
+        self.patch(url, {'status': WorkTicket.Status.ASSIGNMENT}, expected_code=400)
         self.patch(first_url, {
             'handler': assignment_manager.pk,
             'technical_contact': assignment_manager.pk,
         })
         first.refresh_from_db()
+        ticket.refresh_from_db()
         self.assertEqual(first.handler, assignment_manager)
         self.assertEqual(first.technical_contact, assignment_manager)
+        self.assertEqual(ticket.status, WorkTicket.Status.ASSIGNMENT)
+        self.post(
+            reverse('api-procurement-assignment-upload', kwargs={'pk': ticket.pk}),
+            {'subtasks': [first.pk], 'handler': handler.pk},
+        )
+        ticket.refresh_from_db()
+        self.assertEqual(ticket.status, WorkTicket.Status.ASSIGNMENT)
+        self.patch(url, {'status': WorkTicket.Status.WAREHOUSE_REVIEW}, expected_code=400)
         self.client.force_authenticate(user=self.user)
         self.patch(second_url, {
             'handler': self.user.pk,
             'technical_contact': self.user.pk,
         })
-        self.patch(url, {'status': WorkTicket.Status.ASSIGNMENT})
         self.client.force_authenticate(user=assignment_manager)
-        self.patch(first_url, {'handler': handler.pk})
         self.patch(url, {'status': WorkTicket.Status.WAREHOUSE_REVIEW})
         self.patch(first_url, {'handler': handler.pk}, expected_code=400)
         self.patch(first_url, {'title': 'Not an assignment edit'}, expected_code=403)
@@ -2223,6 +2240,7 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
             'requested_quantity': 2,
             'note': 'Reviewed',
         })
+        self.patch(first_url, {'requested_quantity': 0}, expected_code=400)
         self.patch(first_url, {'technical_contact': warehouse_manager.pk}, expected_code=403)
         self.patch(first_url, {'handler': warehouse_manager.pk}, expected_code=403)
         first.refresh_from_db()
@@ -2234,6 +2252,137 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
         ticket.refresh_from_db()
         self.assertEqual(ticket.status, WorkTicket.Status.PURCHASING)
         self.patch(second_url, {'title': 'Too late'}, expected_code=400)
+
+    def test_cancelled_purchase_orders_do_not_complete_procurement(self):
+        """Cancelled order lines cannot satisfy the requested quantity."""
+        from order.models import PurchaseOrder, PurchaseOrderLineItem
+        from order.status_codes import PurchaseOrderStatus
+
+        project = ProjectCode.objects.create(code='PROCUREMENT-CANCELLED-001')
+        handler = get_user_model().objects.create_user(username='cancelled-order-handler')
+        ticket = WorkTicket.objects.create(
+            title='Cancelled order request',
+            project_code=project,
+            assigned_by=self.user,
+            is_procurement_request=True,
+            status=WorkTicket.Status.PURCHASING,
+        )
+        subtask = ProcurementSubtask.objects.create(
+            work_ticket=ticket,
+            title='Replacement item',
+            requested_quantity=2,
+            handler=handler,
+            status=ProcurementSubtask.Status.PENDING,
+        )
+        purchase_order = PurchaseOrder.objects.create(
+            reference='PO-PROC-CANCELLED-001',
+            project_code=project,
+            work_ticket=ticket,
+            procurement_subtask=subtask,
+            status=PurchaseOrderStatus.CANCELLED.value,
+        )
+        PurchaseOrderLineItem.objects.create(
+            order=purchase_order,
+            quantity=2,
+        )
+        subtask_url = reverse(
+            'api-procurement-subtask-detail',
+            kwargs={'pk': ticket.pk, 'subtask_pk': subtask.pk},
+        )
+
+        self.client.force_authenticate(user=handler)
+        self.patch(
+            subtask_url,
+            {'status': ProcurementSubtask.Status.DONE},
+            expected_code=400,
+        )
+
+        purchase_order.status = PurchaseOrderStatus.PENDING.value
+        purchase_order.save()
+        self.patch(subtask_url, {'status': ProcurementSubtask.Status.DONE})
+
+    def test_procurement_order_line_quantities_accept_decimal_api_values(self):
+        """Procurement line validation normalizes API floats before summing decimals."""
+        from company.models import Company, SupplierPart
+        from order.models import PurchaseOrder, SalesOrder
+        from order.serializers import (
+            PurchaseOrderLineItemSerializer,
+            SalesOrderLineItemSerializer,
+        )
+        from part.models import Part
+
+        project = ProjectCode.objects.create(code='PROCUREMENT-DECIMAL-001')
+        ticket = WorkTicket.objects.create(
+            title='Decimal quantity request',
+            project_code=project,
+            assigned_by=self.user,
+            is_procurement_request=True,
+            status=WorkTicket.Status.PURCHASING,
+        )
+        subtask = ProcurementSubtask.objects.create(
+            work_ticket=ticket,
+            title='Decimal item',
+            requested_quantity=Decimal('2.0'),
+            handler=self.user,
+            status=ProcurementSubtask.Status.PENDING,
+        )
+        supplier = Company.objects.create(name='Decimal Supplier', is_supplier=True)
+        customer = Company.objects.create(name='Decimal Customer', is_customer=True)
+        part = Part.objects.create(
+            name='Decimal item',
+            description='Serializer regression item',
+            purchaseable=True,
+            salable=True,
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part,
+            supplier=supplier,
+            SKU='DECIMAL-SKU',
+        )
+        purchase_order = PurchaseOrder.objects.create(
+            reference='PO-PROC-DECIMAL-001',
+            supplier=supplier,
+            project_code=project,
+            work_ticket=ticket,
+            procurement_subtask=subtask,
+        )
+        sales_order = SalesOrder.objects.create(
+            reference='SO-PROC-DECIMAL-001',
+            customer=customer,
+            project_code=project,
+            work_ticket=ticket,
+            procurement_subtask=subtask,
+        )
+
+        purchase_line = PurchaseOrderLineItemSerializer(data={
+            'order': purchase_order.pk,
+            'part': supplier_part.pk,
+            'quantity': 1.0,
+        })
+        self.assertTrue(purchase_line.is_valid(), purchase_line.errors)
+        purchase_line.save()
+        purchase_overage = PurchaseOrderLineItemSerializer(data={
+            'order': purchase_order.pk,
+            'part': supplier_part.pk,
+            'quantity': 1.5,
+        })
+        self.assertFalse(purchase_overage.is_valid())
+        self.assertIn('quantity', purchase_overage.errors)
+
+        sales_line = SalesOrderLineItemSerializer(data={
+            'order': sales_order.pk,
+            'part': part.pk,
+            'quantity': 1.0,
+        })
+        self.assertTrue(sales_line.is_valid(), sales_line.errors)
+        sales_line.save()
+        sales_overage = SalesOrderLineItemSerializer(data={
+            'order': sales_order.pk,
+            'part': part.pk,
+            'quantity': 1.5,
+        })
+        self.assertFalse(sales_overage.is_valid())
+        self.assertIn('quantity', sales_overage.errors)
 
     def test_warehouse_manager_bulk_approval(self):
         """The bulk endpoint approves selected items through the item workflow."""
@@ -2270,6 +2419,71 @@ class WorkTicketAPITest(InvenTreeAPITestCase):
         self.assertEqual(first.warehouse_approved_by, warehouse_manager)
         self.assertEqual(second.warehouse_approved_by, warehouse_manager)
         self.assertEqual(ticket.status, WorkTicket.Status.PURCHASING)
+
+    def test_procurement_excel_import_and_export(self):
+        """The purchase-request template round-trips with review metadata."""
+        project = ProjectCode.objects.create(code='PROCUREMENT-EXCEL-001')
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.append([
+            'Mô tả hàng hóa/Name Product',
+            'Mã sản phẩm/Description',
+            'Hãng/Xuất xứ',
+            'ĐVT',
+            'SL cần',
+            'Người xử lý',
+            'Note',
+            'Người đề xuất/Người giải pháp kỹ thuật',
+        ])
+        sheet.append([
+            'Test item',
+            'ITEM-001',
+            'Việt Nam',
+            'cái',
+            2,
+            '',
+            'Test note',
+            self.user.username,
+        ])
+        source = io.BytesIO()
+        workbook.save(source)
+        source.seek(0)
+
+        response = self.client.post(
+            reverse('api-procurement-upload'),
+            {
+                'file': SimpleUploadedFile(
+                    'de-xuat-mua-hang.xlsx',
+                    source.getvalue(),
+                    content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ),
+                'project_code': project.pk,
+            },
+            format='multipart',
+        )
+        self.assertEqual(response.status_code, 201)
+        ticket = WorkTicket.objects.get(pk=response.data['pk'])
+        self.assertEqual(ticket.status, WorkTicket.Status.PROPOSAL)
+        self.assertEqual(ticket.procurement_subtasks.count(), 1)
+        subtask = ticket.procurement_subtasks.get()
+        self.assertEqual(subtask.status, ProcurementSubtask.Status.WAITING_APPROVAL)
+        self.assertIsNone(subtask.handler)
+        self.assertEqual(subtask.technical_contact, self.user)
+
+        export = self.client.get(
+            reverse('api-procurement-export', kwargs={'pk': ticket.pk})
+        )
+        self.assertEqual(export.status_code, 200)
+        exported = load_workbook(
+            io.BytesIO(b''.join(export.streaming_content)), data_only=True
+        ).active
+        self.assertEqual(exported.max_row, 2)
+        self.assertEqual(exported.max_column, 11)
+        self.assertTrue(exported['A1'].fill.fgColor.rgb.endswith('FF0000'))
+        self.assertTrue(exported['A1'].font.color.rgb.endswith('FFFFFF'))
+        self.assertEqual(exported.freeze_panes, 'A2')
+        self.assertEqual(exported.auto_filter.ref, exported.dimensions)
+        self.assertEqual(exported['I2'].value, 'Chờ duyệt')
 
 
 class CustomUnitAPITest(InvenTreeAPITestCase):

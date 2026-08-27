@@ -119,7 +119,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       },
       {
         id: 'work-tickets',
-        title: t`Quản lý công việc`,
+        title: t`Work Management`,
         link: '/planning/tickets/index/',
         icon: 'tasks'
       },

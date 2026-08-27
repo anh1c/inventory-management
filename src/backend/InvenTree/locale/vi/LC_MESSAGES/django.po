@@ -9833,3 +9833,138 @@ msgstr "Một công ty không thể là công ty mẹ của chính mình"
 
 msgid "Parent company must be an internal company"
 msgstr "Công ty mẹ phải là công ty nội bộ"
+
+msgid "A .xlsx file is required"
+msgstr "Cần cung cấp tệp .xlsx"
+
+msgid "A handler is required"
+msgstr "Cần chọn người thực hiện mua hàng"
+
+msgid "Assign a procurement handler to every item before warehouse review"
+msgstr "Phải phân công người thực hiện mua hàng cho tất cả mặt hàng trước khi duyệt kho"
+
+msgid "Assignments are closed after warehouse review starts"
+msgstr "Không thể thay đổi phân công sau khi bắt đầu duyệt kho"
+
+msgid "Assignments can only be edited during proposal or assignment"
+msgstr "Chỉ có thể sửa phân công ở giai đoạn Đề xuất hoặc Phân công"
+
+msgid "Invalid procurement item transition"
+msgstr "Chuyển trạng thái mặt hàng mua không hợp lệ"
+
+msgid "Invalid procurement workflow transition"
+msgstr "Chuyển giai đoạn mua hàng không hợp lệ"
+
+msgid "Items can only be approved during warehouse review"
+msgstr "Chỉ có thể duyệt mặt hàng trong giai đoạn Duyệt kho"
+
+msgid "Items can only be completed during purchasing"
+msgstr "Chỉ có thể hoàn thành mặt hàng trong giai đoạn Mua bán"
+
+msgid "Only a Warehouse Manager can approve procurement items"
+msgstr "Chỉ Quản lý kho mới có thể duyệt các mặt hàng mua"
+
+msgid "Only a Warehouse Manager can approve this item"
+msgstr "Chỉ Quản lý kho mới có thể duyệt mặt hàng này"
+
+msgid "Only a Warehouse Manager can edit procurement items"
+msgstr "Chỉ Quản lý kho mới có thể sửa thông tin mặt hàng mua"
+
+msgid "Only an Assignment Manager can edit assignments"
+msgstr "Chỉ Quản lý phân công mới có thể sửa phân công"
+
+msgid "Only the assigned handler can complete this item"
+msgstr "Chỉ người thực hiện mua hàng được phân công mới có thể hoàn thành mặt hàng này"
+
+msgid "Only the assigning manager can upload assignments"
+msgstr "Chỉ Quản lý phân công mới có thể nhập tệp phân công"
+
+msgid "Only the plan creator or manager can add procurement requests"
+msgstr "Chỉ người tạo hoặc người phụ trách kế hoạch mới có thể thêm đề xuất mua hàng"
+
+msgid "Only unapproved procurement items can be assigned"
+msgstr "Chỉ có thể phân công các mặt hàng chưa được duyệt"
+
+msgid "Only waiting procurement items can be approved"
+msgstr "Chỉ có thể duyệt các mặt hàng đang ở trạng thái Chờ duyệt"
+
+msgid "Orders containing line items cannot be moved to another procurement item"
+msgstr "Không thể chuyển đơn đã có dòng hàng sang một mặt hàng mua khác"
+
+msgid "Procurement items can only be edited during warehouse review"
+msgstr "Chỉ có thể sửa thông tin mặt hàng trong giai đoạn Duyệt kho"
+
+msgid "Procurement orders can only be changed after warehouse approval"
+msgstr "Chỉ có thể thay đổi đơn hàng sau khi hoàn tất duyệt kho"
+
+msgid "Procurement orders must be linked to an item subtask"
+msgstr "Đơn hàng phải được liên kết với một mặt hàng mua cụ thể"
+
+msgid "Procurement request imported from Excel"
+msgstr "Đề xuất mua hàng được nhập từ Excel"
+
+msgid "Procurement request not found"
+msgstr "Không tìm thấy đề xuất mua hàng"
+
+msgid "Procurement requests can only be added to draft or active plans"
+msgstr "Chỉ có thể thêm đề xuất mua hàng vào kế hoạch nháp hoặc đang thực hiện"
+
+msgid "Procurement subtask must belong to a procurement request"
+msgstr "Mặt hàng mua phải thuộc một đề xuất mua hàng"
+
+msgid "Procurement subtask must belong to the selected work ticket"
+msgstr "Mặt hàng mua phải thuộc công việc đã chọn"
+
+msgid "Project code must match the selected work plan"
+msgstr "Mã dự án phải khớp với kế hoạch công việc đã chọn"
+
+msgid "Purchase-order quantity exceeds the requested quantity"
+msgstr "Số lượng trên đơn mua vượt quá số lượng yêu cầu"
+
+msgid "Purchase-order quantity must match the requested quantity"
+msgstr "Tổng số lượng trên đơn mua phải bằng số lượng yêu cầu"
+
+msgid "Requested quantity must be greater than zero"
+msgstr "Số lượng yêu cầu phải lớn hơn 0"
+
+msgid "Sales-order quantity exceeds the requested quantity"
+msgstr "Số lượng trên đơn bán vượt quá số lượng yêu cầu"
+
+msgid "Sales-order quantity must match the requested quantity"
+msgstr "Tổng số lượng trên đơn bán phải bằng số lượng yêu cầu"
+
+msgid "Select at least one procurement item to assign"
+msgstr "Chọn ít nhất một mặt hàng để phân công"
+
+msgid "Select procurement items to approve"
+msgstr "Chọn các mặt hàng cần duyệt"
+
+msgid "Select valid procurement items"
+msgstr "Vui lòng chọn các mặt hàng hợp lệ"
+
+msgid "The Excel columns must match the purchase-request template"
+msgstr "Các cột Excel phải khớp với mẫu đề xuất mua hàng"
+
+msgid "The Excel file has no item rows"
+msgstr "Tệp Excel không có dòng mặt hàng nào"
+
+msgid "The file must include Mã mục and Người thực hiện mua hàng"
+msgstr "Tệp phải có các cột Mã mục và Người thực hiện mua hàng"
+
+msgid "The purchase request file must contain exactly one worksheet"
+msgstr "Tệp đề xuất mua hàng phải có đúng một trang tính"
+
+msgid "Unable to read the Excel file"
+msgstr "Không thể đọc tệp Excel"
+
+msgid "Unknown item or handler: "
+msgstr "Không xác định được mặt hàng hoặc người thực hiện: "
+
+msgid "Unknown technical contact: "
+msgstr "Không xác định được liên hệ kỹ thuật: "
+
+msgid "You do not have access to this procurement request"
+msgstr "Bạn không có quyền truy cập đề xuất mua hàng này"
+
+msgid "You do not have the required procurement role"
+msgstr "Bạn không có vai trò cần thiết trong luồng mua hàng"

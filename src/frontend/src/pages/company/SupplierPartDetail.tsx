@@ -229,7 +229,7 @@ export default function SupplierPartDetail() {
             )}
             pk={supplierPart?.part_detail?.pk}
           />
-          <Grid.Col span={8}>
+          <Grid.Col span={{ base: 12, md: 8 }}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>

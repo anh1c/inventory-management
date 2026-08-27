@@ -470,6 +470,11 @@ class WorkTicket(
 class ProcurementSubtask(models.Model):
     """A requested procurement item belonging to one procurement work ticket."""
 
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for procurement item lookups."""
+        return reverse('api-procurement-subtask-list')
+
     class Status(models.TextChoices):
         WAITING_APPROVAL = 'waiting_approval', _('Waiting Approval')
         PENDING = 'pending', _('Pending')

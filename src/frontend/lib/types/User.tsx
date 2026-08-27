@@ -59,6 +59,7 @@ export interface UserStateProps {
   isLoggedIn: () => boolean;
   isStaff: () => boolean;
   isSuperuser: () => boolean;
+  hasGroup: (name: string) => boolean;
   // login state
   login_checked: boolean;
   setLoginChecked: (value: boolean) => void;

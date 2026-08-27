@@ -41,7 +41,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from sql_util.utils import SubqueryCount
 from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Font, PatternFill
+from openpyxl.styles import Alignment, Font, PatternFill
 
 import common.filters
 import common.models
@@ -741,6 +741,13 @@ class ProcurementRequestUpload(APIView):
             plan = None
             if request.data.get('plan'):
                 plan = common.models.WorkPlan.objects.get(pk=request.data['plan'])
+                if not request.user.is_staff and request.user.pk not in {
+                    plan.manager_id,
+                    plan.created_by_id,
+                }:
+                    raise PermissionDenied(
+                        _('Only the plan creator or manager can add procurement requests')
+                    )
                 if plan.project_code_id != project.pk:
                     raise serializers.ValidationError({
                         'project_code': _('Project code must match the selected work plan')
@@ -849,7 +856,12 @@ class ProcurementAssignmentUpload(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        parent = common.models.WorkTicket.objects.get(pk=pk, is_procurement_request=True)
+        try:
+            parent = common.models.WorkTicket.objects.get(
+                pk=pk, is_procurement_request=True
+            )
+        except common.models.WorkTicket.DoesNotExist as error:
+            raise NotFound(_('Procurement request not found')) from error
         if not request.user.is_staff and not request.user.groups.filter(
             name='Assignment Manager'
         ).exists():
@@ -902,6 +914,10 @@ class ProcurementAssignmentUpload(APIView):
                 subtask.handler = user
                 updates.append(subtask)
 
+        if not updates:
+            raise serializers.ValidationError({
+                'subtasks': _('Select at least one procurement item to assign')
+            })
         if any(subtask.status != common.models.ProcurementSubtask.Status.WAITING_APPROVAL for subtask in updates):
             raise serializers.ValidationError({
                 'detail': _('Only unapproved procurement items can be assigned')
@@ -976,13 +992,23 @@ class ProcurementExport(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        parent = common.models.WorkTicket.objects.get(pk=pk, is_procurement_request=True)
-        allowed = {
-            parent.assigned_by_id,
-        }
-        if not request.user.is_staff and request.user.pk not in allowed and not parent.procurement_subtasks.filter(
-            Q(handler=request.user) | Q(technical_contact=request.user)
-        ).exists():
+        try:
+            parent = common.models.WorkTicket.objects.get(
+                pk=pk, is_procurement_request=True
+            )
+        except common.models.WorkTicket.DoesNotExist as error:
+            raise NotFound(_('Procurement request not found')) from error
+        has_procurement_role = request.user.groups.filter(
+            name__in=['Assignment Manager', 'Warehouse Manager']
+        ).exists()
+        if (
+            not request.user.is_staff
+            and not has_procurement_role
+            and request.user.pk != parent.assigned_by_id
+            and not parent.procurement_subtasks.filter(
+                Q(handler=request.user) | Q(technical_contact=request.user)
+            ).exists()
+        ):
             raise PermissionDenied(_('You do not have access to this procurement request'))
         workbook, sheet = Workbook(), None
         sheet = workbook.active
@@ -990,7 +1016,27 @@ class ProcurementExport(APIView):
         sheet.append(['Mã mục', 'Mô tả hàng hóa/Name Product', 'Mã sản phẩm/Description', 'Hãng/Xuất xứ', 'ĐVT', 'SL cần', 'Người thực hiện mua hàng', 'Người đề xuất/Người giải pháp kỹ thuật', 'Trạng thái', 'Duyệt kho', 'Note'])
         for cell in sheet[1]:
             cell.fill = PatternFill('solid', fgColor='FF0000')
-            cell.font = Font(bold=True, color='000000')
+            cell.font = Font(bold=True, color='FFFFFF')
+            cell.alignment = Alignment(
+                horizontal='center', vertical='center', wrap_text=True
+            )
+        sheet.freeze_panes = 'A2'
+        sheet.auto_filter.ref = sheet.dimensions
+        sheet.row_dimensions[1].height = 34
+        for column, width in {
+            'A': 12,
+            'B': 34,
+            'C': 24,
+            'D': 22,
+            'E': 12,
+            'F': 12,
+            'G': 28,
+            'H': 34,
+            'I': 20,
+            'J': 20,
+            'K': 34,
+        }.items():
+            sheet.column_dimensions[column].width = width
         status_labels = {
             common.models.ProcurementSubtask.Status.WAITING_APPROVAL: 'Chờ duyệt',
             common.models.ProcurementSubtask.Status.PENDING: 'Chưa thực hiện',
@@ -998,6 +1044,7 @@ class ProcurementExport(APIView):
         }
         for subtask in parent.procurement_subtasks.select_related('handler', 'technical_contact', 'warehouse_approved_by'):
             sheet.append([subtask.pk, subtask.title, subtask.item_code, subtask.manufacturer, subtask.unit, subtask.requested_quantity, subtask.handler.username if subtask.handler else '', subtask.technical_contact.username if subtask.technical_contact else '', status_labels[subtask.status], subtask.warehouse_approved_by.username if subtask.warehouse_approved_by else 'Chưa duyệt', subtask.note])
+        sheet.auto_filter.ref = sheet.dimensions
         output = BytesIO()
         workbook.save(output)
         return InvenTree.helpers.DownloadFile(output.getvalue(), f'{parent.code}-dat-hang.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -1024,6 +1071,54 @@ class ProcurementSubtaskDetail(RetrieveUpdateAPI):
                 work_ticket__status=common.models.WorkTicket.Status.WAREHOUSE_REVIEW,
             )
         return queryset.filter(access_filter)
+
+
+class ProcurementSubtaskFilter(FilterSet):
+    """Filters for procurement item lookups."""
+
+    class Meta:
+        model = common.models.ProcurementSubtask
+        fields = ['work_ticket', 'status', 'handler', 'technical_contact']
+
+
+class ProcurementSubtaskList(ListAPI):
+    """List procurement items visible to the authenticated user."""
+
+    queryset = common.models.ProcurementSubtask.objects.select_related(
+        'work_ticket', 'handler', 'technical_contact', 'warehouse_approved_by'
+    )
+    serializer_class = common.serializers.ProcurementSubtaskSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = SEARCH_ORDER_FILTER
+    filterset_class = ProcurementSubtaskFilter
+    ordering_fields = ['created', 'updated', 'status', 'title', 'item_code']
+    search_fields = ['title', 'item_code', 'manufacturer', 'work_ticket__code']
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(
+            work_ticket__is_procurement_request=True
+        )
+        user = self.request.user
+
+        if user.is_staff:
+            return queryset
+
+        access_filter = Q(handler=user) | Q(technical_contact=user)
+
+        if user.groups.filter(name='Warehouse Manager').exists():
+            access_filter |= Q(
+                work_ticket__status=common.models.WorkTicket.Status.WAREHOUSE_REVIEW
+            )
+
+        if user.groups.filter(name='Assignment Manager').exists():
+            access_filter |= Q(
+                work_ticket__status__in=[
+                    common.models.WorkTicket.Status.PROPOSAL,
+                    common.models.WorkTicket.Status.ASSIGNMENT,
+                ]
+            )
+
+        return queryset.filter(access_filter).distinct()
 
 
 class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
@@ -2054,6 +2149,11 @@ common_api_urls = [
             path('procurement-upload/', ProcurementRequestUpload.as_view(), name='api-procurement-upload'),
             path('', WorkTicketList.as_view(), name='api-work-ticket-list'),
         ]),
+    ),
+    path(
+        'procurement-subtask/',
+        ProcurementSubtaskList.as_view(),
+        name='api-procurement-subtask-list',
     ),
     # Flags
     path(

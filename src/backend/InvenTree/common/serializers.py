@@ -32,6 +32,7 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     OptionalField,
 )
+from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -788,11 +789,21 @@ class WorkTicketSerializer(InvenTreeModelSerializer):
             return attrs
 
         transitions = {
-            common_models.WorkTicket.Status.PROPOSAL: common_models.WorkTicket.Status.ASSIGNMENT,
             common_models.WorkTicket.Status.ASSIGNMENT: common_models.WorkTicket.Status.WAREHOUSE_REVIEW,
         }
         if transitions.get(self.instance.status) != status:
             raise serializers.ValidationError({'status': _('Invalid procurement workflow transition')})
+
+        if (
+            status == common_models.WorkTicket.Status.WAREHOUSE_REVIEW
+            and (
+                not self.instance.procurement_subtasks.exists()
+                or self.instance.procurement_subtasks.filter(handler__isnull=True).exists()
+            )
+        ):
+            raise serializers.ValidationError({
+                'status': _('Assign a procurement handler to every item before warehouse review')
+            })
 
         if not request:
             return attrs
@@ -833,6 +844,16 @@ class ProcurementSubtaskSerializer(InvenTreeModelSerializer):
 
     def validate(self, attrs):
         request = self.context.get('request')
+
+        requested_quantity = attrs.get(
+            'requested_quantity',
+            getattr(self.instance, 'requested_quantity', None),
+        )
+        if requested_quantity is not None and requested_quantity <= 0:
+            raise serializers.ValidationError({
+                'requested_quantity': _('Requested quantity must be greater than zero')
+            })
+
         if not self.instance or not request:
             return attrs
         ticket = self.instance.work_ticket
@@ -881,7 +902,12 @@ class ProcurementSubtaskSerializer(InvenTreeModelSerializer):
                 raise PermissionDenied(_('Only the assigned handler can complete this item'))
             if ticket.status != common_models.WorkTicket.Status.PURCHASING:
                 raise serializers.ValidationError({'status': _('Items can only be completed during purchasing')})
-            purchase_quantity = self.instance.purchase_orders.aggregate(
+            purchase_quantity = self.instance.purchase_orders.filter(
+                status__in=(
+                    PurchaseOrderStatusGroups.OPEN
+                    + PurchaseOrderStatusGroups.COMPLETE
+                )
+            ).aggregate(
                 quantity=Sum('lines__quantity')
             )['quantity'] or 0
             if purchase_quantity != self.instance.requested_quantity:
@@ -889,7 +915,12 @@ class ProcurementSubtaskSerializer(InvenTreeModelSerializer):
                     'status': _('Purchase-order quantity must match the requested quantity')
                 })
             if ticket.commercial:
-                sales_quantity = self.instance.sales_orders.aggregate(
+                sales_quantity = self.instance.sales_orders.filter(
+                    status__in=(
+                        SalesOrderStatusGroups.OPEN
+                        + SalesOrderStatusGroups.COMPLETE
+                    )
+                ).aggregate(
                     quantity=Sum('lines__quantity')
                 )['quantity'] or 0
                 if sales_quantity != self.instance.requested_quantity:
@@ -901,10 +932,15 @@ class ProcurementSubtaskSerializer(InvenTreeModelSerializer):
         return attrs
 
     def update(self, instance, validated_data):
-        """Record individual warehouse approval and start purchasing after the last one."""
+        """Advance the procurement workflow after assignment or approval."""
         with transaction.atomic():
             ticket = common_models.WorkTicket.objects.select_for_update().get(
                 pk=instance.work_ticket_id
+            )
+            is_assignment = (
+                ticket.status == common_models.WorkTicket.Status.PROPOSAL
+                and 'handler' in validated_data
+                and validated_data['handler'] is not None
             )
             is_approval = (
                 ticket.status == common_models.WorkTicket.Status.WAREHOUSE_REVIEW
@@ -915,6 +951,10 @@ class ProcurementSubtaskSerializer(InvenTreeModelSerializer):
                 validated_data['warehouse_approved_by'] = self.context['request'].user
                 validated_data['warehouse_approved_at'] = now()
             instance = super().update(instance, validated_data)
+
+            if is_assignment:
+                ticket.status = common_models.WorkTicket.Status.ASSIGNMENT
+                ticket.save(update_fields=['status', 'updated'])
 
             if is_approval:
                 if not ticket.procurement_subtasks.filter(

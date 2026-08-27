@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Badge, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconReceipt, IconShoppingCart } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -14,17 +15,13 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useInstance } from '../../hooks/UseInstance';
 import { useEditApiFormModal } from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 
-const statusLabels: Record<string, string> = {
-  waiting_approval: 'Chờ duyệt',
-  pending: 'Chưa thực hiện',
-  done: 'Hoàn thành'
-};
-
 export default function ProcurementSubtaskDetail() {
   const { ticketId, subtaskId } = useParams();
+  const user = useUserState();
   const { instance: ticket } = useInstance({
     endpoint: ApiEndpoints.work_ticket_list,
     pk: ticketId,
@@ -36,18 +33,37 @@ export default function ProcurementSubtaskDetail() {
     pathParams: { subtask_pk: subtaskId ?? '' },
     refetchOnMount: true
   });
-  const nextStatus = subtask.status === 'waiting_approval' ? 'pending' : (
-    subtask.status === 'pending' ? 'done' : undefined
-  );
+  const statusLabels: Record<string, string> = {
+    waiting_approval: t`Waiting Approval`,
+    pending: t`Not Started`,
+    done: t`Completed`
+  };
+  const isAssignmentManager =
+    user.isStaff() || user.hasGroup('Assignment Manager');
+  const isWarehouseManager =
+    user.isStaff() || user.hasGroup('Warehouse Manager');
+  const canEditAssignment =
+    isAssignmentManager && ['proposal', 'assignment'].includes(ticket.status);
+  const canEditWarehouse =
+    isWarehouseManager && ticket.status === 'warehouse_review';
+  const canApprove =
+    isWarehouseManager &&
+    ticket.status === 'warehouse_review' &&
+    subtask.status === 'waiting_approval';
+  const canComplete =
+    ticket.status === 'purchasing' &&
+    subtask.status === 'pending' &&
+    user.userId() === subtask.handler;
+  const nextStatus = canApprove ? 'pending' : canComplete ? 'done' : undefined;
   const updateStatus = useEditApiFormModal({
     url: apiUrl(ApiEndpoints.procurement_subtask_detail, ticketId, {
       subtask_pk: subtaskId ?? ''
     }),
-    title: 'Cập nhật trạng thái mặt hàng',
+    title: t`Update Item Status`,
     fields: {
       status: {
         field_type: 'choice',
-        label: 'Trạng thái',
+        label: t`Status`,
         choices: [
           { value: subtask.status, display_name: statusLabels[subtask.status] ?? subtask.status },
           ...(nextStatus ? [{ value: nextStatus, display_name: statusLabels[nextStatus] }] : [])
@@ -60,31 +76,34 @@ export default function ProcurementSubtaskDetail() {
     url: apiUrl(ApiEndpoints.procurement_subtask_detail, ticketId, {
       subtask_pk: subtaskId ?? ''
     }),
-    title: 'Chỉnh sửa mục',
-    successMessage: 'Đã cập nhật mục',
+    title: t`Edit Procurement Item`,
+    successMessage: t`Procurement item updated`,
     ignorePermissionCheck: true,
     fields: ['proposal', 'assignment'].includes(ticket.status)
       ? {
           handler: {
             field_type: 'related field',
             api_url: apiUrl(ApiEndpoints.user_list),
-            label: 'Người thực hiện mua hàng',
+            label: t`Procurement Handler`,
             filters: { is_active: true }
           },
           technical_contact: {
             field_type: 'related field',
             api_url: apiUrl(ApiEndpoints.user_list),
-            label: 'Người đề xuất / Liên hệ kỹ thuật',
+            label: t`Requester / Technical Contact`,
             filters: { is_active: true }
           }
         }
       : {
-          title: { field_type: 'string', label: 'Mặt hàng', required: true },
-          item_code: { field_type: 'string', label: 'Mã hàng' },
-          manufacturer: { field_type: 'string', label: 'Hãng/Xuất xứ' },
-          unit: { field_type: 'string', label: 'Đơn vị tính' },
-          requested_quantity: { field_type: 'decimal', label: 'Số lượng cần' },
-          note: { field_type: 'string', label: 'Ghi chú' }
+          title: { field_type: 'string', label: t`Item`, required: true },
+          item_code: { field_type: 'string', label: t`Item Code` },
+          manufacturer: { field_type: 'string', label: t`Manufacturer / Origin` },
+          unit: { field_type: 'string', label: t`Unit` },
+          requested_quantity: {
+            field_type: 'decimal',
+            label: t`Requested Quantity`
+          },
+          note: { field_type: 'string', label: t`Note` }
         },
     onFormSuccess: refreshInstance
   });
@@ -93,41 +112,54 @@ export default function ProcurementSubtaskDetail() {
     if (instanceQuery.isFetching) return <Skeleton />;
 
     const fields: DetailsField[] = [
-      { type: 'text', name: 'title', label: 'Mặt hàng', icon: 'name', copy: true },
-      { type: 'text', name: 'item_code', label: 'Mã hàng', icon: 'reference', copy: true },
-      { type: 'text', name: 'manufacturer', label: 'Hãng/Xuất xứ', icon: 'details' },
-      { type: 'text', name: 'unit', label: 'Đơn vị tính', icon: 'details' },
-      { type: 'text', name: 'requested_quantity', label: 'Số lượng cần', icon: 'details' },
-      { type: 'text', name: 'note', label: 'Ghi chú', icon: 'description' },
+      { type: 'text', name: 'title', label: t`Item`, icon: 'name', copy: true },
+      { type: 'text', name: 'item_code', label: t`Item Code`, icon: 'reference', copy: true },
+      { type: 'text', name: 'manufacturer', label: t`Manufacturer / Origin`, icon: 'details' },
+      { type: 'text', name: 'unit', label: t`Unit`, icon: 'details' },
+      { type: 'text', name: 'requested_quantity', label: t`Requested Quantity`, icon: 'details' },
+      { type: 'text', name: 'note', label: t`Note`, icon: 'description' },
       {
         type: 'text',
         name: 'technical_contact_detail.username',
-        label: 'Người đề xuất / Liên hệ kỹ thuật',
+        label: t`Requester / Technical Contact`,
         icon: 'user'
       },
       {
         type: 'text',
         name: 'handler_detail.username',
-        label: 'Người thực hiện mua hàng',
+        label: t`Procurement Handler`,
         icon: 'user'
       },
       {
         type: 'text',
         name: 'status',
-        label: 'Trạng thái',
+        label: t`Status`,
         icon: 'status',
-        value_formatter: () => <Badge>{statusLabels[subtask.status] ?? subtask.status}</Badge>
+        value_formatter: () => (
+          <Badge
+            color={
+              subtask.status === 'done'
+                ? 'green'
+                : subtask.status === 'waiting_approval'
+                  ? 'yellow'
+                  : 'blue'
+            }
+            variant='light'
+          >
+            {statusLabels[subtask.status] ?? subtask.status}
+          </Badge>
+        )
       },
       {
         type: 'text',
         name: 'warehouse_approved_by_detail.username',
-        label: 'Người duyệt kho',
+        label: t`Warehouse Approver`,
         icon: 'user'
       },
       {
         type: 'date',
         name: 'warehouse_approved_at',
-        label: 'Thời điểm duyệt kho',
+        label: t`Warehouse Approval Time`,
         icon: 'calendar',
         showTime: true
       }
@@ -142,10 +174,10 @@ export default function ProcurementSubtaskDetail() {
 
   const panels: PanelType[] = useMemo(
     () => [
-      { name: 'detail', label: 'Chi tiết mặt hàng', icon: <IconInfoCircle />, content: detailsPanel },
+      { name: 'detail', label: t`Item Details`, icon: <IconInfoCircle />, content: detailsPanel },
       {
         name: 'purchase-orders',
-        label: 'Đơn mua hàng',
+        label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         content: (
           <PurchaseOrderTable
@@ -155,9 +187,9 @@ export default function ProcurementSubtaskDetail() {
           />
         )
       },
-      {
+      ...(ticket.commercial ? [{
         name: 'sales-orders',
-        label: 'Đơn bán hàng',
+        label: t`Sales Orders`,
         icon: <IconReceipt />,
         content: (
           <SalesOrderTable
@@ -166,9 +198,9 @@ export default function ProcurementSubtaskDetail() {
             defaultOutstanding={false}
           />
         )
-      }
+      }] : [])
     ],
-    [detailsPanel, subtask.pk, ticket.project_code]
+    [detailsPanel, subtask.pk, ticket.commercial, ticket.project_code]
   );
 
   return (
@@ -177,25 +209,28 @@ export default function ProcurementSubtaskDetail() {
         {updateStatus.modal}
         {editSubtask.modal}
         <PageDetail
-          title={subtask.title || 'Chi tiết mặt hàng'}
+          title={subtask.title || t`Item Details`}
           subtitle={subtask.item_code}
           badges={[<Badge key='status'>{statusLabels[subtask.status] ?? subtask.status}</Badge>]}
           breadcrumbs={[
-            { name: 'Công việc', url: '/planning/tickets/index/' },
-            { name: ticket.code || 'Công việc cha', url: `/planning/tickets/${ticketId}/` }
+            { name: t`Work Tickets`, url: '/planning/tickets/index/' },
+            { name: ticket.code || t`Parent Work Ticket`, url: `/planning/tickets/${ticketId}/` }
           ]}
           actions={[
             <PrimaryActionButton
               key='edit-subtask'
-              title='Chỉnh sửa mục'
+              title={t`Edit Procurement Item`}
               icon='edit'
-              hidden={!['proposal', 'assignment', 'warehouse_review'].includes(ticket.status)}
+              color='blue'
+              hidden={!canEditAssignment && !canEditWarehouse}
               onClick={editSubtask.open}
             />,
             <PrimaryActionButton
               key='update-subtask-status'
-              title={subtask.status === 'waiting_approval' ? 'Duyệt mục' : 'Hoàn thành mục'}
+              title={canApprove ? t`Approve Item` : t`Complete Item`}
               icon='status'
+              color='green'
+              variant='filled'
               hidden={!nextStatus}
               onClick={updateStatus.open}
             />

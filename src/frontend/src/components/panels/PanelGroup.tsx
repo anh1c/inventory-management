@@ -272,7 +272,7 @@ function BasePanelGroup({
                                   textAlign: 'left'
                                 }}
                                 href={generateUrl(
-                                  `/${getBaseUrl()}${location.pathname}/${panel.name}`
+                                  `/${getBaseUrl()}${location.pathname}/../${panel.name}`
                                 )}
                               >
                                 {expanded && panel.label}

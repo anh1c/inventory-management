@@ -473,7 +473,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   return (
     <>
       {downloadImage.modal}
-      <Grid.Col span={{ base: 12, sm: 4 }}>
+      <Grid.Col span={{ base: 12, md: 4 }}>
         <AspectRatio
           ref={ref}
           maw={IMAGE_DIMENSION}

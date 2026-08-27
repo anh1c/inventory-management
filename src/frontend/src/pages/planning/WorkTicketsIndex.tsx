@@ -33,7 +33,7 @@ export default function WorkTicketsIndex() {
           },
           SegmentedControlPanel({
             name: 'tickets',
-            label: t`Quản lý công việc`,
+            label: t`Work Management`,
             icon: <IconTicket />,
             selection: view,
             onChange: setView,

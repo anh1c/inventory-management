@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Badge, Text } from '@mantine/core';
-import { IconUpload } from '@tabler/icons-react';
+import { IconFileSpreadsheet } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -82,23 +82,31 @@ const statusLabels: Record<string, string> = {
   open: t`Open`,
   processing: t`Processing`,
   review: t`Review`,
-  proposal: 'Đề xuất',
-  assignment: 'Phân công',
-  warehouse_review: 'Duyệt kho',
-  purchasing: 'Mua bán',
-  done: 'Hoàn thành'
+  proposal: t`Proposal`,
+  assignment: t`Assignment`,
+  warehouse_review: t`Warehouse Review`,
+  purchasing: t`Purchasing and Sales`,
+  done: t`Completed`
 };
 
 export const nextWorkTicketStatus = (
   record: any,
   userId: number | undefined,
-  isStaff: boolean
+  isStaff: boolean,
+  isAssignmentManager = false
 ) => {
   if (!record) return undefined;
   if (record.is_procurement_request) {
-    if (record.status === 'proposal' && (isStaff || userId === record.assigned_by)) return 'assignment';
-    if (record.status === 'assignment' && (isStaff || userId === record.assigned_by)) return 'warehouse_review';
-    if (record.status === 'warehouse_review' && isStaff) return 'purchasing';
+    const allItemsAssigned =
+      record.procurement_subtasks?.length > 0 &&
+      record.procurement_subtasks.every((item: any) => !!item.handler);
+    if (
+      record.status === 'assignment' &&
+      allItemsAssigned &&
+      (isStaff || isAssignmentManager)
+    ) {
+      return 'warehouse_review';
+    }
     return undefined;
   }
   if (['on_hold', 'done', 'cancelled'].includes(record.plan_detail?.status)) {
@@ -132,9 +140,15 @@ export const nextWorkTicketStatus = (
 export const workTicketStatusFields = (
   record?: any,
   userId?: number,
-  isStaff = false
+  isStaff = false,
+  isAssignmentManager = false
 ): ApiFormFieldSet => {
-  const next = nextWorkTicketStatus(record, userId, isStaff);
+  const next = nextWorkTicketStatus(
+    record,
+    userId,
+    isStaff,
+    isAssignmentManager
+  );
   const values = [record?.status, next].filter(Boolean) as string[];
   return {
   status: {
@@ -166,11 +180,11 @@ const ticketStatusLabels: Record<string, string> = {
   open: t`Open`,
   processing: t`Processing`,
   review: t`Review`,
-  proposal: 'Đề xuất',
-  assignment: 'Phân công',
-  warehouse_review: 'Duyệt kho',
-  purchasing: 'Mua bán',
-  done: 'Hoàn thành'
+  proposal: t`Proposal`,
+  assignment: t`Assignment`,
+  warehouse_review: t`Warehouse Review`,
+  purchasing: t`Purchasing and Sales`,
+  done: t`Completed`
 };
 
 const ticketStatusColors: Record<string, string> = {
@@ -221,6 +235,10 @@ export default function WorkTicketTable({
         { value: 'open', label: t`Open` },
         { value: 'processing', label: t`Processing` },
         { value: 'review', label: t`Review` },
+        { value: 'proposal', label: t`Proposal` },
+        { value: 'assignment', label: t`Assignment` },
+        { value: 'warehouse_review', label: t`Warehouse Review` },
+        { value: 'purchasing', label: t`Purchasing and Sales` },
         { value: 'done', label: t`Done` }
       ]
     },
@@ -240,13 +258,13 @@ export default function WorkTicketTable({
   ];
   const newProcurementRequest = useCreateApiFormModal({
     url: ApiEndpoints.procurement_upload,
-    title: 'Nhập yêu cầu mua hàng từ Excel',
+    title: t`Import Procurement Request`,
     ignorePermissionCheck: true,
     fields: {
       file: {
         field_type: 'file upload',
-        label: 'Tệp yêu cầu mua hàng (.xlsx)',
-        description: 'Cột bắt buộc: Mô tả hàng hóa/Name Product, Mã sản phẩm/Description, ĐVT, SL cần',
+        label: t`Procurement Request File (.xlsx)`,
+        description: t`Required columns: Mô tả hàng hóa/Name Product, Mã sản phẩm/Description, Hãng/Xuất xứ, ĐVT, SL cần, Người xử lý, Note, Người đề xuất/Người giải pháp kỹ thuật`,
         accept: '.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         required: true
       },
@@ -256,9 +274,9 @@ export default function WorkTicketTable({
       project_code: {
         field_type: 'related field', api_url: apiUrl(ApiEndpoints.project_code_list),
         model: ModelType.projectcode,
-        label: 'Mã dự án', value: projectCodeId, disabled: !!projectCodeId, required: true
+        label: t`Project Code`, value: projectCodeId, disabled: !!projectCodeId, required: true
       },
-      commercial: { field_type: 'boolean', label: 'Yêu cầu thương mại' },
+      commercial: { field_type: 'boolean', label: t`Commercial Request` },
     },
     initialData: { plan: planId, project_code: projectCodeId },
     table
@@ -279,7 +297,12 @@ export default function WorkTicketTable({
     url: ApiEndpoints.work_ticket_list,
     pk: selectedTicket?.pk,
     title: t`Update Work Status`,
-    fields: workTicketStatusFields(selectedTicket, user.userId(), user.isStaff()),
+    fields: workTicketStatusFields(
+      selectedTicket,
+      user.userId(),
+      user.isStaff(),
+      user.hasGroup('Assignment Manager')
+    ),
     table
   });
   const newPurchaseOrder = useCreateApiFormModal({
@@ -392,6 +415,7 @@ export default function WorkTicketTable({
     (record: any): RowAction[] => {
       const uid = user.userId();
       const isStaff = user.isStaff();
+      const isAssignmentManager = user.hasGroup('Assignment Manager');
       const canLink =
         isStaff ||
         uid === record.assigned_by ||
@@ -403,7 +427,12 @@ export default function WorkTicketTable({
       const canCreateBuildOrder = user.hasAddRole(UserRoles.build);
       return [
       RowEditAction({
-        hidden: !nextWorkTicketStatus(record, uid, isStaff),
+        hidden: !nextWorkTicketStatus(
+          record,
+          uid,
+          isStaff,
+          isAssignmentManager
+        ),
         onClick: () => {
           setSelectedTicket(record);
           updateStatus.open();
@@ -479,8 +508,10 @@ export default function WorkTicketTable({
             />,
             <ActionButton
               key='add-procurement-request'
-              tooltip='Nhập yêu cầu mua hàng từ Excel'
-              icon={<IconUpload />}
+              tooltip={t`Import Procurement Request`}
+              icon={<IconFileSpreadsheet size={19} />}
+              color='blue'
+              variant='light'
               hidden={!!parentId || canCreate === false}
               onClick={() => newProcurementRequest.open()}
             />

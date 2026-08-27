@@ -680,6 +680,21 @@ class AbstractOrderSerializer(
         procurement_subtask = data.get(
             'procurement_subtask', getattr(self.instance, 'procurement_subtask', None)
         )
+        current_procurement_subtask = getattr(
+            self.instance, 'procurement_subtask', None
+        )
+
+        if (
+            self.instance
+            and current_procurement_subtask != procurement_subtask
+            and self.instance.lines.exists()
+        ):
+            raise ValidationError({
+                'procurement_subtask': _(
+                    'Orders containing line items cannot be moved to another procurement item'
+                )
+            })
+
         request = self.context.get('request')
         if procurement_subtask:
             if not procurement_subtask.work_ticket.is_procurement_request:
@@ -1563,10 +1578,16 @@ class PurchaseOrderLineItemSerializer(
             raise ValidationError({'order': _('Purchase order must be specified')})
 
         subtask = purchase_order.procurement_subtask
-        if subtask:
-            quantity = data.get('quantity', getattr(self.instance, 'quantity', Decimal(0)))
+        accepted_statuses = (
+            PurchaseOrderStatusGroups.OPEN + PurchaseOrderStatusGroups.COMPLETE
+        )
+        if subtask and purchase_order.status in accepted_statuses:
+            quantity = Decimal(
+                str(data.get('quantity', getattr(self.instance, 'quantity', Decimal(0))))
+            )
             assigned = order.models.PurchaseOrderLineItem.objects.filter(
-                order__procurement_subtask=subtask
+                order__procurement_subtask=subtask,
+                order__status__in=accepted_statuses,
             )
             if self.instance:
                 assigned = assigned.exclude(pk=self.instance.pk)
@@ -2294,10 +2315,16 @@ class SalesOrderLineItemSerializer(
         sales_order = data.get('order')
         subtask = sales_order.procurement_subtask if sales_order else None
 
-        if subtask:
-            quantity = data.get('quantity', getattr(self.instance, 'quantity', Decimal(0)))
+        accepted_statuses = (
+            SalesOrderStatusGroups.OPEN + SalesOrderStatusGroups.COMPLETE
+        )
+        if subtask and sales_order.status in accepted_statuses:
+            quantity = Decimal(
+                str(data.get('quantity', getattr(self.instance, 'quantity', Decimal(0))))
+            )
             assigned = order.models.SalesOrderLineItem.objects.filter(
-                order__procurement_subtask=subtask
+                order__procurement_subtask=subtask,
+                order__status__in=accepted_statuses,
             )
             if self.instance:
                 assigned = assigned.exclude(pk=self.instance.pk)

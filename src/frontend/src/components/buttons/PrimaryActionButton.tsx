@@ -11,6 +11,7 @@ export default function PrimaryActionButton({
   tooltip,
   icon,
   color,
+  variant = 'light',
   hidden,
   onClick
 }: Readonly<{
@@ -18,6 +19,7 @@ export default function PrimaryActionButton({
   tooltip?: string;
   icon?: keyof InvenTreeIconType;
   color?: string;
+  variant?: 'filled' | 'light' | 'outline' | 'subtle' | 'default';
   hidden?: boolean;
   onClick: () => void;
 }>) {
@@ -30,8 +32,11 @@ export default function PrimaryActionButton({
       <Button
         leftSection={icon && <InvenTreeIcon icon={icon} />}
         color={color}
-        radius='sm'
-        p='xs'
+        variant={variant}
+        size='xs'
+        radius='xs'
+        h={34}
+        px='sm'
         onClick={onClick}
       >
         {title}

@@ -720,7 +720,7 @@ export default function PartDetail() {
               refresh={refreshInstance}
               pk={part.pk}
             />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
+            <Grid.Col span={{ base: 12, md: 8 }}>
               <DetailsTable fields={tl} item={data} />
             </Grid.Col>
           </Grid>
